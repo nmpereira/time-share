@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="5" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form method="post" action="/api/times">
+      user:
+      <input type="text" name="user" id="user" /><br />
+      num_work:
+      <input type="text" name="num_work" value="1" /><br />
+      time_work:
+      <input type="text" name="time_work" value="2" /><br />
+      num_break:
+      <input type="text" name="num_break" value="3" /><br />
+      time_break:
+      <input type="text" name="time_break" value="4" /><br />
+      sets:
+      <input type="text" name="sets" value="5" /><br />
+      end_time:
+      <input type="text" name="end_time" id="end_time" /><br />
+      <button type="submit">Submit</button>
+    </form>
+    <form method="get" action="/api/times/">
+      <button type="submit">View all</button>
+    </form>
+
+    <script src="main.js"></script>
+  </body>
+</html>

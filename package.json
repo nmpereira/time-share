@@ -1,0 +1,25 @@
+{
+  "name": "time-share",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "devstart": "cd app/server && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nmpereira/time-share.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nmpereira/time-share/issues"
+  },
+  "homepage": "https://github.com/nmpereira/time-share#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "mongoose": "^6.2.1"
+  }
+}
