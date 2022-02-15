@@ -4,31 +4,47 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="refresh" content="5" />
+    <!-- <meta http-equiv="refresh" content="5" /> -->
     <title>Document</title>
   </head>
   <body>
-    <form method="post" action="/api/times">
+    <iframe name="hiddenFrame" class="hide"></iframe>
+    <form method="post" action="/api/times" target="hiddenFrame">
       user:
-      <input type="text" name="user" id="user" /><br />
+      <input type="text" id="user" /><br />
       num_work:
-      <input type="text" name="num_work" value="1" /><br />
+      <input type="text" value="1" id="num_work" /><br />
       time_work:
-      <input type="text" name="time_work" value="2" /><br />
+      <input type="text" value="2" id="time_work" /><br />
       num_break:
-      <input type="text" name="num_break" value="3" /><br />
+      <input type="text" value="3" id="num_break" /><br />
       time_break:
-      <input type="text" name="time_break" value="4" /><br />
+      <input type="text" value="4" id="time_break" /><br />
       sets:
-      <input type="text" name="sets" value="5" /><br />
+      <input type="text" value="5" id="sets" /><br />
       end_time:
-      <input type="text" name="end_time" id="end_time" /><br />
+      <input type="text" id="end_time" />
+      <p id="seconds"></p>
+      <p id="current_time"></p>
+
       <button type="submit">Submit</button>
     </form>
     <form method="get" action="/api/times/">
+      <br />
       <button type="submit">View all</button>
     </form>
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+      integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.js"
+      integrity="sha512-oqSECbLRRAy3Sq2tJ0RmzbqXHprFS+n7WapvpI1t0V7CtV4vghscIQ8MYoQo6tp4MrJmih4SlOaYuCkPRi3j6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script src="main.js"></script>
   </body>
 </html>
