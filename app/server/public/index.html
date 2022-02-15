@@ -33,6 +33,8 @@
       <br />
       <button type="submit">View all</button>
     </form>
+    Client1
+    <button onclick="sendMessage()">Send Msg</button>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
       integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
@@ -45,6 +47,24 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+    <script>
+      // Create WebSocket connection.
+      const socket = new WebSocket("ws://localhost:7071");
+
+      // Connection opened
+      socket.addEventListener("open", function (event) {
+        console.log("Connected to WS Server");
+      });
+
+      // Listen for messages
+      socket.addEventListener("message", function (event) {
+        console.log("Message from server ", event.data);
+      });
+
+      const sendMessage = () => {
+        socket.send("Hello From Client1!");
+      };
+    </script>
     <script src="main.js"></script>
   </body>
 </html>
