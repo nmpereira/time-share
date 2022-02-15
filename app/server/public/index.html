@@ -11,19 +11,19 @@
     <iframe name="hiddenFrame" class="hide"></iframe>
     <form method="post" action="/api/times" target="hiddenFrame">
       user:
-      <input type="text" id="user" /><br />
+      <input type="text" name="user" id="user" /><br />
       num_work:
-      <input type="text" value="1" id="num_work" /><br />
+      <input type="text" name="num_work" value="10" id="num_work" /><br />
       time_work:
-      <input type="text" value="2" id="time_work" /><br />
+      <input type="text" name="time_work" value="1" id="time_work" /><br />
       num_break:
-      <input type="text" value="3" id="num_break" /><br />
+      <input type="text" name="num_break" value="5" id="num_break" /><br />
       time_break:
-      <input type="text" value="4" id="time_break" /><br />
+      <input type="text" name="time_break" value="2" id="time_break" /><br />
       sets:
-      <input type="text" value="5" id="sets" /><br />
+      <input type="text" name="sets" value="2" id="sets" /><br />
       end_time:
-      <input type="text" id="end_time" />
+      <input type="text" name="end_time" id="end_time" />
       <p id="seconds_time">0</p>
       <p id="current_time">0</p>
 
@@ -33,7 +33,7 @@
       <br />
       <button type="submit">View all</button>
     </form>
-    Client1
+    <!-- Client1 -->
     <button onclick="sendMessage()">Send Msg</button>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
@@ -47,24 +47,8 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <script>
-      // Create WebSocket connection.
-      const socket = new WebSocket("ws://localhost:7071");
 
-      // Connection opened
-      socket.addEventListener("open", function (event) {
-        console.log("Connected to WS Server");
-      });
-
-      // Listen for messages
-      socket.addEventListener("message", function (event) {
-        console.log("Message from server ", event.data);
-      });
-
-      const sendMessage = () => {
-        socket.send("Hello From Client1!");
-      };
-    </script>
+    <script src="socketClient.js"></script>
     <script src="main.js"></script>
   </body>
 </html>
