@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app/server/index.js",
     "devstart": "cd app/server && npm run dev"
   },
   "repository": {
