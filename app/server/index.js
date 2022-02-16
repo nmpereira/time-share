@@ -18,7 +18,8 @@ const server = express()
 
 //Websocket
 const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 80 });
+// const wss = new WebSocket.Server({ port: 80 });
+const wss = new Server({ server });
 wss.on("connection", function connection(ws, req) {
   console.log("A new client Connected!");
   ws.send("Welcome New Client!");

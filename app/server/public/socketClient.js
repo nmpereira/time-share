@@ -18,6 +18,7 @@ console.log("2 ", new_uri);
 
 // var HOST = "wss://time-share.herokuapp.com";
 // var HOST = "ws://localhost";
+var HOST = new_uri;
 console.log("HOST: ", HOST);
 var ws = new WebSocket(HOST);
 
