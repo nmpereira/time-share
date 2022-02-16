@@ -1,5 +1,5 @@
 // Create WebSocket connection.
-const ws = new WebSocket("ws://localhost:7071");
+const ws = new WebSocket("ws://time-share.herokuapp.com:7071");
 
 // Connection opened
 ws.addEventListener("open", function (event) {
