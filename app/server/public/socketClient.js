@@ -17,7 +17,7 @@
 // console.log(loc.port);
 
 var HOST = "wss://time-share.herokuapp.com:7071";
-// console.log("HOST: ", HOST);
+console.log("HOST: ", HOST);
 var ws = new WebSocket(HOST);
 
 // Connection opened
