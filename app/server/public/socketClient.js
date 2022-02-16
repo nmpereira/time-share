@@ -1,23 +1,23 @@
 // Create WebSocket connection.
 
-// var loc = window.location,
-//   new_uri;
-// if (loc.protocol === "https:") {
-//   new_uri = "wss:";
-// } else {
-//   new_uri = "ws:";
-// }
-// // console.log("1 ", new_uri);
-// new_uri += "//" + loc.host.replace(loc.port, "7071");
-// console.log("2 ", new_uri);
-// new_uri += loc.origin.replace(loc.port, "7071");
+var loc = window.location,
+  new_uri;
+if (loc.protocol === "https:") {
+  new_uri = "wss:";
+} else {
+  new_uri = "ws:";
+}
+// console.log("1 ", new_uri);
+new_uri += "//" + loc.host;
+console.log("2 ", new_uri);
+// new_uri += loc.pathname;
 // console.log("3 ", new_uri);
 // console.log(loc);
 // console.log(loc.hostname);
 // console.log(loc.port);
 
-var HOST = "wss://time-share.herokuapp.com";
-// var HOST = "ws://localhost:80";
+// var HOST = "wss://time-share.herokuapp.com";
+// var HOST = "ws://localhost";
 console.log("HOST: ", HOST);
 var ws = new WebSocket(HOST);
 

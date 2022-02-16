@@ -6,9 +6,16 @@ const logger = require("./routes/logger");
 const api = require("./routes/api");
 const PORT = process.env.PORT || 3001;
 const app = express();
+const INDEX = "./public/index.html";
+const { Server } = require("ws");
 const moment = require("moment");
 let timestamp = moment().add(10, "seconds");
 let secs;
+
+const server = express()
+  .use(express.static(path.resolve(__dirname, "../server/public")))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
 //Websocket
 const WebSocket = require("ws");
 const wss = new WebSocket.Server({ port: 80 });
@@ -71,7 +78,7 @@ db.once("open", () => console.error("Connected to db"));
 app.set("json spaces", 2);
 app.use(express.json());
 // Have Node serve the files for our built React app
-app.use(express.static(path.resolve(__dirname, "../server/public")));
+// app.use(express.static(path.resolve(__dirname, "../server/public")));
 app.use(logger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -83,11 +90,11 @@ app.get("/", (req, res) => {
 });
 app.use("/api", api);
 
-// All other GET requests not handled before will return our React app
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../server/public", "index.html"));
-});
+// // All other GET requests not handled before will return our React app
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "../server/public", "index.html"));
+// });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server listening on ${PORT}`);
+// });
