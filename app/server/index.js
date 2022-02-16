@@ -11,7 +11,7 @@ let timestamp = moment().add(10, "seconds");
 let secs;
 //Websocket
 const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 7071 });
+const wss = new WebSocket.Server({ port: 80 });
 wss.on("connection", function connection(ws, req) {
   console.log("A new client Connected!");
   ws.send("Welcome New Client!");
@@ -54,7 +54,7 @@ const timeFromNow = async (ws, timestamp) => {
   console.log("time_now ", time_now);
 
   let duration = moment.duration(time_now.diff(timestamp));
-  secs = Math.abs(duration.asSeconds());
+  secs = -duration.asSeconds();
   ws.send(secs);
   console.log(secs);
   // return secs;
