@@ -5,13 +5,33 @@ const path = require("path");
 const logger = require("./routes/logger");
 const api = require("./routes/api");
 const PORT = process.env.PORT || 3001;
-const app = express();
+// const app = express();
+// const INDEX = "./public/index.html";
+const { Server } = require("ws");
 const moment = require("moment");
 let timestamp = moment().add(10, "seconds");
 let secs;
+
+const server = express()
+  .use(express.static(path.resolve(__dirname, "../server/public")))
+
+  .use(express.json())
+  .use(logger)
+  .use(express.json())
+  .use(express.urlencoded({ extended: false }))
+  .set("json spaces", 2)
+  .get("/", (req, res) => {
+    res.json({
+      message: "Timer App",
+    });
+  })
+  .use("/api", api)
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
 //Websocket
 const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 7071 });
+// const wss = new WebSocket.Server({ port: 80 });
+const wss = new Server({ server });
 wss.on("connection", function connection(ws, req) {
   console.log("A new client Connected!");
   ws.send("Welcome New Client!");
@@ -54,7 +74,7 @@ const timeFromNow = async (ws, timestamp) => {
   console.log("time_now ", time_now);
 
   let duration = moment.duration(time_now.diff(timestamp));
-  secs = Math.abs(duration.asSeconds());
+  secs = -duration.asSeconds();
   ws.send(secs);
   console.log(secs);
   // return secs;
@@ -67,27 +87,20 @@ const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.error("Connected to db"));
 
-//app config
-app.set("json spaces", 2);
-app.use(express.json());
-// Have Node serve the files for our built React app
-app.use(express.static(path.resolve(__dirname, "../server/public")));
-app.use(logger);
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// //app config
+// server.set("json spaces", 2);
+// server.use(express.json());
+// // Have Node serve the files for our built React app
+// // server.use(express.static(path.resolve(__dirname, "../server/public")));
+// server.use(logger);
+// server.use(express.json());
+// server.use(express.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
-  res.json({
-    message: "Timer App",
-  });
-});
-app.use("/api", api);
+// // All other GET requests not handled before will return our React app
+// server.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "../server/public", "index.html"));
+// });
 
-// All other GET requests not handled before will return our React app
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../server/public", "index.html"));
-});
-
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
+// server.listen(PORT, () => {
+//   console.log(`Server listening on ${PORT}`);
+// });
