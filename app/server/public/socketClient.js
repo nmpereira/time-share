@@ -9,7 +9,7 @@ if (loc.protocol === "https:") {
 }
 // console.log("1 ", new_uri);
 new_uri += "//" + loc.host;
-console.log("2 ", new_uri);
+// console.log("2 ", new_uri);
 // new_uri += loc.pathname;
 // console.log("3 ", new_uri);
 // console.log(loc);
@@ -19,7 +19,7 @@ console.log("2 ", new_uri);
 // var HOST = "wss://time-share.herokuapp.com";
 // var HOST = "ws://localhost";
 var HOST = new_uri;
-console.log("HOST: ", HOST);
+// console.log("HOST: ", HOST);
 var ws = new WebSocket(HOST);
 
 // Connection opened

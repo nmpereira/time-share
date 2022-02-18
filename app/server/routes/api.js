@@ -3,27 +3,10 @@ const express = require("express");
 const router = express.Router();
 const times = require("./times");
 const moment = require("moment-timezone");
-// const serverTimer = require("./serverTimer");
-
-// const posts = require("./posts");
-// const comments = require("./comments");
-// const events = require("./events");
+const serverTimers = require("./serverTimers");
 
 router.use("/times", times);
-// router.use("/posts", posts);
-// router.use("/comments", comments);
-// router.use("/events", events);
-
-// Handle GET requests to /api route
-
-// let time_end = true;
-// while (time_end) {
-// serverTimer();
-//   setInterval(500);
-// }
-
-// console.log("end_time_db_1: ", end_time_db);
-const timer = 60;
+router.use("/serverTimers", serverTimers);
 
 let end_time_db;
 let end_time_db_json;
