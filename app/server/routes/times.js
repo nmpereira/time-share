@@ -2,7 +2,7 @@
 require("dotenv").config();
 const express = require("express");
 const router = express.Router();
-
+const fetch = require("node-fetch");
 const time = require("../models/time");
 
 //Get all Times
@@ -25,8 +25,18 @@ router.route("/:id").get(getTime, async (req, res) => {
 });
 
 //Get single Time by id
-router.route("/time/:id").get(getTime, async (req, res) => {
-  res.render("../public/test");
+router.get("/time/:id", async (req, res) => {
+  try {
+    res.render("../public/test");
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+
+  // let userID = "620c08c3da42f669fe201b0d";
+  // let query = `http://localhost:3001/api/times/${userID}`;
+  // const fetchtest = await fetch(query);
+  // const fetchData = await fetchtest.json();
+  // console.log("fetchData.end_time123", fetchData.end_time);
 });
 
 //Create times

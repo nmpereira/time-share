@@ -4,9 +4,44 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>test</title>
   </head>
   <body>
     <h1>test</h1>
+
+    <script>
+      fetch("http://localhost:3001/api/times")
+        .then((res) => res.json())
+        .then((data) => console.log(data));
+      // Create WebSocket connection.
+
+      var loc = window.location,
+        new_uri;
+      if (loc.protocol === "https:") {
+        new_uri = "wss:";
+      } else {
+        new_uri = "ws:";
+      }
+
+      new_uri += "//" + loc.host;
+
+      var HOST = new_uri;
+
+      var ws = new WebSocket(HOST);
+
+      // Connection opened
+      ws.addEventListener("open", function (event) {
+        console.log("Connected to WS Server");
+      });
+
+      // Listen for messages
+      ws.addEventListener("message", function (event) {
+        console.log("Message from server ", event.data);
+      });
+      const user = document.getElementById("user");
+      const sendMessage = () => {
+        ws.send(`Hello From: ${user.value}`);
+      };
+    </script>
   </body>
 </html>

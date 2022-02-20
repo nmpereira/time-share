@@ -28,7 +28,7 @@ const server = express()
 
 //Websocket
 const WebSocket = require("ws");
-const wss = new Server({ server, path: `/api/times/time/` });
+const wss = new Server({ server });
 wss.on("connection", async function connection(ws, req) {
   console.log("A new client Connected!");
   ws.send("Welcome New Client!");
