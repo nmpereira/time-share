@@ -4,7 +4,6 @@ let date_zone = moment().tz("America/New_York").format();
 document.getElementById("user").value = (Math.random() + 1)
   .toString(36)
   .substring(2);
-// document.getElementById("end_time").value = date_zone;
 
 const num_work = document.getElementById("num_work");
 const time_work = document.getElementById("time_work");
@@ -39,9 +38,6 @@ function time_calc() {
 }
 time_calc;
 let add_seconds = 20;
-
-console.log("date_zone", date_zone);
-// console.log("end_time_new", end_time_new);
 
 let span = document.getElementById("current_time");
 

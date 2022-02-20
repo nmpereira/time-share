@@ -5,8 +5,7 @@ const path = require("path");
 const logger = require("./routes/logger");
 const api = require("./routes/api");
 const PORT = process.env.PORT || 3001;
-// const app = express();
-// const INDEX = "./public/index.html";
+
 const { Server } = require("ws");
 const moment = require("moment");
 const fetch = require("node-fetch");
@@ -55,7 +54,6 @@ wss.on("connection", async function connection(ws, req) {
   const fetchtest = await fetch(query);
   const fetchData = await fetchtest.json();
   console.log(fetchData.end_time);
-  console.log("HOST", location.host);
 });
 
 const runTimer = async (ws, input) => {
@@ -64,7 +62,7 @@ const runTimer = async (ws, input) => {
     if (secs > 0) {
       var ref = setInterval(() => {
         ws.send(--i);
-        // console.log(i);
+
         if (i <= 0) clearInterval(ref);
       }, 1000);
     }
@@ -74,12 +72,10 @@ const runTimer = async (ws, input) => {
 };
 let secs;
 const timeFromNow = async (ws, timestamp) => {
-  // let timestamp = moment().add(2, "minutes");
   let time_now = moment();
   let duration = moment.duration(time_now.diff(timestamp));
   secs = Math.round(-duration.asSeconds());
-  // ws.send(secs);
-  // console.log(secs);
+
   return secs;
 };
 
