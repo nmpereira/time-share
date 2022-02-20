@@ -21,6 +21,7 @@
   "homepage": "https://github.com/nmpereira/time-share#readme",
   "dependencies": {
     "dotenv": "^16.0.0",
+    "ejs": "^3.1.6",
     "express": "^4.17.2",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",

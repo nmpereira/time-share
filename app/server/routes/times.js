@@ -24,6 +24,11 @@ router.route("/:id").get(getTime, async (req, res) => {
   }
 });
 
+//Get single Time by id
+router.route("/time/:id").get(getTime, async (req, res) => {
+  res.render("../public/test");
+});
+
 //Create times
 router.route("/").post(async (req, res, next) => {
   const updated_at = Date.now();

@@ -19,17 +19,16 @@ const server = express()
   .use(express.json())
   .use(express.urlencoded({ extended: false }))
   .set("json spaces", 2)
+  .set("view engine", "ejs")
   .get("/", (req, res) => {
-    res.json({
-      message: "Timer App",
-    });
+    res.render("../public/index");
   })
   .use("/api", api)
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 //Websocket
 const WebSocket = require("ws");
-const wss = new Server({ server });
+const wss = new Server({ server, path: `/api/times/time/` });
 wss.on("connection", async function connection(ws, req) {
   console.log("A new client Connected!");
   ws.send("Welcome New Client!");
