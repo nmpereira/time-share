@@ -46,13 +46,14 @@ wss.on("connection", async function connection(ws, req) {
   ws.on("close", () => {
     console.log("Client has Disconnected");
   });
-  runTimer(ws, timeFromNow(ws, timestamp));
+  runTimer(ws, timeFromNow(timestamp));
 
-  userID = "620c08c3da42f669fe201b0d";
-  let query = `http://localhost:3001/api/times/${userID}`;
-  const fetchtest = await fetch(query);
-  const fetchData = await fetchtest.json();
-  console.log(fetchData.end_time);
+  // userID = "620c08c3da42f669fe201b0d";
+  // let query = `http://localhost:3001/api/times/${userID}`;
+  // const fetchtest = await fetch(query);
+  // const fetchData = await fetchtest.json();
+  // console.log(fetchData.end_time);
+  console.log("ws", ws);
 });
 
 const runTimer = async (ws, input) => {
@@ -70,7 +71,7 @@ const runTimer = async (ws, input) => {
   longForLoop(secs);
 };
 let secs;
-const timeFromNow = async (ws, timestamp) => {
+const timeFromNow = async (timestamp) => {
   let time_now = moment();
   let duration = moment.duration(time_now.diff(timestamp));
   secs = Math.round(-duration.asSeconds());
@@ -84,3 +85,5 @@ mongoose.connect(process.env.dbURI);
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.error("Connected to db"));
+
+// module.exports = runTimer;

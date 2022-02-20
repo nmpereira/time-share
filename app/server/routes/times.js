@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const fetch = require("node-fetch");
 const time = require("../models/time");
+const moment = require("moment");
 
 //Get all Times
 router.route("/").get(async (req, res) => {
@@ -31,12 +32,37 @@ router.get("/time/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
+  // console.log("req.params", req.params.id);
 
-  // let userID = "620c08c3da42f669fe201b0d";
-  // let query = `http://localhost:3001/api/times/${userID}`;
-  // const fetchtest = await fetch(query);
-  // const fetchData = await fetchtest.json();
-  // console.log("fetchData.end_time123", fetchData.end_time);
+  let userID = req.params.id;
+  let query = `http://localhost:3001/api/times/${userID}`;
+  const fetchtest = await fetch(query);
+  const fetchData = await fetchtest.json();
+  console.log("fetchData.end_time123", fetchData.end_time);
+  let timestamp = fetchData.end_time;
+  const runTimer = async (input) => {
+    function longForLoop(secs) {
+      var i = secs;
+      if (secs > 0) {
+        var ref = setInterval(() => {
+          console.log(--i);
+
+          if (i <= 0) clearInterval(ref);
+        }, 1000);
+      }
+    }
+
+    longForLoop(secs);
+  };
+  let secs;
+  const timeFromNow = async (timestamp) => {
+    let time_now = moment();
+    let duration = moment.duration(time_now.diff(timestamp));
+    secs = Math.round(-duration.asSeconds());
+
+    return secs;
+  };
+  runTimer(timeFromNow(timestamp));
 });
 
 //Create times
