@@ -3,10 +3,10 @@ const express = require("express");
 const router = express.Router();
 const times = require("./times");
 const moment = require("moment-timezone");
-const serverTimers = require("./serverTimers");
+// const serverTimers = require("./serverTimers");
 
 router.use("/times", times);
-router.use("/serverTimers", serverTimers);
+// router.use("/serverTimers", serverTimers);
 
 let end_time_db;
 let end_time_db_json;

@@ -46,7 +46,6 @@ wss.on("connection", async function connection(ws, req) {
   ws.on("close", () => {
     console.log("Client has Disconnected");
   });
-  runTimer(ws, timeFromNow(timestamp));
 
   // userID = "620c08c3da42f669fe201b0d";
   // let query = `http://localhost:3001/api/times/${userID}`;
@@ -58,7 +57,13 @@ wss.on("connection", async function connection(ws, req) {
     console.log("send a message:" + msg);
     ws.send(`send a message ${msg}`);
   }
+  function runTheTimer(msg) {
+    console.log("this is the message", msg);
+    runTimer(ws, timeFromNow(msg));
+  }
+
   module.exports.sendAMessage = sendAMessage;
+  module.exports.runTheTimer = runTheTimer;
 });
 
 const runTimer = async (ws, input) => {
@@ -75,6 +80,7 @@ const runTimer = async (ws, input) => {
 
   longForLoop(secs);
 };
+
 let secs;
 const timeFromNow = async (timestamp) => {
   let time_now = moment();

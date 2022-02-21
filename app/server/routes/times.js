@@ -5,7 +5,8 @@ const router = express.Router();
 const fetch = require("node-fetch");
 const time = require("../models/time");
 const moment = require("moment");
-var sendMessage = require("../index.js");
+const sendMessage = require("../index.js");
+const runATimer = require("../index.js");
 
 //Get all Times
 router.route("/").get(async (req, res) => {
@@ -41,7 +42,7 @@ router.get("/time/:id", async (req, res) => {
   const fetchData = await fetchtest.json();
   console.log("fetchData.end_time123", fetchData.end_time);
   let timestamp = fetchData.end_time;
-  sendMessage.sendAMessage(fetchData.end_time);
+  runATimer.runTheTimer(fetchData.end_time);
 });
 
 //Create times
