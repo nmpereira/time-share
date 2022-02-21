@@ -53,7 +53,12 @@ wss.on("connection", async function connection(ws, req) {
   // const fetchtest = await fetch(query);
   // const fetchData = await fetchtest.json();
   // console.log(fetchData.end_time);
-  console.log("ws", ws);
+  // console.log("ws", ws);
+  function sendAMessage(msg) {
+    console.log("send a message:" + msg);
+    ws.send(`send a message ${msg}`);
+  }
+  module.exports.sendAMessage = sendAMessage;
 });
 
 const runTimer = async (ws, input) => {
@@ -85,5 +90,3 @@ mongoose.connect(process.env.dbURI);
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.error("Connected to db"));
-
-// module.exports = runTimer;

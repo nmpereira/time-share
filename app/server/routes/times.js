@@ -5,6 +5,7 @@ const router = express.Router();
 const fetch = require("node-fetch");
 const time = require("../models/time");
 const moment = require("moment");
+var sendMessage = require("../index.js");
 
 //Get all Times
 router.route("/").get(async (req, res) => {
@@ -40,29 +41,7 @@ router.get("/time/:id", async (req, res) => {
   const fetchData = await fetchtest.json();
   console.log("fetchData.end_time123", fetchData.end_time);
   let timestamp = fetchData.end_time;
-  const runTimer = async (input) => {
-    function longForLoop(secs) {
-      var i = secs;
-      if (secs > 0) {
-        var ref = setInterval(() => {
-          console.log(--i);
-
-          if (i <= 0) clearInterval(ref);
-        }, 1000);
-      }
-    }
-
-    longForLoop(secs);
-  };
-  let secs;
-  const timeFromNow = async (timestamp) => {
-    let time_now = moment();
-    let duration = moment.duration(time_now.diff(timestamp));
-    secs = Math.round(-duration.asSeconds());
-
-    return secs;
-  };
-  runTimer(timeFromNow(timestamp));
+  sendMessage.sendAMessage(fetchData.end_time);
 });
 
 //Create times
