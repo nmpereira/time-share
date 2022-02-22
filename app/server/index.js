@@ -20,6 +20,7 @@ const server = express()
   .use(express.urlencoded({ extended: false }))
   .set("json spaces", 2)
   .set("view engine", "ejs")
+  .set("views", path.join(__dirname, "views"))
   .get("/", (req, res) => {
     res.render("../public/index");
   })
