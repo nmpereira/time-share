@@ -10,9 +10,6 @@
     <h1>test</h1>
 
     <script>
-      fetch("http://localhost:3001/api/times")
-        .then((res) => res.json())
-        .then((data) => console.log(data));
       // Create WebSocket connection.
 
       var loc = window.location,
@@ -26,7 +23,9 @@
       new_uri += "//" + loc.host;
 
       var HOST = new_uri;
-
+      fetch(`${loc.protocol}/api/times`)
+        .then((res) => res.json())
+        .then((data) => console.log(data));
       var ws = new WebSocket(HOST);
 
       // Connection opened
