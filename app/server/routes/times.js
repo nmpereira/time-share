@@ -42,7 +42,9 @@ router.get("/time/:id", async (req, res) => {
   const fetchData = await fetchtest.json();
   console.log("fetchData.end_time123", fetchData.end_time);
   let timestamp = fetchData.end_time;
-  runATimer.runTheTimer(fetchData.end_time);
+  setTimeout(() => {
+    runATimer.runTheTimer(fetchData.end_time, userID);
+  }, 500);
 });
 
 //Create times

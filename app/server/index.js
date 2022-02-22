@@ -57,8 +57,8 @@ wss.on("connection", async function connection(ws, req) {
     console.log("send a message:" + msg);
     ws.send(`send a message ${msg}`);
   }
-  function runTheTimer(msg) {
-    console.log("this is the message", msg);
+  function runTheTimer(msg, userID) {
+    console.log(`timestamp: ${msg} from user:${userID}`);
     runTimer(ws, timeFromNow(msg));
   }
 
@@ -71,7 +71,7 @@ const runTimer = async (ws, input) => {
     var i = secs;
     if (secs > 0) {
       var ref = setInterval(() => {
-        ws.send(--i);
+        ws.send(secondsToHMS(--i));
 
         if (i <= 0) clearInterval(ref);
       }, 1000);
@@ -96,3 +96,15 @@ mongoose.connect(process.env.dbURI);
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.error("Connected to db"));
+
+var secondsToHMS = (secs) => {
+  var sec_num = parseInt(secs, 10);
+  var hours = Math.floor(sec_num / 3600);
+  var minutes = Math.floor(sec_num / 60) % 60;
+  var seconds = sec_num % 60;
+
+  return [hours, minutes, seconds]
+    .map((v) => (v < 10 ? "0" + v : v))
+    .filter((v, i) => v !== "00" || i > 0)
+    .join(":");
+};
