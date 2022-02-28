@@ -4,43 +4,41 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>test</title>
+
+    <title>Timer</title>
   </head>
   <body>
-    <h1>test</h1>
+    <h1 id="timestamp"></h1>
+    <script src="/socket.io/socket.io.js"></script>
 
     <script>
-      // Create WebSocket connection.
+      const socket = io();
+    </script>
 
-      var loc = window.location,
-        new_uri;
-      if (loc.protocol === "https:") {
-        new_uri = "wss:";
-      } else {
-        new_uri = "ws:";
-      }
-
-      new_uri += "//" + loc.host;
-
-      var HOST = new_uri;
-      fetch(`${loc.protocol}/api/times`)
-        .then((res) => res.json())
-        .then((data) => console.log(data));
-      var ws = new WebSocket(HOST);
-
-      // Connection opened
-      ws.addEventListener("open", function (event) {
-        console.log("Connected to WS Server");
-      });
-
+    <script>
       // Listen for messages
-      ws.addEventListener("message", function (event) {
+      socket.addEventListener("message", function (event) {
         console.log("Message from server ", event.data);
       });
+      // socket.addEventListener("timestamp", function (event) {
+      //   console.log(event);
+      //   console.log("123");
+      // });
+      socket.on("message", (msg) => {
+        console.log(msg);
+        // console.log(456);
+      }); // From server
+      socket.on("timestamp", (msg) => {
+        // console.log(msg);
+        document.getElementById("timestamp").innerHTML = msg;
+        // console.log(123);
+      }); // From server
       const user = document.getElementById("user");
       const sendMessage = () => {
-        ws.send(`Hello From: ${user.value}`);
+        socket.emit("message", `Hello From: ${user.value}`);
+        console.log(`Hello From: ${user.value}`);
       };
     </script>
+    <!-- <script src="socketClient.js"></script> -->
   </body>
 </html>
