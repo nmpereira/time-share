@@ -6,13 +6,18 @@ const logger = require("./routes/logger");
 const api = require("./routes/api");
 const PORT = process.env.PORT || 3001;
 
-const { Server } = require("ws");
+const { Server } = require("socket.io");
 const moment = require("moment");
 const fetch = require("node-fetch");
 const request = require("request");
 let timestamp = moment().add(10, "seconds");
 
-const server = express()
+const app = express();
+const http = require("http");
+const server = http.createServer(app);
+const io = new Server(server);
+
+app
   .use(express.static(path.resolve(__dirname, "../server/public")))
   .use(express.json())
   .use(logger)
@@ -24,55 +29,82 @@ const server = express()
   .get("/", (req, res) => {
     res.render("../public/index");
   })
-  .use("/api", api)
-  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+  .use("/api", api);
+
+server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 //Websocket
-const WebSocket = require("ws");
-const wss = new Server({ server });
-wss.on("connection", async function connection(ws, req) {
-  console.log("A new client Connected!");
-  ws.send("Welcome New Client!");
 
-  ws.on("message", function incoming(message) {
-    console.log("received: %s", message);
+io.on("connection", (socket) => {
+  console.log("a user connected");
 
-    wss.clients.forEach(function each(client) {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
+  //Whenever someone disconnects this piece of code executed
+  socket.on("disconnect", function () {
+    console.log("A user disconnected");
   });
 
-  ws.on("close", () => {
-    console.log("Client has Disconnected");
+  //send a timestamp to the socket
+  socket.on("timestamp", function (msg) {
+    console.log(msg);
   });
 
-  // userID = "620c08c3da42f669fe201b0d";
-  // let query = `http://localhost:3001/api/times/${userID}`;
-  // const fetchtest = await fetch(query);
-  // const fetchData = await fetchtest.json();
-  // console.log(fetchData.end_time);
-  // console.log("ws", ws);
   function sendAMessage(msg) {
     console.log("send a message:" + msg);
-    ws.send(`send a message ${msg}`);
+    socket.emit("message", `send a message ${msg}`);
   }
   function runTheTimer(msg, userID) {
     console.log(`timestamp: ${msg} from user:${userID}`);
-    runTimer(ws, timeFromNow(msg));
+    runTimer(socket, timeFromNow(msg));
   }
 
   module.exports.sendAMessage = sendAMessage;
   module.exports.runTheTimer = runTheTimer;
 });
+// const WebSocket = require("ws");
+// const wss = new Server({ server });
+// wss.on("connection", async function connection(ws, req) {
+//   console.log("A new client Connected!");
+//   ws.send("Welcome New Client!");
 
-const runTimer = async (ws, input) => {
+//   ws.on("message", function incoming(message) {
+//     console.log("received: %s", message);
+
+//     wss.clients.forEach(function each(client) {
+//       if (client !== ws && client.readyState === WebSocket.OPEN) {
+//         client.send(message);
+//       }
+//     });
+//   });
+
+//   ws.on("close", () => {
+//     console.log("Client has Disconnected");
+//   });
+
+//   // userID = "620c08c3da42f669fe201b0d";
+//   // let query = `http://localhost:3001/api/times/${userID}`;
+//   // const fetchtest = await fetch(query);
+//   // const fetchData = await fetchtest.json();
+//   // console.log(fetchData.end_time);
+//   // console.log("ws", ws);
+//   function sendAMessage(msg) {
+//     console.log("send a message:" + msg);
+//     ws.send(`send a message ${msg}`);
+//   }
+//   function runTheTimer(msg, userID) {
+//     console.log(`timestamp: ${msg} from user:${userID}`);
+//     runTimer(ws, timeFromNow(msg));
+//   }
+
+//   module.exports.sendAMessage = sendAMessage;
+//   module.exports.runTheTimer = runTheTimer;
+// });
+
+const runTimer = async (socket, input) => {
   function longForLoop(secs) {
     var i = secs;
     if (secs > 0) {
       var ref = setInterval(() => {
-        ws.send(secondsToHMS(--i));
+        socket.emit("timestamp", secondsToHMS(--i));
 
         if (i <= 0) clearInterval(ref);
       }, 1000);

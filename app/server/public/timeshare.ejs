@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Timer</title>
+  </head>
+  <body>
+    <h1 id="timestamp"></h1>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io();
+    </script>
+
+    <script>
+      // Listen for messages
+      socket.addEventListener("message", function (event) {
+        console.log("Message from server ", event.data);
+      });
+      // socket.addEventListener("timestamp", function (event) {
+      //   console.log(event);
+      //   console.log("123");
+      // });
+      socket.on("message", (msg) => {
+        console.log(msg);
+        // console.log(456);
+      }); // From server
+      socket.on("timestamp", (msg) => {
+        // console.log(msg);
+        document.getElementById("timestamp").innerHTML = msg;
+        // console.log(123);
+      }); // From server
+      const user = document.getElementById("user");
+      const sendMessage = () => {
+        socket.emit("message", `Hello From: ${user.value}`);
+        console.log(`Hello From: ${user.value}`);
+      };
+    </script>
+    <!-- <script src="socketClient.js"></script> -->
+  </body>
+</html>

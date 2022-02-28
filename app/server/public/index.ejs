@@ -33,7 +33,13 @@
       <button type="submit">View all</button>
     </form>
     <!-- Client1 -->
-    <button onclick="sendMessage()">Send Msg</button>
+
+    <button onclick="sendMessage()" class="submit">Send Msg</button>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io();
+    </script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
       integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
@@ -48,6 +54,10 @@
     ></script>
 
     <script src="socketClient.js"></script>
+    <!-- <script>
+    const user = document.getElementById("user"); const sendMessage = () => {
+    socket.emit("message", `Hello From: ${user.value}`); };
+     </script>  -->
     <script src="main.js"></script>
   </body>
 </html>

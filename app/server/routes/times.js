@@ -30,7 +30,7 @@ router.route("/:id").get(getTime, async (req, res) => {
 //Get single Time by id
 router.get("/time/:id", async (req, res) => {
   try {
-    res.render("../public/test");
+    res.render("../public/timeshare");
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
