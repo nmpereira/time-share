@@ -111,9 +111,9 @@ io.on("connection", (socket) => {
 // });
 
 const runTimer = async (socket, input) => {
-  function longForLoop(secs) {
-    var i = secs;
-    if (secs > 0) {
+  function longForLoop(param) {
+    var i = param;
+    if (param > 0) {
       var ref = setInterval(() => {
         socket.emit("timestamp", formatter("run", secondsToHMS(--i)));
 
@@ -123,14 +123,24 @@ const runTimer = async (socket, input) => {
   }
 
   function pauseLoop() {
-    // var
+    // on pause
+    // pause secs
+    // start timer to count up
+    // on resume
+    // collect counter from pause
+    // add counter to end timer and write to db
+    // continue timer (runTimer)
   }
 
-  longForLoop(secs);
+  input.then((result) => {
+    longForLoop(result);
+  });
+  // longForLoop(10);
 };
 
-let secs;
+// let secs;
 const timeFromNow = async (timestamp) => {
+  let secs;
   let time_now = moment();
   let duration = moment.duration(time_now.diff(timestamp));
   secs = Math.round(-duration.asSeconds());
