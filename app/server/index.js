@@ -50,9 +50,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("pausetimer", function (msg) {
+    // pausetimer();
+    runTimer(socket, timeFromNow(msg), true);
     console.log("pausetimer");
   });
   socket.on("playtimer", function (msg) {
+    runTimer(socket, timeFromNow(msg), false);
     console.log("playtimer");
   });
   socket.on("resettimer", function (msg) {
@@ -65,7 +68,7 @@ io.on("connection", (socket) => {
   }
   function runTheTimer(msg, userID) {
     console.log(`timestamp: ${msg} from user:${userID}`);
-    runTimer(socket, timeFromNow(msg));
+    runTimer(socket, timeFromNow(msg), false);
   }
 
   module.exports.sendAMessage = sendAMessage;
@@ -110,31 +113,57 @@ io.on("connection", (socket) => {
 //   module.exports.runTheTimer = runTheTimer;
 // });
 
-const runTimer = async (socket, input) => {
+const runTimer = async (socket, input, paused) => {
+  socket.emit("message", "hello");
+  var run = true;
   function longForLoop(param) {
     var i = param;
+    run = true;
+    socket.emit("message", "running");
+    socket.emit("message", run);
     if (param > 0) {
       var ref = setInterval(() => {
-        socket.emit("timestamp", formatter("run", secondsToHMS(--i)));
+        if (run) {
+          socket.emit("timestamp", formatter("run", secondsToHMS(--i)));
+
+          if (i <= 0) clearInterval(ref);
+        }
+      }, 1000);
+    }
+  }
+
+  function pauseLoop(param) {
+    var i = param;
+    run = false;
+    socket.emit("message", "paused");
+    socket.emit("message", run);
+    if (param > 0) {
+      var ref = setInterval(() => {
+        socket.emit("timestamp", formatter("paused", secondsToHMS(1)));
 
         if (i <= 0) clearInterval(ref);
       }, 1000);
     }
   }
+  // on pause
+  // pause secs
+  // start timer to count up
+  //
+  // on resume
+  // collect counter from pause
+  // add counter to end timer and write to db
+  // continue timer (runTimer)
 
-  function pauseLoop() {
-    // on pause
-    // pause secs
-    // start timer to count up
-    // on resume
-    // collect counter from pause
-    // add counter to end timer and write to db
-    // continue timer (runTimer)
+  if (!paused) {
+    input.then((result) => {
+      longForLoop(result);
+      console.log("not paused/paused is false");
+    });
+  } else if (paused) {
+    pauseLoop();
+    // pauseLoop(input);
+    console.log("paused/paused is true");
   }
-
-  input.then((result) => {
-    longForLoop(result);
-  });
   // longForLoop(10);
 };
 
