@@ -3,6 +3,7 @@
 const express = require("express");
 const path = require("path");
 const logger = require("./routes/logger");
+const formatter = require("./routes/formatter");
 const api = require("./routes/api");
 const PORT = process.env.PORT || 3003;
 
@@ -36,16 +37,26 @@ server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //Websocket
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("New client Connected!");
 
   //Whenever someone disconnects this piece of code executed
   socket.on("disconnect", function () {
-    console.log("A user disconnected");
+    console.log("Client has Disconnected");
   });
 
   //send a timestamp to the socket
   socket.on("timestamp", function (msg) {
     console.log(msg);
+  });
+
+  socket.on("pausetimer", function (msg) {
+    console.log("pausetimer");
+  });
+  socket.on("playtimer", function (msg) {
+    console.log("playtimer");
+  });
+  socket.on("resettimer", function (msg) {
+    console.log("resettimer");
   });
 
   function sendAMessage(msg) {
@@ -104,11 +115,15 @@ const runTimer = async (socket, input) => {
     var i = secs;
     if (secs > 0) {
       var ref = setInterval(() => {
-        socket.emit("timestamp", secondsToHMS(--i));
+        socket.emit("timestamp", formatter("run", secondsToHMS(--i)));
 
         if (i <= 0) clearInterval(ref);
       }, 1000);
     }
+  }
+
+  function pauseLoop() {
+    // var
   }
 
   longForLoop(secs);
