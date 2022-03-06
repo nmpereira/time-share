@@ -7,6 +7,7 @@ const time = require("../models/time");
 const moment = require("moment");
 const sendMessage = require("../index.js");
 const runATimer = require("../index.js");
+const helpers = require("./helpers");
 
 //Get all Times
 router.route("/").get(async (req, res) => {
@@ -34,16 +35,17 @@ router.get("/time/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
-  // console.log("req.params", req.headers.host);
 
   let userID = req.params.id;
-  let query = `http://${req.headers.host}/api/times/${userID}`;
-  const fetchtest = await fetch(query);
-  const fetchData = await fetchtest.json();
-  console.log("fetchData.end_time123", fetchData.end_time);
-  let timestamp = fetchData.end_time;
+  let reqHost = req.headers.host;
+
   setTimeout(() => {
-    runATimer.runTheTimer(fetchData.end_time, userID);
+    runATimer.runTheTimer(
+      helpers.endTime(reqHost, userID).then((e) => {
+        return e;
+      }),
+      userID
+    );
   }, 500);
 });
 
