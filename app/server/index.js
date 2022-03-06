@@ -36,7 +36,7 @@ app
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 //Websocket
-
+let run;
 io.on("connection", (socket) => {
   console.log("New client Connected!");
 
@@ -51,14 +51,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("pausetimer", function (msg) {
+    run = false;
     helpers.endTime(msg.requestOrigin, msg.userId);
+
     // pausetimer();
-    runTimer(socket, timeFromNow(msg), true);
+    runTimer(socket, timeFromNow(msg));
     console.log("pausetimer", msg);
     // console.log("msg.userId", msg.userId);
     // console.log("msg.requestOrigin", msg.requestOrigin);
   });
   socket.on("playtimer", function (msg) {
+    run = true;
     runTimer(socket, timeFromNow(msg), false);
     console.log("playtimer");
   });
@@ -75,7 +78,8 @@ io.on("connection", (socket) => {
       return timeFromNow(msg);
     });
     console.log(`timestamp: ${msg} from user:${userID}`);
-    runTimer(socket, msg, false);
+    run = true;
+    runTimer(socket, msg);
   }
 
   module.exports.sendAMessage = sendAMessage;
@@ -120,24 +124,29 @@ io.on("connection", (socket) => {
 //   module.exports.runTheTimer = runTheTimer;
 // });
 
-const runTimer = async (socket, input, paused) => {
+const runTimer = async (socket, input) => {
   socket.emit("message", "hello");
-  var run = true;
+
   var ref;
   var ref2;
   function longForLoop(param) {
     console.log("param", param);
     var i = param;
-    run = true;
+
     socket.emit("message", "running");
     socket.emit("message", run);
+
     if (param > 0) {
       ref = setInterval(() => {
-        if (run) {
+        // console.log("run", run);
+        if (run === true) {
           socket.emit("timestamp", formatter("run", secondsToHMS(--i)));
-          clearInterval(ref2);
-          if (i <= 0) clearInterval(ref);
+          // socket.emit("message", run);
+        } else {
+          socket.emit("timestamp", formatter("paused", secondsToHMS(i)));
+          // socket.emit("message", run);
         }
+        if (i <= 0) clearInterval(ref);
       }, 1000);
     }
   }
@@ -145,13 +154,13 @@ const runTimer = async (socket, input, paused) => {
   function pauseLoop(param) {
     console.log("param", param);
     var i = param;
-    run = false;
+
     socket.emit("message", "paused");
     socket.emit("message", run);
     if (param > 0) {
       ref2 = setInterval(() => {
-        socket.emit("timestamp", formatter("paused", secondsToHMS(i)));
-        clearInterval(ref);
+        // socket.emit("timestamp", formatter("paused", secondsToHMS(i)));
+
         if (i <= 0) clearInterval(ref);
       }, 1000);
     }
@@ -165,14 +174,16 @@ const runTimer = async (socket, input, paused) => {
   // add counter to end timer and write to db
   // continue timer (runTimer)
 
-  if (!paused) {
+  if (run) {
+    // run = true;
     input.then((result) => {
       longForLoop(result);
       console.log("not paused/paused is false");
     });
-  } else if (paused) {
+  } else if (!run) {
+    // run = false;
     input.then((result) => {
-      pauseLoop(-result);
+      // longForLoop(-result);
       console.log("paused/paused is true");
     });
 
