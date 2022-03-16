@@ -33,6 +33,7 @@
       document.getElementById("timestamp").innerHTML = msg.timestamp;
       console.log("test", msg)
     });
+
     // parse url to get id and put in var
     const userId = document.location.pathname.split("/").pop()
     const requestOrigin = window.location.host
@@ -49,6 +50,7 @@
       socket.emit("resettimer", `Command: resettimer`);
       console.log(`Command:resettimer`);
     };
+
   </script>
   <!-- <script src="socketClient.js"></script> -->
 </body>

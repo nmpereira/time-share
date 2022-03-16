@@ -52,9 +52,13 @@ io.on("connection", (socket) => {
 
   socket.on("pausetimer", function (msg) {
     run = false;
-    helpers.endTime(msg.requestOrigin, msg.userId);
+    // helpers
+    //   .endTime(msg.requestOrigin, msg.userId)
+    //   .then((e) => console.log("testtt", e));
 
     // pausetimer();
+
+    io.to(msg.userId).emit("message", msg.userId);
     runTimer(socket, timeFromNow(msg));
     console.log("pausetimer", msg);
     // console.log("msg.userId", msg.userId);
@@ -81,54 +85,22 @@ io.on("connection", (socket) => {
     run = true;
     runTimer(socket, msg);
   }
+  function joinRoom(userID) {
+    socket.join(userID);
+    console.log("Joined room:" + userID);
+    socket.emit("message", `Joined a room: ${userID}`);
+  }
 
   module.exports.sendAMessage = sendAMessage;
   module.exports.runTheTimer = runTheTimer;
+  module.exports.joinRoom = joinRoom;
 });
-// const WebSocket = require("ws");
-// const wss = new Server({ server });
-// wss.on("connection", async function connection(ws, req) {
-//   console.log("A new client Connected!");
-//   ws.send("Welcome New Client!");
-
-//   ws.on("message", function incoming(message) {
-//     console.log("received: %s", message);
-
-//     wss.clients.forEach(function each(client) {
-//       if (client !== ws && client.readyState === WebSocket.OPEN) {
-//         client.send(message);
-//       }
-//     });
-//   });
-
-//   ws.on("close", () => {
-//     console.log("Client has Disconnected");
-//   });
-
-//   // userID = "620c08c3da42f669fe201b0d";
-//   // let query = `http://localhost:3001/api/times/${userID}`;
-//   // const fetchtest = await fetch(query);
-//   // const fetchData = await fetchtest.json();
-//   // console.log(fetchData.end_time);
-//   // console.log("ws", ws);
-//   function sendAMessage(msg) {
-//     console.log("send a message:" + msg);
-//     ws.send(`send a message ${msg}`);
-//   }
-//   function runTheTimer(msg, userID) {
-//     console.log(`timestamp: ${msg} from user:${userID}`);
-//     runTimer(ws, timeFromNow(msg));
-//   }
-
-//   module.exports.sendAMessage = sendAMessage;
-//   module.exports.runTheTimer = runTheTimer;
-// });
 
 const runTimer = async (socket, input) => {
   socket.emit("message", "hello");
 
   var ref;
-  var ref2;
+
   function longForLoop(param) {
     console.log("param", param);
     var i = param;
@@ -151,20 +123,6 @@ const runTimer = async (socket, input) => {
     }
   }
 
-  function pauseLoop(param) {
-    console.log("param", param);
-    var i = param;
-
-    socket.emit("message", "paused");
-    socket.emit("message", run);
-    if (param > 0) {
-      ref2 = setInterval(() => {
-        // socket.emit("timestamp", formatter("paused", secondsToHMS(i)));
-
-        if (i <= 0) clearInterval(ref);
-      }, 1000);
-    }
-  }
   // on pause
   // pause secs
   // start timer to count up

@@ -7,6 +7,7 @@ const time = require("../models/time");
 const moment = require("moment");
 const sendMessage = require("../index.js");
 const runATimer = require("../index.js");
+const joinARoom = require("../index.js");
 const helpers = require("./helpers");
 
 //Get all Times
@@ -38,8 +39,8 @@ router.get("/time/:id", async (req, res) => {
 
   let userID = req.params.id;
   let reqHost = req.headers.host;
-
   setTimeout(() => {
+    joinARoom.joinRoom(userID);
     runATimer.runTheTimer(
       helpers.endTime(reqHost, userID).then((e) => {
         return e;
