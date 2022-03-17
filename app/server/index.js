@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
 
     io.to(msg.userId).emit("message", [
       msg.userId,
-      (runningTimerTrak[msg.userId] = false),
+      (runningTimerTrak[msg.userId].running = false),
     ]);
     runTimer(socket, timeFromNow(msg), msg);
     console.log("pausetimer", msg);
@@ -71,7 +71,7 @@ io.on("connection", (socket) => {
     // run = true;
     io.to(msg.userId).emit("message", [
       msg.userId,
-      (runningTimerTrak[msg.userId] = true),
+      (runningTimerTrak[msg.userId].running = true),
     ]);
     runTimer(socket, timeFromNow(msg), msg);
     console.log("playtimer");
@@ -108,9 +108,14 @@ const runTimer = async (socket, input, msg) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
   console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
-  if (runningTimerTrak[roomID] === undefined) {
-    runningTimerTrak[roomID] = true;
+  if (runningTimerTrak[roomID] !== undefined) {
+    runningTimerTrak[roomID].clients.push(socket);
+    return;
   }
+  runningTimerTrak[roomID] = {
+    running: true,
+    clients: [socket],
+  };
   console.log("runningTimerTrak2", runningTimerTrak);
   var ref;
 
@@ -125,17 +130,24 @@ const runTimer = async (socket, input, msg) => {
       "message456",
       socket.handshake.headers.referer.split("/").pop()
     );
-    console.log("message123", msg);
+    // console.log("message123", socket);
 
     if (param > 0) {
       ref = setInterval(() => {
-        console.log("i and rooomID", i, roomID);
-        if (runningTimerTrak[roomID] === true) {
-          socket.emit("timestamp", formatter("run", secondsToHMS(--i), run));
+        // console.log("i and rooomID", i, roomID);
+        if (runningTimerTrak[roomID].running === true) {
+          i--;
+          runningTimerTrak[roomID].clients.forEach((s) => {
+            s.emit("timestamp", formatter("run", secondsToHMS(i), run));
+          });
           // socket.emit("message", run);
         } else {
-          socket.emit("timestamp", formatter("paused", secondsToHMS(i), run));
-          // socket.emit("message", run);
+          runningTimerTrak[roomID].clients.forEach(
+            (s) => {
+              s.emit("timestamp", formatter("paused", secondsToHMS(i), run));
+            }
+            // socket.emit("message", run);
+          );
         }
         if (i <= 0) clearInterval(ref);
       }, 1000);
