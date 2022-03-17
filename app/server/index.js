@@ -39,7 +39,7 @@ server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 let run;
 io.on("connection", (socket) => {
   console.log("New client Connected!");
-
+  
   //Whenever someone disconnects this piece of code executed
   socket.on("disconnect", function () {
     console.log("Client has Disconnected");

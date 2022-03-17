@@ -38,11 +38,16 @@
     // const playTimer = document.getElementById("playTimer");
     // const resetTimer = document.getElementById("resetTimer");
     // Listen for messages from server
+    // socket.on("connect", (msg) => {
+    //   // clearTimeout(timeout);
+    // });
+    const timeout = setTimeout(() => { window.location.reload() }, 5000)
     socket.on("message", (msg) => {
       console.log("Message from server ", msg);
     });
     // Listen for timestamps from server
     socket.on("timestamp", (msg) => {
+      clearTimeout(timeout);
       document.getElementById("timestamp").innerHTML = msg.timestamp;
       console.log("test", msg)
     });
