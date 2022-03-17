@@ -56,7 +56,7 @@
       console.log(`Command: pausetimer`);
     };
     const playTimer = () => {
-      socket.emit("playtimer", `Command: playtimer`);
+      socket.emit("playtimer", { userId, requestOrigin });
       console.log(`Command: playtimer`);
     };
     // const resetTimer = () => {

@@ -61,6 +61,7 @@ router.route("/").post(async (req, res, next) => {
     time_break: req.body.time_break,
     sets: req.body.sets,
     end_time: req.body.end_time,
+    paused: req.body.paused,
     updated_at,
   });
 
@@ -91,6 +92,7 @@ router.route("/:id").put(getTime, async (req, res) => {
       time_break: req.body.time_break,
       sets: req.body.sets,
       end_time: req.body.end_time,
+      paused: req.body.paused,
     },
     updated_at,
   };
