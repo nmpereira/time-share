@@ -64,15 +64,7 @@ router.route("/").post(async (req, res, next) => {
     updated_at,
   });
 
-  if (
-    !Time.user ||
-    !Time.num_work ||
-    !Time.time_work ||
-    !Time.num_break ||
-    !Time.time_break ||
-    !Time.sets ||
-    !Time.end_time
-  ) {
+  if (!Time.user || !Time.sets || !Time.end_time) {
     return res.status(400).json({
       msg: "Please include a user, num_work,time_work, num_break,time_break, sets, end_time",
     });

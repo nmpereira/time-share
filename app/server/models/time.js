@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 
 const timeSchema = new mongoose.Schema({
   user: { type: String, required: true, unique: true },
-  num_work: { type: Number, required: true },
-  time_work: { type: Number, required: true },
-  num_break: { type: Number, required: true },
-  time_break: { type: Number, required: true },
+  num_work: { type: Number },
+  time_work: { type: Number },
+  num_break: { type: Number },
+  time_break: { type: Number },
   sets: { type: Number, required: true },
   end_time: { type: Date, required: true },
   created_at: { type: Date, required: true, default: Date.now },
