@@ -73,7 +73,7 @@ router.route("/").post(async (req, res, next) => {
 
   try {
     const newTime = await Time.save();
-    res.status(201).json(newTime);
+    res.redirect(`/api/times/time/${newTime._id}`);
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }
