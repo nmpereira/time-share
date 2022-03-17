@@ -57,23 +57,28 @@ io.on("connection", (socket) => {
     //   .then((e) => console.log("testtt", e));
 
     // pausetimer();
-
-    io.to(msg.userId).emit("message", [
-      msg.userId,
-      (runningTimerTrak[msg.userId].running = false),
-    ]);
-    runTimer(socket, timeFromNow(msg), msg);
+    const currentRoom = runningTimerTrak[msg.userId];
+    if (currentRoom) {
+      io.to(msg.userId).emit("message", [
+        msg.userId,
+        (runningTimerTrak[msg.userId].running = false),
+      ]);
+    }
+    // runTimer(socket, timeFromNow(msg), msg);
     console.log("pausetimer", msg);
     // console.log("msg.userId", msg.userId);
     // console.log("msg.requestOrigin", msg.requestOrigin);
   });
   socket.on("playtimer", function (msg) {
     // run = true;
-    io.to(msg.userId).emit("message", [
-      msg.userId,
-      (runningTimerTrak[msg.userId].running = true),
-    ]);
-    runTimer(socket, timeFromNow(msg), msg);
+    const currentRoom = runningTimerTrak[msg.userId];
+    if (currentRoom) {
+      io.to(msg.userId).emit("message", [
+        msg.userId,
+        (runningTimerTrak[msg.userId].running = true),
+      ]);
+    }
+    // runTimer(socket, timeFromNow(msg), msg);
     console.log("playtimer");
   });
   socket.on("resettimer", function (msg) {
@@ -106,6 +111,13 @@ const runningTimerTrak = {};
 const runTimer = async (socket, input, msg) => {
   socket.emit("message", "hello");
   const roomID = socket.handshake.headers.referer.split("/").pop();
+  socket.on("disconnect", function () {
+    const currentRoom = runningTimerTrak[roomID];
+    console.log(currentRoom);
+    if (!currentRoom) return;
+    currentRoom.clients.splice(currentRoom.clients.indexOf(socket), 1);
+    console.log(currentRoom);
+  });
   console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
   if (runningTimerTrak[roomID] !== undefined) {
@@ -116,6 +128,7 @@ const runTimer = async (socket, input, msg) => {
     running: true,
     clients: [socket],
   };
+
   console.log("runningTimerTrak2", runningTimerTrak);
   var ref;
 
