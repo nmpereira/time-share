@@ -1,0 +1,19 @@
+#timestamp {
+  font-size: 10vw;
+}
+.btnSpace {
+  margin-left: 10px;
+}
+
+.center {
+  padding: 40% 0;
+}
+
+@media screen and (min-width: 1200px) {
+  #timestamp {
+    font-size: 120px;
+  }
+  .center {
+    padding: 30% 0;
+  }
+}

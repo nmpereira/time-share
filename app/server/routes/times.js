@@ -7,6 +7,8 @@ const time = require("../models/time");
 const moment = require("moment");
 const sendMessage = require("../index.js");
 const runATimer = require("../index.js");
+const joinARoom = require("../index.js");
+const helpers = require("./helpers");
 
 //Get all Times
 router.route("/").get(async (req, res) => {
@@ -34,16 +36,17 @@ router.get("/time/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
-  // console.log("req.params", req.headers.host);
 
   let userID = req.params.id;
-  let query = `http://${req.headers.host}/api/times/${userID}`;
-  const fetchtest = await fetch(query);
-  const fetchData = await fetchtest.json();
-  console.log("fetchData.end_time123", fetchData.end_time);
-  let timestamp = fetchData.end_time;
+  let reqHost = req.headers.host;
   setTimeout(() => {
-    runATimer.runTheTimer(fetchData.end_time, userID);
+    joinARoom.joinRoom(userID);
+    runATimer.runTheTimer(
+      helpers.endTime(reqHost, userID).then((e) => {
+        return e;
+      }),
+      userID
+    );
   }, 500);
 });
 
@@ -58,18 +61,11 @@ router.route("/").post(async (req, res, next) => {
     time_break: req.body.time_break,
     sets: req.body.sets,
     end_time: req.body.end_time,
+    paused: req.body.paused,
     updated_at,
   });
 
-  if (
-    !Time.user ||
-    !Time.num_work ||
-    !Time.time_work ||
-    !Time.num_break ||
-    !Time.time_break ||
-    !Time.sets ||
-    !Time.end_time
-  ) {
+  if (!Time.user || !Time.sets || !Time.end_time) {
     return res.status(400).json({
       msg: "Please include a user, num_work,time_work, num_break,time_break, sets, end_time",
     });
@@ -77,7 +73,7 @@ router.route("/").post(async (req, res, next) => {
 
   try {
     const newTime = await Time.save();
-    res.status(201).json(newTime);
+    res.redirect(`/api/times/time/${newTime._id}`);
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }
@@ -96,6 +92,7 @@ router.route("/:id").put(getTime, async (req, res) => {
       time_break: req.body.time_break,
       sets: req.body.sets,
       end_time: req.body.end_time,
+      paused: req.body.paused,
     },
     updated_at,
   };
