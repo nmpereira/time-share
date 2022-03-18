@@ -41,7 +41,7 @@
     // socket.on("connect", (msg) => { 
     //   // clearTimeout(timeout);
     // });
-    const timeout = setTimeout(() => { window.location.reload() }, 1000)
+    const timeout = setTimeout(() => { window.location.reload() }, 2000)
     socket.on("message", (msg) => {
       console.log("Message from server ", msg);
     });
