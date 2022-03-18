@@ -34,7 +34,7 @@ function time_calc() {
     .add(add_seconds, "seconds")
     .format();
   document.getElementById("end_time").value = end_time_new;
-  document.getElementById("seconds_time").innerHTML = add_seconds;
+  document.getElementById("seconds_time").innerHTML = add_seconds + " seconds";
 }
 time_calc;
 let add_seconds = 20;
