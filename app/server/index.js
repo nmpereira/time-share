@@ -177,7 +177,7 @@ const runTimer = async (socket, input, msg) => {
   // collect counter from pause
   // add counter to end timer and write to db
   // continue timer (runTimer)
-
+  //
   // if (run) {
   // run = true;
   input.then((result) => {
