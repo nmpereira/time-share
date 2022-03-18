@@ -39,7 +39,7 @@ server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 let run;
 io.on("connection", (socket) => {
   console.log("New client Connected!");
-  
+
   //Whenever someone disconnects this piece of code executed
   socket.on("disconnect", function () {
     console.log("Client has Disconnected");
@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
 
   //send a timestamp to the socket
   socket.on("timestamp", function (msg) {
-    console.log(msg);
+    console.log("on timestamp", msg);
   });
 
   socket.on("pausetimer", function (msg) {
@@ -93,7 +93,7 @@ io.on("connection", (socket) => {
     msg = msg.then((msg) => {
       return timeFromNow(msg);
     });
-    console.log(`timestamp: ${msg} from user:${userID}`);
+    console.log(`timestamp: request from user:${userID}`);
     run = true;
     runTimer(socket, msg, msg);
   }
@@ -113,12 +113,12 @@ const runTimer = async (socket, input, msg) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
   socket.on("disconnect", function () {
     const currentRoom = runningTimerTrak[roomID];
-    console.log(currentRoom);
+    // console.log(currentRoom);
     if (!currentRoom) return;
     currentRoom.clients.splice(currentRoom.clients.indexOf(socket), 1);
-    console.log(currentRoom);
+    // console.log(currentRoom);
   });
-  console.log("runningTimerTrak1", runningTimerTrak);
+  // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
   if (runningTimerTrak[roomID] !== undefined) {
     runningTimerTrak[roomID].clients.push(socket);
@@ -129,20 +129,20 @@ const runTimer = async (socket, input, msg) => {
     clients: [socket],
   };
 
-  console.log("runningTimerTrak2", runningTimerTrak);
+  // console.log("runningTimerTrak2", runningTimerTrak);
   var ref;
 
   function longForLoop(param) {
-    console.log("param", param);
+    console.log("timeleft", param);
     var i = param;
 
     socket.emit("message", "running");
     socket.emit("message", run);
 
-    console.log(
-      "message456",
-      socket.handshake.headers.referer.split("/").pop()
-    );
+    // console.log(
+    //   "message456",
+    //   socket.handshake.headers.referer.split("/").pop()
+    // );
     // console.log("message123", socket);
 
     if (param > 0) {
@@ -180,7 +180,7 @@ const runTimer = async (socket, input, msg) => {
   // run = true;
   input.then((result) => {
     longForLoop(result);
-    console.log("not paused/paused is false");
+    // console.log("not paused/paused is false");
   });
   // }
   // else if (!run) {
