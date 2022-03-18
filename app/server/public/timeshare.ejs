@@ -17,7 +17,7 @@
   <div class="container">
     <div class="center">
 
-      <h1 id="timestamp" class="d-flex justify-content-center">00:00:00
+      <h1 id="timestamp" class="d-flex justify-content-center">Loading...
       </h1>
       <div class="d-flex justify-content-center">
 
@@ -38,10 +38,10 @@
     // const playTimer = document.getElementById("playTimer");
     // const resetTimer = document.getElementById("resetTimer");
     // Listen for messages from server
-    // socket.on("connect", (msg) => {
+    // socket.on("connect", (msg) => { 
     //   // clearTimeout(timeout);
     // });
-    const timeout = setTimeout(() => { window.location.reload() }, 5000)
+    const timeout = setTimeout(() => { window.location.reload() }, 1000)
     socket.on("message", (msg) => {
       console.log("Message from server ", msg);
     });
