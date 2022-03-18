@@ -120,6 +120,8 @@ const runTimer = async (socket, input, msg) => {
   });
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
+  const param = await input;
+  socket.emit("timestamp", formatter("run", "Loading...", param <= 0));
   if (runningTimerTrak[roomID] !== undefined) {
     runningTimerTrak[roomID].clients.push(socket);
     return;
@@ -151,13 +153,13 @@ const runTimer = async (socket, input, msg) => {
         if (runningTimerTrak[roomID].running === true) {
           i--;
           runningTimerTrak[roomID].clients.forEach((s) => {
-            s.emit("timestamp", formatter("run", secondsToHMS(i), run));
+            s.emit("timestamp", formatter("run", secondsToHMS(i), false));
           });
           // socket.emit("message", run);
         } else {
           runningTimerTrak[roomID].clients.forEach(
             (s) => {
-              s.emit("timestamp", formatter("paused", secondsToHMS(i), run));
+              s.emit("timestamp", formatter("paused", secondsToHMS(i), false));
             }
             // socket.emit("message", run);
           );

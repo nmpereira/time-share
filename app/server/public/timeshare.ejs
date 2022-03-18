@@ -50,6 +50,7 @@
       clearTimeout(timeout);
       document.getElementById("timestamp").innerHTML = msg.timestamp;
       console.log("test", msg)
+      if (msg.expired === true) document.getElementById("timestamp").innerHTML = '00:00:00';
     });
 
     // parse url to get id and put in var
