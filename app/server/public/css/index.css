@@ -1,3 +1,10 @@
+body {
+  transform: scale(1.75);
+  background: #4e50bf;
+  /* transform-origin: 0 0; */
+  /* // add prefixed versions too. */
+}
+
 *,
 *::after,
 *::before {

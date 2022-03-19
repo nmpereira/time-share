@@ -109,7 +109,7 @@ io.on("connection", (socket) => {
 });
 const runningTimerTrak = {};
 const runTimer = async (socket, input, msg) => {
-  socket.emit("message", "hello");
+  socket.emit("message", "Greetings Earthling");
   const roomID = socket.handshake.headers.referer.split("/").pop();
   socket.on("disconnect", function () {
     const currentRoom = runningTimerTrak[roomID];
@@ -120,6 +120,8 @@ const runTimer = async (socket, input, msg) => {
   });
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
+  const param = await input;
+  socket.emit("timestamp", formatter("run", secondsToHMS(param), param <= 0));
   if (runningTimerTrak[roomID] !== undefined) {
     runningTimerTrak[roomID].clients.push(socket);
     return;
@@ -136,8 +138,8 @@ const runTimer = async (socket, input, msg) => {
     console.log("timeleft", param);
     var i = param;
 
-    socket.emit("message", "running");
-    socket.emit("message", run);
+    // socket.emit("message", "running");
+    // socket.emit("message", run);
 
     // console.log(
     //   "message456",
@@ -151,13 +153,13 @@ const runTimer = async (socket, input, msg) => {
         if (runningTimerTrak[roomID].running === true) {
           i--;
           runningTimerTrak[roomID].clients.forEach((s) => {
-            s.emit("timestamp", formatter("run", secondsToHMS(i), run));
+            s.emit("timestamp", formatter("run", secondsToHMS(i), false));
           });
           // socket.emit("message", run);
         } else {
           runningTimerTrak[roomID].clients.forEach(
             (s) => {
-              s.emit("timestamp", formatter("paused", secondsToHMS(i), run));
+              s.emit("timestamp", formatter("paused", secondsToHMS(i), false));
             }
             // socket.emit("message", run);
           );
@@ -175,7 +177,7 @@ const runTimer = async (socket, input, msg) => {
   // collect counter from pause
   // add counter to end timer and write to db
   // continue timer (runTimer)
-
+  //
   // if (run) {
   // run = true;
   input.then((result) => {
@@ -218,9 +220,10 @@ var secondsToHMS = (secs) => {
   var hours = Math.floor(sec_num / 3600);
   var minutes = Math.floor(sec_num / 60) % 60;
   var seconds = sec_num % 60;
-
-  return [hours, minutes, seconds]
-    .map((v) => (v < 10 ? "0" + v : v))
-    .filter((v, i) => v !== "00" || i > 0)
-    .join(":");
+  if (secs > 0) {
+    return [hours, minutes, seconds]
+      .map((v) => (v < 10 ? "0" + v : v))
+      .filter((v, i) => v !== "00" || i > 0)
+      .join(":");
+  } else return 0;
 };
