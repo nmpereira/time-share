@@ -35,6 +35,7 @@
     this.explicitMode = options.explicitMode; // If true 123 = 1:23, 12345 = 1:23:45, else invalid.
 
     this.handleDocumentClick = function (e) {
+      updateValue_set();
       var self = e.data.scope;
       // This condition was inspired by bootstrap-datepicker.
       // The element the timepicker is invoked on is the input but it has a sibling for addon/button.

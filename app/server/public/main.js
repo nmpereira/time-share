@@ -57,3 +57,7 @@ function time() {
 setInterval(time, 1000);
 setInterval(time_calc, 1000);
 time;
+
+const updateValue_set = () => {
+  updateValue_work();
+};
