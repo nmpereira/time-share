@@ -36,12 +36,23 @@ app
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 //Websocket
+let clientsConnected_Global = 0;
 let run;
 io.on("connection", (socket) => {
   console.log("New client Connected!");
+  clientsConnected_Global += 1;
+  io.emit("userActivity", {
+    clientsConnected_Global,
+    Activity: "Client Joined",
+  });
 
   //Whenever someone disconnects this piece of code executed
   socket.on("disconnect", function () {
+    clientsConnected_Global -= 1;
+    io.emit("userActivity", {
+      clientsConnected_Global,
+      Activity: "Client Left",
+    });
     console.log("Client has Disconnected");
   });
 
