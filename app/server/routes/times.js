@@ -14,7 +14,7 @@ const helpers = require("./helpers");
 router.route("/").get(async (req, res) => {
   try {
     const times = await time.find();
-    res.json(times);
+    res.redirect("/");
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }

@@ -62,12 +62,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("pausetimer", function (msg) {
-    // run = false;
-    // helpers
-    //   .endTime(msg.requestOrigin, msg.userId)
-    //   .then((e) => console.log("testtt", e));
-
-    // pausetimer();
     const currentRoom = runningTimerTrak[msg.userId];
     if (currentRoom) {
       io.to(msg.userId).emit("message", [
@@ -75,13 +69,9 @@ io.on("connection", (socket) => {
         (runningTimerTrak[msg.userId].running = false),
       ]);
     }
-    // runTimer(socket, timeFromNow(msg), msg);
     console.log("pausetimer", msg);
-    // console.log("msg.userId", msg.userId);
-    // console.log("msg.requestOrigin", msg.requestOrigin);
   });
   socket.on("playtimer", function (msg) {
-    // run = true;
     const currentRoom = runningTimerTrak[msg.userId];
     if (currentRoom) {
       io.to(msg.userId).emit("message", [
@@ -89,7 +79,6 @@ io.on("connection", (socket) => {
         (runningTimerTrak[msg.userId].running = true),
       ]);
     }
-    // runTimer(socket, timeFromNow(msg), msg);
     console.log("playtimer");
   });
   socket.on("resettimer", function (msg) {
@@ -124,10 +113,9 @@ const runTimer = async (socket, input, msg) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
   socket.on("disconnect", function () {
     const currentRoom = runningTimerTrak[roomID];
-    // console.log(currentRoom);
+
     if (!currentRoom) return;
     currentRoom.clients.splice(currentRoom.clients.indexOf(socket), 1);
-    // console.log(currentRoom);
   });
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
@@ -149,15 +137,6 @@ const runTimer = async (socket, input, msg) => {
     console.log("timeleft", param);
     var i = param;
 
-    // socket.emit("message", "running");
-    // socket.emit("message", run);
-
-    // console.log(
-    //   "message456",
-    //   socket.handshake.headers.referer.split("/").pop()
-    // );
-    // console.log("message123", socket);
-
     if (param > 0) {
       ref = setInterval(() => {
         // console.log("i and rooomID", i, roomID);
@@ -166,47 +145,19 @@ const runTimer = async (socket, input, msg) => {
           runningTimerTrak[roomID].clients.forEach((s) => {
             s.emit("timestamp", formatter("run", secondsToHMS(i), false));
           });
-          // socket.emit("message", run);
         } else {
-          runningTimerTrak[roomID].clients.forEach(
-            (s) => {
-              s.emit("timestamp", formatter("paused", secondsToHMS(i), false));
-            }
-            // socket.emit("message", run);
-          );
+          runningTimerTrak[roomID].clients.forEach((s) => {
+            s.emit("timestamp", formatter("paused", secondsToHMS(i), false));
+          });
         }
         if (i <= 0) clearInterval(ref);
       }, 1000);
     }
   }
 
-  // on pause
-  // pause secs
-  // start timer to count up
-  //
-  // on resume
-  // collect counter from pause
-  // add counter to end timer and write to db
-  // continue timer (runTimer)
-  //
-  // if (run) {
-  // run = true;
   input.then((result) => {
     longForLoop(result);
-    // console.log("not paused/paused is false");
   });
-  // }
-  // else if (!run) {
-  // run = false;
-  // input.then((result) => {
-  //   // longForLoop(-result);
-  //   console.log("paused/paused is true");
-  // });
-
-  // pauseLoop(input);
-  // console.log("paused/paused is true");
-  // }
-  // longForLoop(10);
 };
 
 // let secs;

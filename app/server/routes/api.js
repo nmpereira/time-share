@@ -15,8 +15,7 @@ router.route("/").get((req, res) => {
   end_time_db_json = { end_time_db };
 
   res.send({
-    test: 1,
-    message: end_time_db,
+    message: "You're not supposed to be here, are you??",
   });
 });
 

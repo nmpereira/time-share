@@ -21,7 +21,7 @@ body {
   background: #4e50bf;
 }
 
-#userCountContainer,
+#userCountGlobalContainer,
 #userCountGlobal {
   display: flex;
   justify-content: center;

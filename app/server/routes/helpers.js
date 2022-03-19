@@ -6,7 +6,6 @@ const endTime = async (reqHost, userID) => {
   let query = `http://${reqHost}/api/times/${userID}`;
   const fetchtest = await fetch(query);
   const fetchData = await fetchtest.json();
-  // console.log("fetchData.end_time123", fetchData.end_time);
   let timestamp = fetchData.end_time;
   return timestamp;
 };
