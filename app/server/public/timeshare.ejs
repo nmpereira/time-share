@@ -19,6 +19,7 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
   <link rel="stylesheet" href="/css/timeshare.css" type="text/css">
+  <link rel="stylesheet" href="/css/snackbar.css" type="text/css">
   <title>Time-Share</title>
 </head>
 
@@ -38,6 +39,8 @@
     </div>
     <!-- <button id="resetTimer" onclick="resetTimer()">Reset</button> -->
   </div>
+  <div id="userCountGlobalContainer">Users Online: &thinsp;<span id="userCountGlobal"> 0</span></div>
+  <div id="userCountGlobalContainer">Connected to this timer: &thinsp;<span id="userCountLocal"> 0</span></div>
   <div id="snackbar">Copied Link to Clipboard</div>
   <script src="/socket.io/socket.io.js"></script>
 
@@ -46,13 +49,9 @@
   </script>
 
   <script>
-    // const pauseTimer = document.getElementById("pauseTimer");
-    // const playTimer = document.getElementById("playTimer");
-    // const resetTimer = document.getElementById("resetTimer");
+
     // Listen for messages from server
-    // socket.on("connect", (msg) => { 
-    //   // clearTimeout(timeout);
-    // });
+
     const timeout = setTimeout(() => { window.location.reload() }, 5000)
     socket.on("message", (msg) => {
       console.log("Message from server ", msg);
@@ -61,44 +60,42 @@
     socket.on("timestamp", (msg) => {
       clearTimeout(timeout);
       document.getElementById("timestamp").innerHTML = msg.timestamp;
-      console.log("TimeStamp:", msg)
+      // console.log("TimeStamp:", msg)
       if (msg.expired === true) document.getElementById("timestamp").innerHTML = '00:00:00';
     });
+    socket.on("userActivity", (msg) => {
+      // console.log("User Activity ", msg);
+
+      document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
+    });
+    socket.on("localUserActivity", (msg) => {
+
+      document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
+    })
+
+
 
     // parse url to get id and put in var
     const userId = document.location.pathname.split("/").pop()
     const requestOrigin = window.location.host
     const pauseTimer = () => {
       socket.emit("pausetimer", { userId, requestOrigin });
-      // console.log("requestOrigin", requestOrigin)
-      // console.log(`Command: pausetimer`);
     };
     const playTimer = () => {
       socket.emit("playtimer", { userId, requestOrigin });
-      // console.log(`Command: playtimer`);
     };
 
-    // const resetTimer = () => {
-    //   socket.emit("resettimer", `Command: resettimer`);
-    //   console.log(`Command:resettimer`);
-    // };
-
   </script>
-  <!-- <script src="socketClient.js"></script> -->
 
   <script>
     const shareTimer = () => {
       const ShareUrl = window.location.href
       navigator.clipboard.writeText(ShareUrl)
       console.log("Copied to Clipboard", ShareUrl)
-
-
       // Get the snackbar DIV
       var x = document.getElementById("snackbar");
-
       // Add the "show" class to DIV
       x.className = "show";
-
       // After 3 seconds, remove the show class from DIV
       setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
     };
