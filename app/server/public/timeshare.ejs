@@ -64,7 +64,7 @@
       if (msg.expired === true) document.getElementById("timestamp").innerHTML = '00:00:00';
     });
     socket.on("userActivity", (msg) => {
-      console.log("User Activity ", msg);
+      // console.log("User Activity ", msg);
 
       document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
     });
@@ -72,6 +72,8 @@
 
       document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
     })
+
+
 
     // parse url to get id and put in var
     const userId = document.location.pathname.split("/").pop()

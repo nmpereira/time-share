@@ -53,6 +53,7 @@ io.on("connection", (socket) => {
       clientsConnected_Global,
       Activity: "Client Left",
     });
+
     console.log("Client has Disconnected");
   });
 
@@ -94,7 +95,7 @@ io.on("connection", (socket) => {
       return timeFromNow(msg);
     });
     console.log(`timestamp: request from user:${userID}`);
-    run = true;
+    // run = true;
     runTimer(socket, msg, msg);
   }
   function joinRoom(userID) {
@@ -109,13 +110,23 @@ io.on("connection", (socket) => {
 });
 const runningTimerTrak = {};
 const runTimer = async (socket, input, msg) => {
+  const clientsConnected_Socket = 0;
   socket.emit("message", "Greetings Earthling");
   const roomID = socket.handshake.headers.referer.split("/").pop();
+
+  // console.log(runningTimerTrak[roomID].clients.length);
+  socket.on("connection", function () {});
   socket.on("disconnect", function () {
     const currentRoom = runningTimerTrak[roomID];
 
     if (!currentRoom) return;
     currentRoom.clients.splice(currentRoom.clients.indexOf(socket), 1);
+    runningTimerTrak[roomID].connections -= 1;
+    io.emit("localUserActivity", {
+      clientsConnected_Socket: runningTimerTrak[roomID].connections,
+      Activity: "Socket Client Left",
+    });
+    // console.log(runningTimerTrak[roomID]);
   });
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
@@ -123,12 +134,24 @@ const runTimer = async (socket, input, msg) => {
   socket.emit("timestamp", formatter("run", secondsToHMS(param), param <= 0));
   if (runningTimerTrak[roomID] !== undefined) {
     runningTimerTrak[roomID].clients.push(socket);
+    runningTimerTrak[roomID].connections += 1;
+    io.emit("localUserActivity", {
+      clientsConnected_Socket: runningTimerTrak[roomID].connections,
+      Activity: "Socket Client Joined",
+    });
+    // console.log(runningTimerTrak[roomID]);
     return;
   }
   runningTimerTrak[roomID] = {
     running: true,
     clients: [socket],
+    connections: 1,
   };
+  io.emit("localUserActivity", {
+    clientsConnected_Socket: runningTimerTrak[roomID].connections,
+    Activity: "User Joined new room",
+  });
+  // console.log(runningTimerTrak[roomID]);
 
   // console.log("runningTimerTrak2", runningTimerTrak);
   var ref;
@@ -166,7 +189,7 @@ const timeFromNow = async (timestamp) => {
   let time_now = moment();
   let duration = moment.duration(time_now.diff(timestamp));
   secs = Math.round(-duration.asSeconds());
-
+  secs > 0 ? secs : (secs = 0);
   return secs;
 };
 
