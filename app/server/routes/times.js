@@ -34,7 +34,7 @@ router.get("/time/:id", async (req, res) => {
   try {
     res.render("../public/timeshare");
   } catch (err) {
-    res.status(500).json({ msg: err.message });
+    res.status(500).json({ msg123: err.message });
   }
 
   let userID = req.params.id;
@@ -64,7 +64,9 @@ router.route("/").post(async (req, res, next) => {
     paused: req.body.paused,
     updated_at,
   });
-
+  if (req.headers["content-type"] !== "application/x-www-form-urlencoded") {
+    return res.status(404).end;
+  }
   if (!Time.user || !Time.sets || !Time.end_time) {
     return res.status(400).json({
       msg: "Please include a user, num_work,time_work, num_break,time_break, sets, end_time",
@@ -119,6 +121,9 @@ router.route("/:id").delete(getTime, async (req, res) => {
 
 async function getTime(req, res, next) {
   let input;
+  if (!req.headers["user-agent"].startsWith("node-fetch")) {
+    return res.status(404).end();
+  }
   try {
     input = await time.findById(req.params.id);
     if (input == null) {
