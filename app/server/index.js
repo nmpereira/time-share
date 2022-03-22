@@ -13,7 +13,10 @@ const fetch = require("node-fetch");
 const request = require("request");
 let timestamp = moment().add(10, "seconds");
 const helpers = require("./routes/helpers");
-
+// const runATimer = require("runTheTimer");
+// const joinARoom = require("joinRoom");
+const joinARoom = require("./index.js");
+const runATimer = require("./index.js");
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
@@ -34,7 +37,26 @@ app
   .use("/api", api);
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
+//Get single Time by id
+app.get("/:id", async (req, res) => {
+  try {
+    res.render("../public/timeshare");
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 
+  let userID = req.params.id;
+  let reqHost = req.headers.host;
+  setTimeout(() => {
+    joinARoom.joinRoom(userID);
+    runATimer.runTheTimer(
+      helpers.endTime(reqHost, userID).then((e) => {
+        return e;
+      }),
+      userID
+    );
+  }, 500);
+});
 //Websocket
 let clientsConnected_Global = 0;
 let run;

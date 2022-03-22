@@ -29,25 +29,35 @@ router.route("/:id").get(getTime, async (req, res) => {
   }
 });
 
-//Get single Time by id
-router.get("/time/:id", async (req, res) => {
-  try {
-    res.render("../public/timeshare");
-  } catch (err) {
-    res.status(500).json({ msg123: err.message });
-  }
+// //Get single Time by id
+// router.get("/time/:id", async (req, res) => {
+//   try {
+//     res.render("../public/timeshare");
+//   } catch (err) {
+//     res.status(500).json({ msg: err.message });
+//   }
 
+//   let userID = req.params.id;
+//   let reqHost = req.headers.host;
+//   setTimeout(() => {
+//     joinARoom.joinRoom(userID);
+//     runATimer.runTheTimer(
+//       helpers.endTime(reqHost, userID).then((e) => {
+//         return e;
+//       }),
+//       userID
+//     );
+//   }, 500);
+// });
+
+//redirect
+router.get("/time/:id", async (req, res) => {
   let userID = req.params.id;
-  let reqHost = req.headers.host;
-  setTimeout(() => {
-    joinARoom.joinRoom(userID);
-    runATimer.runTheTimer(
-      helpers.endTime(reqHost, userID).then((e) => {
-        return e;
-      }),
-      userID
-    );
-  }, 500);
+  try {
+    res.redirect(`/${userID}`);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 });
 
 //Create times
