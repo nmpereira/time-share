@@ -31,6 +31,7 @@ app
   .set("json spaces", 2)
   .set("view engine", "ejs")
   .set("views", path.join(__dirname, "views"))
+  .set("trust proxy", true)
   .get("/", (req, res) => {
     res.render("../public/index");
   })
@@ -47,6 +48,7 @@ app.get("/:id", async (req, res) => {
 
   let userID = req.params.id;
   let reqHost = req.headers.host;
+
   setTimeout(() => {
     joinARoom.joinRoom(userID);
     runATimer.runTheTimer(
@@ -62,11 +64,13 @@ let clientsConnected_Global = 0;
 let run;
 io.on("connection", (socket) => {
   console.log("New client Connected!");
+
   clientsConnected_Global += 1;
   io.emit("userActivity", {
     clientsConnected_Global,
     Activity: "Client Joined",
   });
+  console.log("Global Connections", clientsConnected_Global);
 
   //Whenever someone disconnects this piece of code executed
   socket.on("disconnect", function () {
@@ -75,6 +79,7 @@ io.on("connection", (socket) => {
       clientsConnected_Global,
       Activity: "Client Left",
     });
+    console.log("Global Connections", clientsConnected_Global);
 
     console.log("Client has Disconnected");
   });
@@ -148,7 +153,7 @@ const runTimer = async (socket, input, msg) => {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Left",
     });
-    // console.log(runningTimerTrak[roomID]);
+    console.log("Local Connections", runningTimerTrak[roomID].connections);
   });
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
@@ -161,7 +166,7 @@ const runTimer = async (socket, input, msg) => {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Joined",
     });
-    // console.log(runningTimerTrak[roomID]);
+    console.log("Local Connections", runningTimerTrak[roomID].connections);
     return;
   }
   runningTimerTrak[roomID] = {
@@ -173,7 +178,7 @@ const runTimer = async (socket, input, msg) => {
     clientsConnected_Socket: runningTimerTrak[roomID].connections,
     Activity: "User Joined new room",
   });
-  // console.log(runningTimerTrak[roomID]);
+  console.log("Local Connections", runningTimerTrak[roomID].connections);
 
   // console.log("runningTimerTrak2", runningTimerTrak);
   var ref;

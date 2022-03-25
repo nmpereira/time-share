@@ -44,7 +44,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
 
-                        <form class="form-inline my-2 my-sm-0">
+                        <form class="form-inline my-2 my-sm-0" id="userNameForm">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1">@</span>
@@ -69,10 +69,13 @@
 
 
         const homeLink = window.location.origin
-        console.log(window.location)
+        // console.log(window.location)
         document.getElementById("homeLink").href = homeLink
         document.getElementById("homeLinkName").href = homeLink
         document.getElementById("homeLinkName").innerHTML = window.location.host
+        if (window.location.href === homeLink.concat("/")) userNameForm.style.display = "none"
+        userNameForm.style.display = "none"
+
 
 
     </script>

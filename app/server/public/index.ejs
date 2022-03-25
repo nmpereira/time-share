@@ -45,10 +45,10 @@
           <div class="time_label-container">
             <div class="line d-flex justify-content-end">
 
-              <label class="form__label" for="user" hidden> User:
+              <label class="form__label" for="user"> Timer Name:
 
               </label>
-              <input type="text" class="form__input" name="user" id="user" hidden />
+              <input type="text" class="form__input" name="user" id="user" />
             </div>
             <div class="line d-flex justify-content-end">
 
@@ -94,7 +94,7 @@
             <label class="form__label" id="seconds_time" for="seconds_time"> 0 seconds</label>
             <label class="form__label" id="current_time" for="current_time" hidden> 0</label>
 
-            <button type="submit" class="btn btn-success btnSubmit">Submit</button>
+            <button type="submit" class="btn btn-success btnSubmit" id="formSubmit">Submit</button>
           </div>
         </form>
         <form method="get" action="/api/times/" hidden>
@@ -120,6 +120,7 @@
     <script src="socketClient.js"></script>
     <script src="main.js"></script>
     <script>
+      document.getElementById("formSubmit").disabled = true;
 
       const hms_work = document.getElementById("time_hms");
       const time_work_value = document.getElementById("time_work");
@@ -127,15 +128,8 @@
 
 
       const updateValue_work = () => {
-
         let seconds_work = hmsToSecondsOnly(hms_work.value)
-
-
         time_work_value.value = seconds_work
-
-
-
-
       }
       updateValue_work()
       function hmsToSecondsOnly(str) {

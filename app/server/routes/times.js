@@ -14,6 +14,7 @@ const helpers = require("./helpers");
 router.route("/").get(async (req, res) => {
   try {
     const times = await time.find();
+    // res.json(times);
     res.redirect("/");
   } catch (err) {
     res.status(500).json({ msg: err.message });
@@ -85,7 +86,7 @@ router.route("/").post(async (req, res, next) => {
 
   try {
     const newTime = await Time.save();
-    res.redirect(`/api/times/time/${newTime._id}`);
+    res.redirect(`/api/times/time/${newTime.user}`);
   } catch (err) {
     res.status(400).json({ msg: err.message });
   }
@@ -93,7 +94,7 @@ router.route("/").post(async (req, res, next) => {
 
 //Update single Time by id
 router.route("/:id").put(getTime, async (req, res) => {
-  const query = { _id: req.params.id };
+  const query = { user: req.params.id };
   const updated_at = Date.now();
   const update = {
     $set: {
@@ -135,7 +136,7 @@ async function getTime(req, res, next) {
     return res.status(404).end();
   }
   try {
-    input = await time.findById(req.params.id);
+    input = await time.findOne({ user: req.params.id });
     if (input == null) {
       return res.status(404).json({ message: "Cannot find time" });
     }
