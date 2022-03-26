@@ -63,25 +63,29 @@ app.get("/:id", async (req, res) => {
 let clientsConnected_Global = 0;
 let run;
 io.on("connection", (socket) => {
-  console.log("New client Connected!");
+  console.log("New client Connected!", "SocketId:", socket.id);
 
   clientsConnected_Global += 1;
   io.emit("userActivity", {
     clientsConnected_Global,
     Activity: "Client Joined",
   });
-  console.log("Global Connections", clientsConnected_Global);
+  // console.log("Global Connections", clientsConnected_Global);
 
   //Whenever someone disconnects this piece of code executed
-  socket.on("disconnect", function () {
+  socket.on("disconnect", function (reason) {
     clientsConnected_Global -= 1;
     io.emit("userActivity", {
       clientsConnected_Global,
       Activity: "Client Left",
     });
-    console.log("Global Connections", clientsConnected_Global);
+    // console.log("Global Connections", clientsConnected_Global);
 
-    console.log("Client has Disconnected");
+    console.log(
+      reason
+        ? `Client has Disconnected due to ${reason}`
+        : "Client has Disconnected"
+    );
   });
 
   //send a timestamp to the socket
@@ -121,7 +125,7 @@ io.on("connection", (socket) => {
     msg = msg.then((msg) => {
       return timeFromNow(msg);
     });
-    console.log(`timestamp: request from user:${userID}`);
+    // console.log(`timestamp: request from user:${userID}`);
     // run = true;
     runTimer(socket, msg, msg);
   }
@@ -153,7 +157,7 @@ const runTimer = async (socket, input, msg) => {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Left",
     });
-    console.log("Local Connections", runningTimerTrak[roomID].connections);
+    // console.log("Local Connections", runningTimerTrak[roomID].connections);
   });
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
@@ -166,7 +170,7 @@ const runTimer = async (socket, input, msg) => {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Joined",
     });
-    console.log("Local Connections", runningTimerTrak[roomID].connections);
+    // console.log("Local Connections", runningTimerTrak[roomID].connections);
     return;
   }
   runningTimerTrak[roomID] = {
@@ -178,13 +182,13 @@ const runTimer = async (socket, input, msg) => {
     clientsConnected_Socket: runningTimerTrak[roomID].connections,
     Activity: "User Joined new room",
   });
-  console.log("Local Connections", runningTimerTrak[roomID].connections);
+  // console.log("Local Connections", runningTimerTrak[roomID].connections);
 
   // console.log("runningTimerTrak2", runningTimerTrak);
   var ref;
 
   function longForLoop(param) {
-    console.log("timeleft", param);
+    // console.log("timeleft", param);
     var i = param;
 
     if (param > 0) {
