@@ -13,7 +13,10 @@ const fetch = require("node-fetch");
 const request = require("request");
 let timestamp = moment().add(10, "seconds");
 const helpers = require("./routes/helpers");
-
+// const runATimer = require("runTheTimer");
+// const joinARoom = require("joinRoom");
+const joinARoom = require("./index.js");
+const runATimer = require("./index.js");
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
@@ -28,23 +31,46 @@ app
   .set("json spaces", 2)
   .set("view engine", "ejs")
   .set("views", path.join(__dirname, "views"))
+  .set("trust proxy", true)
   .get("/", (req, res) => {
     res.render("../public/index");
   })
   .use("/api", api);
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
+//Get single Time by id
+app.get("/:id", async (req, res) => {
+  try {
+    res.render("../public/timeshare");
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 
+  let userID = req.params.id;
+  let reqHost = req.headers.host;
+
+  setTimeout(() => {
+    joinARoom.joinRoom(userID);
+    runATimer.runTheTimer(
+      helpers.endTime(reqHost, userID).then((e) => {
+        return e;
+      }),
+      userID
+    );
+  }, 500);
+});
 //Websocket
 let clientsConnected_Global = 0;
 let run;
 io.on("connection", (socket) => {
   console.log("New client Connected!");
+
   clientsConnected_Global += 1;
   io.emit("userActivity", {
     clientsConnected_Global,
     Activity: "Client Joined",
   });
+  console.log("Global Connections", clientsConnected_Global);
 
   //Whenever someone disconnects this piece of code executed
   socket.on("disconnect", function () {
@@ -53,6 +79,7 @@ io.on("connection", (socket) => {
       clientsConnected_Global,
       Activity: "Client Left",
     });
+    console.log("Global Connections", clientsConnected_Global);
 
     console.log("Client has Disconnected");
   });
@@ -126,7 +153,7 @@ const runTimer = async (socket, input, msg) => {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Left",
     });
-    // console.log(runningTimerTrak[roomID]);
+    console.log("Local Connections", runningTimerTrak[roomID].connections);
   });
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
@@ -139,7 +166,7 @@ const runTimer = async (socket, input, msg) => {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Joined",
     });
-    // console.log(runningTimerTrak[roomID]);
+    console.log("Local Connections", runningTimerTrak[roomID].connections);
     return;
   }
   runningTimerTrak[roomID] = {
@@ -151,7 +178,7 @@ const runTimer = async (socket, input, msg) => {
     clientsConnected_Socket: runningTimerTrak[roomID].connections,
     Activity: "User Joined new room",
   });
-  // console.log(runningTimerTrak[roomID]);
+  console.log("Local Connections", runningTimerTrak[roomID].connections);
 
   // console.log("runningTimerTrak2", runningTimerTrak);
   var ref;

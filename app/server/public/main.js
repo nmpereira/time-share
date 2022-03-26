@@ -1,10 +1,17 @@
 const date = new Date();
 let date_zone = moment().tz("America/New_York").format();
+const userNameGenerate = () => {
+  const userName = (Math.random() + 1).toString(36).substring(2);
 
-document.getElementById("user").value = (Math.random() + 1)
-  .toString(36)
-  .substring(2);
-
+  document.getElementById("user").value = userName;
+};
+userNameGenerate();
+window.onunload = function () {
+  userNameGenerate();
+};
+window.onpopstate = function () {
+  userNameGenerate();
+};
 const num_work = document.getElementById("num_work");
 const time_work = document.getElementById("time_work");
 const num_break = document.getElementById("num_break");
@@ -16,6 +23,19 @@ time_work.addEventListener("change", time_calc);
 num_break.addEventListener("change", time_calc);
 time_break.addEventListener("change", time_calc);
 sets.addEventListener("change", time_calc);
+let span = document.getElementById("current_time");
+function time() {
+  var d = new Date();
+  var s = d.getSeconds();
+  var m = d.getMinutes();
+  var h = d.getHours();
+  span.innerHTML =
+    ("0" + h).substr(-2) +
+    ":" +
+    ("0" + m).substr(-2) +
+    ":" +
+    ("0" + s).substr(-2);
+}
 
 function time_calc() {
   const num_work_value = num_work.value;
@@ -33,30 +53,18 @@ function time_calc() {
     .tz("America/New_York")
     .add(add_seconds, "seconds")
     .format();
-  document.getElementById("end_time").value = end_time_new;
   document.getElementById("seconds_time").innerHTML = add_seconds + " seconds";
+  document.getElementById("end_time").value = end_time_new;
+  document.getElementById("formSubmit").disabled = false;
 }
-time_calc;
-let add_seconds = 20;
+let add_seconds = 0;
 
-let span = document.getElementById("current_time");
-
-function time() {
-  var d = new Date();
-  var s = d.getSeconds();
-  var m = d.getMinutes();
-  var h = d.getHours();
-  span.innerHTML =
-    ("0" + h).substr(-2) +
-    ":" +
-    ("0" + m).substr(-2) +
-    ":" +
-    ("0" + s).substr(-2);
-}
-
-setInterval(time, 1000);
-setInterval(time_calc, 1000);
-time;
+let timeInterval = setInterval(time, 100);
+let calcInterval = setInterval(time_calc, 100);
+const clearTimeout_calc = setTimeout(() => clearInterval(calcInterval), 3000);
+const clearTimeout_time = setTimeout(() => clearInterval(timeInterval), 3000);
+let calcInterval_new = setInterval(time, 500);
+let timeInterval_new = setInterval(time_calc, 500);
 
 const updateValue_set = () => {
   updateValue_work();
