@@ -1,10 +1,17 @@
 const date = new Date();
 let date_zone = moment().tz("America/New_York").format();
+const userNameGenerate = () => {
+  const userName = (Math.random() + 1).toString(36).substring(2);
 
-document.getElementById("user").value = (Math.random() + 1)
-  .toString(36)
-  .substring(2);
-
+  document.getElementById("user").value = userName;
+};
+userNameGenerate();
+window.onunload = function () {
+  userNameGenerate();
+};
+window.onpopstate = function () {
+  userNameGenerate();
+};
 const num_work = document.getElementById("num_work");
 const time_work = document.getElementById("time_work");
 const num_break = document.getElementById("num_break");
