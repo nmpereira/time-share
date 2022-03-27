@@ -7,6 +7,7 @@ const endTime = async (reqHost, userID) => {
   const fetchtest = await fetch(query);
   const fetchData = await fetchtest.json();
   let timestamp = fetchData.end_time;
+
   return timestamp;
 };
 module.exports = { endTime };

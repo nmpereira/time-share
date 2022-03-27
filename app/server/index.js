@@ -40,24 +40,29 @@ app
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //Get single Time by id
 app.get("/:id", async (req, res) => {
-  try {
-    res.render("../public/timeshare");
-  } catch (err) {
-    res.status(500).json({ msg: err.message });
-  }
-
   let userID = req.params.id;
   let reqHost = req.headers.host;
+  helpers.endTime(reqHost, userID).then((e) => {
+    if (!e) {
+      res.render("../public/error");
+    } else {
+      try {
+        res.render("../public/timeshare");
+      } catch (err) {
+        res.status(500).json({ msg: err.message });
+      }
 
-  setTimeout(() => {
-    joinARoom.joinRoom(userID);
-    runATimer.runTheTimer(
-      helpers.endTime(reqHost, userID).then((e) => {
-        return e;
-      }),
-      userID
-    );
-  }, 500);
+      setTimeout(() => {
+        joinARoom.joinRoom(userID);
+        runATimer.runTheTimer(
+          helpers.endTime(reqHost, userID).then((e) => {
+            return e;
+          }),
+          userID
+        );
+      }, 500);
+    }
+  });
 });
 //Websocket
 let clientsConnected_Global = 0;
