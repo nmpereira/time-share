@@ -68,7 +68,10 @@ app.get("/:id", async (req, res) => {
 let clientsConnected_Global = 0;
 let run;
 io.on("connection", (socket) => {
-  console.log("New client Connected!", "SocketId:", socket.id);
+  const roomID = socket.handshake.headers.referer.split("/").pop();
+  console.log("New client Connected!", "Room ID:", roomID);
+
+  socket.join(roomID);
 
   clientsConnected_Global += 1;
   io.emit("userActivity", {
@@ -88,7 +91,7 @@ io.on("connection", (socket) => {
 
     console.log(
       reason
-        ? `Client has Disconnected due to ${reason}`
+        ? `Client has Disconnected from:  ${roomID} due to ${reason}`
         : "Client has Disconnected"
     );
   });
@@ -158,7 +161,7 @@ const runTimer = async (socket, input, msg) => {
     if (!currentRoom) return;
     currentRoom.clients.splice(currentRoom.clients.indexOf(socket), 1);
     runningTimerTrak[roomID].connections -= 1;
-    io.emit("localUserActivity", {
+    io.to(roomID).emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Left",
       roomID,
@@ -172,7 +175,7 @@ const runTimer = async (socket, input, msg) => {
   if (runningTimerTrak[roomID] !== undefined) {
     runningTimerTrak[roomID].clients.push(socket);
     runningTimerTrak[roomID].connections += 1;
-    io.emit("localUserActivity", {
+    io.to(roomID).emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Joined",
       roomID,
@@ -190,7 +193,7 @@ const runTimer = async (socket, input, msg) => {
     clients: [socket],
     connections: 1,
   };
-  io.emit("localUserActivity", {
+  io.to(roomID).emit("localUserActivity", {
     clientsConnected_Socket: runningTimerTrak[roomID].connections,
     Activity: "User Joined new room",
     roomID,
