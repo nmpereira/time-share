@@ -1,5 +1,8 @@
 <footer class="bg-dark text-center text-white footer fixed-bottom">
-    <div id="userCountGlobalContainer">Users Online: &thinsp;<span id="userCountGlobal"> 0</span></div>
+    <div id="userCountGlobalContainer">Users Online: &thinsp;<span id="userCountGlobal"> 0</span><span
+            id="userCountLocalContainer">&thinsp;| Connected to this timer: &thinsp;<span id="userCountLocal">
+                0</span></span>
+    </div>
     <!-- Copyright -->
     <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
         &copy; <span id="year"></span> Copyright | Made with ❤️ by <a class="text-white" href="https://nmpereira.com/">
@@ -23,5 +26,9 @@
         document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
 
     });
+    const homepage = window.location.origin
+    // console.log("homepage", homepage)
+    userCountLocalContainer.style.display = "none"
+    userCountLocalContainer.style.display = "inline"
 
 </script>
