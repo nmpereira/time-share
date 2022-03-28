@@ -1,0 +1,27 @@
+<footer class="bg-dark text-center text-white footer fixed-bottom">
+    <div id="userCountGlobalContainer">Users Online: &thinsp;<span id="userCountGlobal"> 0</span></div>
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        &copy; <span id="year"></span> Copyright | Made with ❤️ by <a class="text-white" href="https://nmpereira.com/">
+            nmpereira.com</a>
+    </div>
+    <!-- Copyright -->
+</footer>
+
+<script>
+
+    document.querySelector('#year').innerHTML = new Date().getFullYear()
+
+
+</script>
+<!-- <script src="/socket.io/socket.io.js"></script> -->
+<script>
+    // const socket = io();
+    socket.on("userActivity", (msg) => {
+        // console.log("User Activity ", msg);
+
+        document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
+
+    });
+
+</script>

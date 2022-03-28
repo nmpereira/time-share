@@ -15,7 +15,7 @@ let timestamp = moment().add(10, "seconds");
 const helpers = require("./routes/helpers");
 // const runATimer = require("runTheTimer");
 // const joinARoom = require("joinRoom");
-const joinARoom = require("./index.js");
+// const joinARoom = require("./index.js");
 const runATimer = require("./index.js");
 const app = express();
 const http = require("http");
@@ -53,7 +53,7 @@ app.get("/:id", async (req, res) => {
       }
 
       setTimeout(() => {
-        joinARoom.joinRoom(userID);
+        // joinARoom.joinRoom(userID);
         runATimer.runTheTimer(
           helpers.endTime(reqHost, userID).then((e) => {
             return e;
@@ -134,15 +134,15 @@ io.on("connection", (socket) => {
     // run = true;
     runTimer(socket, msg, msg);
   }
-  function joinRoom(userID) {
-    socket.join(userID);
-    console.log("Joined room:" + userID);
-    socket.emit("message", `Joined a room: ${userID}`);
-  }
+  // function joinRoom(userID) {
+  //   socket.join(userID);
+  //   console.log("Joined room:" + userID);
+  //   socket.emit("message", `Joined a room: ${userID}`);
+  // }
 
   module.exports.sendAMessage = sendAMessage;
   module.exports.runTheTimer = runTheTimer;
-  module.exports.joinRoom = joinRoom;
+  // module.exports.joinRoom = joinRoom;
 });
 const runningTimerTrak = {};
 const runTimer = async (socket, input, msg) => {
@@ -161,21 +161,28 @@ const runTimer = async (socket, input, msg) => {
     io.emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Left",
+      roomID,
     });
     // console.log("Local Connections", runningTimerTrak[roomID].connections);
   });
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
   const param = await input;
-  socket.emit("timestamp", formatter("run", secondsToHMS(param), param <= 0));
+  socket.emit("timestamp", formatter("run", "Loading...", param <= 0));
   if (runningTimerTrak[roomID] !== undefined) {
     runningTimerTrak[roomID].clients.push(socket);
     runningTimerTrak[roomID].connections += 1;
     io.emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Joined",
+      roomID,
     });
-    // console.log("Local Connections", runningTimerTrak[roomID].connections);
+
+    // console.log(
+    //   "Local Connections",
+    //   runningTimerTrak[roomID].connections,
+    //   roomID
+    // );
     return;
   }
   runningTimerTrak[roomID] = {
@@ -186,6 +193,7 @@ const runTimer = async (socket, input, msg) => {
   io.emit("localUserActivity", {
     clientsConnected_Socket: runningTimerTrak[roomID].connections,
     Activity: "User Joined new room",
+    roomID,
   });
   // console.log("Local Connections", runningTimerTrak[roomID].connections);
 

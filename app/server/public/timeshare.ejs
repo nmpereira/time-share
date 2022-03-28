@@ -43,13 +43,13 @@
       </div>
       <!-- <button id="resetTimer" onclick="resetTimer()">Reset</button> -->
     </div>
-    <div id="userCountGlobalContainer">Users Online: &thinsp;<span id="userCountGlobal"> 0</span></div>
+    <!-- <div id="userCountGlobalContainer">Users Online: &thinsp;<span id="userCountGlobal"> 0</span></div> -->
     <div id="userCountGlobalContainer">Connected to this timer: &thinsp;<span id="userCountLocal"> 0</span></div>
     <div id="snackbar">Copied Link to Clipboard</div>
-    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
 
     <script>
-      const socket = io();
+      // const socket = io();
     </script>
 
     <script>
@@ -68,11 +68,11 @@
         // console.log("TimeStamp:", msg)
         if (msg.expired === true) document.getElementById("timestamp").innerHTML = '00:00:00';
       });
-      socket.on("userActivity", (msg) => {
-        // console.log("User Activity ", msg);
+      // socket.on("userActivity", (msg) => {
+      //   // console.log("User Activity ", msg);
 
-        document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
-      });
+      //   document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
+      // });
       socket.on("localUserActivity", (msg) => {
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
@@ -108,3 +108,4 @@
   </body>
 
   </html>
+  <%- include('footer') -%>
