@@ -109,7 +109,7 @@ io.on("connection", (socket) => {
         (runningTimerTrak[msg.userId].running = false),
       ]);
     }
-    console.log("pausetimer", msg);
+    // console.log("pausetimer", msg);
   });
   socket.on("playtimer", function (msg) {
     const currentRoom = runningTimerTrak[msg.userId];
@@ -119,7 +119,7 @@ io.on("connection", (socket) => {
         (runningTimerTrak[msg.userId].running = true),
       ]);
     }
-    console.log("playtimer");
+    // console.log("playtimer");
   });
   socket.on("resettimer", function (msg) {
     console.log("resettimer");

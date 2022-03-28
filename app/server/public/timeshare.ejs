@@ -35,7 +35,7 @@
         </h1>
         <div class="d-flex justify-content-center">
 
-          <button id=" pauseTimer" class="btn btn-secondary btnSpace" onclick="pauseTimer()">Pause</button>
+          <button id="pauseTimer" class="btn btn-secondary btnSpace" onclick="pauseTimer()">Pause</button>
           <button id="playTimer" class="btn btn-secondary btnSpace" onclick="playTimer()">Play</button>
           <button id="shareTimer" class="btn btn-success btnSpace" onclick="shareTimer()">Share Timer
             (Clipboard)</button>
@@ -54,6 +54,8 @@
 
     <script>
       isTimerPage = true
+      document.getElementById('pauseTimer').style.display = "none"
+      document.getElementById('playTimer').style.display = "none"
       // Listen for messages from server
 
       const timeout = setTimeout(() => { window.location.reload() }, 5000)
@@ -66,8 +68,22 @@
         document.getElementById("timestamp").innerHTML = msg.timestamp;
         document.title = msg.timestamp
         // console.log("TimeStamp:", msg)
-        if (msg.expired === true) document.getElementById("timestamp").innerHTML = '00:00:00';
+
         if (msg.expired === true) document.title = '00:00';
+
+        if (msg.action == 'run') {
+          document.getElementById('playTimer').style.display = "none"
+          document.getElementById('pauseTimer').style.display = "inline"
+          // console.log(msg.action)
+        } else if (msg.action == 'paused') {
+          document.getElementById('pauseTimer').style.display = "none"
+          document.getElementById('playTimer').style.display = "inline"
+          // console.log(msg.action)
+        }
+        if (msg.expired === true) {
+          document.getElementById("timestamp").innerHTML = '00:00:00'
+          document.getElementById('pauseTimer').style.display = "none"
+        };
       });
       // socket.on("userActivity", (msg) => {
       //   // console.log("User Activity ", msg);
