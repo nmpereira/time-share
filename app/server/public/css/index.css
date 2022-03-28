@@ -96,3 +96,11 @@ body {
     margin-bottom: 1rem;
   }
 }
+.homeTitle {
+  padding-top: 10%;
+  padding-bottom: auto;
+}
+.homeTitle .card {
+  background: #4e50bf;
+  border: none;
+}

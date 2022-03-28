@@ -38,6 +38,31 @@
 
   <body>
     <div class="container">
+      <div class="homeTitle">
+        <div class="d-flex justify-content-center ">
+          <div class="card" style="width: 25rem;">
+            <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+            <div class="card-body text-center">
+              <h2>Shareable timer</h2>
+              <p class="card-text text-center">A shared timer for working together remotely! Create a timer, share it
+                with friends
+                or
+                colleagues. You both
+                see the same synced time
+              </p>
+
+            </div>
+          </div>
+          <!-- <h2>Shareable timer</h2> -->
+
+        </div>
+        <!-- <div class="d-flex justify-content-center ">
+
+          <p class="text-center">A Shared timer for working together remotely! Create a timer, share it with friends or
+            colleagues. You both
+            see the same synced time</p>
+        </div> -->
+      </div>
       <div class=" center">
         <!-- <button type="button" class="btn btn-primary"> -->
 
@@ -46,7 +71,7 @@
           <div class="time_label-container">
             <div class="line d-flex justify-content-end">
 
-              <label class="form__label" for="user"> Timer Name:
+              <label class="form__label" for="user" id="timerNameLabel"> Timer Name:
 
               </label>
               <input type="text" class="form__input" name="user" id="user" />
@@ -95,7 +120,7 @@
             <label class="form__label" id="seconds_time" for="seconds_time" hidden> 0 seconds</label>
             <label class="form__label" id="current_time" for="current_time" hidden> 0</label>
 
-            <button type="submit" class="btn btn-success btnSubmit" id="formSubmit">Submit</button>
+            <button type="submit" class="btn btn-success btnSubmit" id="formSubmit">Start</button>
           </div>
         </form>
         <form method="get" action="/api/times/" hidden>
@@ -125,6 +150,8 @@
 
       const hms_work = document.getElementById("time_hms");
       const time_work_value = document.getElementById("time_work");
+      document.getElementById("timerNameLabel").innerHTML = window.location.host + '/'
+
       // updateValue_work()
 
 
