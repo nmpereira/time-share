@@ -171,7 +171,7 @@ const runTimer = async (socket, input, msg) => {
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
   const param = await input;
-  socket.emit("timestamp", formatter("run", "Loading...", param <= 0));
+  socket.emit("timestamp", formatter("Loading", "Loading...", param <= 0));
   if (runningTimerTrak[roomID] !== undefined) {
     runningTimerTrak[roomID].clients.push(socket);
     runningTimerTrak[roomID].connections += 1;
