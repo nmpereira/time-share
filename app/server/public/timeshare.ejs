@@ -37,7 +37,7 @@
 
           <button id="pauseTimer" class="btn btn-primary btnSpace" onclick="pauseTimer()">Pause</button>
           <button id="playTimer" class="btn btn-danger btnSpace" onclick="playTimer()">Resume</button>
-          <button id="resetTimer" class="btn btn-secondary btnSpace" onclick="playTimer()">Reset</button>
+          <button id="resetTimer" class="btn btn-secondary btnSpace" onclick="resetTimer()">Reset</button>
           <button id="shareTimer" class="btn btn-success btnSpace" onclick="shareTimer()">Share Timer
             (Clipboard)</button>
         </div>
@@ -107,6 +107,13 @@
       };
       const playTimer = () => {
         socket.emit("playtimer", { userId, requestOrigin });
+      };
+      const resetTimer = () => {
+        const id = window.location.pathname
+        const host = window.location.origin
+        console.log(host, id)
+        window.location.href = `${host}/settime${id}`;
+        socket.emit("resettimer", { userId, requestOrigin });
       };
 
 
