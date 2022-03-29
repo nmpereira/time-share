@@ -21,6 +21,8 @@ const app = express();
 const http = require("http");
 const server = http.createServer(app);
 const io = new Server(server);
+const methodOverride = require("method-override");
+const time = require("../server/models/time");
 
 app
   .use(express.static(path.resolve(__dirname, "../server/public")))
@@ -28,6 +30,7 @@ app
   .use(logger)
   .use(express.json())
   .use(express.urlencoded({ extended: false }))
+  .use(methodOverride("_method"))
   .set("json spaces", 2)
   .set("view engine", "ejs")
   .set("views", path.join(__dirname, "views"))
@@ -64,6 +67,77 @@ app.get("/:id", async (req, res) => {
     }
   });
 });
+app.get("/settime/:id", async (req, res) => {
+  var id = req.params.id;
+  try {
+    res.render("../public/resettimer", { userid: id });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+});
+
+//Update single Time by id
+app.post("/settime/:id", async (req, res) => {
+  console.log("abc");
+  const id = req.params.id;
+  const query = { user: req.params.id };
+  const updated_at = Date.now();
+  const update = {
+    $set: {
+      user: req.body.user,
+      num_work: req.body.num_work,
+      time_work: req.body.time_work,
+      num_break: req.body.num_break,
+      time_break: req.body.time_break,
+      sets: req.body.sets,
+      end_time: req.body.end_time,
+      paused: req.body.paused,
+    },
+    updated_at,
+  };
+
+  try {
+    const times = await time.findOneAndUpdate(query, update, {
+      new: true,
+    });
+    // res.send(times);
+    res.redirect(`/${id}`);
+  } catch (err) {
+    res.status(500).json({ msg1: err.message });
+    console.log(err);
+  }
+});
+// app.put("/settime/:id", async (req, res) => {
+//   console.log("def");
+//   // var userid = req.body.userid;
+//   // var endtime = req.body.endtime;
+//   console.log("inputs:");
+//   // const query = { user: req.params.id };
+//   // const updated_at = Date.now();
+//   // const update = {
+//   //   $set: {
+//   //     user: req.body.user,
+//   //     num_work: req.body.num_work,
+//   //     time_work: req.body.time_work,
+//   //     num_break: req.body.num_break,
+//   //     time_break: req.body.time_break,
+//   //     sets: req.body.sets,
+//   //     end_time: req.body.end_time,
+//   //     paused: req.body.paused,
+//   //   },
+//   //   updated_at,
+//   // };
+
+//   // try {
+//   //   const times = await time.findOneAndUpdate(query, update, {
+//   //     new: true,
+//   //   });
+//   //   res.send(times);
+//   // } catch (err) {
+//   //   res.status(500).json({ msg1: err.message });
+//   // }
+// });
+
 //Websocket
 let clientsConnected_Global = 0;
 let run;

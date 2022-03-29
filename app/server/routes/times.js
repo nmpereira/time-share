@@ -78,7 +78,7 @@ router.route("/").post(async (req, res, next) => {
   if (req.headers["content-type"] !== "application/x-www-form-urlencoded") {
     return res.status(404).end;
   }
-  if (!Time.user || !Time.sets || !Time.end_time) {
+  if (!Time.user || !Time.end_time) {
     return res.status(400).json({
       msg: "Please include a user, num_work,time_work, num_break,time_break, sets, end_time",
     });
@@ -91,6 +91,39 @@ router.route("/").post(async (req, res, next) => {
     res.status(400).json({ msg: err.message });
   }
 });
+
+//Update single Time by id
+
+// router.route("/settime/:id").put(getTime, async (req, res) => {
+//   // var userid = req.params.userid;
+//   // var userid = req.body.userid;
+//   // var endtime = req.body.endtime;
+//   console.log("inputs:", userid, endtime);
+//   const query = { user: req.params.id };
+//   const updated_at = Date.now();
+//   const update = {
+//     $set: {
+//       user: req.body.user,
+//       num_work: req.body.num_work,
+//       time_work: req.body.time_work,
+//       num_break: req.body.num_break,
+//       time_break: req.body.time_break,
+//       sets: req.body.sets,
+//       end_time: req.body.end_time,
+//       paused: req.body.paused,
+//     },
+//     updated_at,
+//   };
+
+//   try {
+//     const times = await time.findOneAndUpdate(query, update, {
+//       new: true,
+//     });
+//     res.send(times);
+//   } catch (err) {
+//     res.status(500).json({ msg1: err.message });
+//   }
+// });
 
 //Update single Time by id
 router.route("/:id").put(getTime, async (req, res) => {
