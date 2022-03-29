@@ -79,7 +79,8 @@ app.get("/settime/:id", async (req, res) => {
 //Update single Time by id
 app.post("/settime/:id", async (req, res) => {
   console.log("abc");
-  const id = req.params.id;
+  const userID = req.params.id;
+  let reqHost = req.headers.host;
   const query = { user: req.params.id };
   const updated_at = Date.now();
   const update = {
@@ -100,8 +101,19 @@ app.post("/settime/:id", async (req, res) => {
     const times = await time.findOneAndUpdate(query, update, {
       new: true,
     });
+
     // res.send(times);
-    res.redirect(`/${id}`);
+    res.redirect(`/${userID}`);
+
+    setTimeout(() => {
+      // joinARoom.joinRoom(userID);
+      runATimer.runTheTimer(
+        helpers.endTime(reqHost, userID).then((e) => {
+          return e;
+        }),
+        userID
+      );
+    }, 500);
   } catch (err) {
     res.status(500).json({ msg1: err.message });
     console.log(err);
@@ -196,7 +208,9 @@ io.on("connection", (socket) => {
     // console.log("playtimer");
   });
   socket.on("resettimer", function (msg) {
-    console.log("resettimer");
+    let reset;
+    runningTimerTrak[reset] = true;
+    console.log("resettimer", runningTimerTrak[reset]);
   });
 
   function sendAMessage(msg) {
@@ -223,6 +237,10 @@ io.on("connection", (socket) => {
 });
 const runningTimerTrak = {};
 const runTimer = async (socket, input, msg) => {
+  var ref;
+  clearInterval(ref);
+  let reset;
+  console.log("you are in runTimer");
   const clientsConnected_Socket = 0;
   socket.emit("message", "Greetings Earthling");
   const roomID = socket.handshake.headers.referer.split("/").pop();
@@ -246,7 +264,7 @@ const runTimer = async (socket, input, msg) => {
   // if (runningTimerTrak[roomID]) return;
   const param = await input;
   socket.emit("timestamp", formatter("Loading", "Loading...", param <= 0));
-  if (runningTimerTrak[roomID] !== undefined) {
+  if (runningTimerTrak[roomID] !== undefined && !runningTimerTrak[reset]) {
     runningTimerTrak[roomID].clients.push(socket);
     runningTimerTrak[roomID].connections += 1;
     io.to(roomID).emit("localUserActivity", {
@@ -260,6 +278,8 @@ const runTimer = async (socket, input, msg) => {
     //   runningTimerTrak[roomID].connections,
     //   roomID
     // );
+    console.log("you are in if Notundefined");
+    // NOTE: i am here. I need to add a property to an object "reset:true" and make sure it doesnt return here but goes and runs timer
     return;
   }
   runningTimerTrak[roomID] = {
