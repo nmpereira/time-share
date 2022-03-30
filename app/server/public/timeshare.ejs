@@ -22,6 +22,8 @@
 
     <link rel="stylesheet" href="/css/timeshare.css" type="text/css">
     <link rel="stylesheet" href="/css/snackbar.css" type="text/css">
+    <title> Join /<%= title %>'s shared timer</title>
+    <meta name="description" content="Create a sharable timer for your team or friends!">
 
     <!-- <title>Time-Share</title> -->
   </head>
@@ -73,7 +75,7 @@
           audio.play();
         }
         document.title = msg.timestamp
-        console.log("TimeStamp:", msg)
+        // console.log("TimeStamp:", msg)
 
         if (msg.expired === true) document.title = '00:00';
 

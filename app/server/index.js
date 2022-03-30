@@ -59,7 +59,7 @@ app.get("/:id", async (req, res) => {
       });
     } else {
       try {
-        res.render("../public/timeshare");
+        res.render("../public/timeshare", { title: userID });
       } catch (err) {
         res.status(500).json({ msg: err.message });
       }
@@ -79,7 +79,7 @@ app.get("/:id", async (req, res) => {
 app.get("/reset/:id", async (req, res) => {
   var id = req.params.id;
   try {
-    res.render("../public/resettimer", { userid: id });
+    res.render("../public/resettimer", { userid: id, title: id });
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
