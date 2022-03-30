@@ -290,7 +290,7 @@ const runTimer = async (socket, input, msg) => {
     //   roomID
     // );
     // console.log("you are in if Notundefined");
-    // NOTE: i am here. I need to add a property to an object "reset:true" and make sure it doesnt return here but goes and runs timer
+    // NOTE: i am here. I need to add a property to an object "reset:true" and make sure it doesnt return here but goes and runs  timer
     return;
   }
   // console.log("runningTimerTrak[roomID]_1", runningTimerTrak[roomID]);
