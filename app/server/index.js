@@ -6,6 +6,7 @@ const logger = require("./routes/logger");
 const formatter = require("./routes/formatter");
 const api = require("./routes/api");
 const PORT = process.env.PORT || 3003;
+const bodyParser = require("body-parser");
 
 const { Server } = require("socket.io");
 const moment = require("moment");
@@ -28,10 +29,14 @@ const time = require("../server/models/time");
 
 app
   .use(express.static(path.resolve(__dirname, "../server/public")))
+  .use("/admin", admin)
+
+  .use(bodyParser.json())
   .use(express.json())
   .use(logger)
   .use(express.json())
   .use(express.urlencoded({ extended: false }))
+
   .use(methodOverride("_method"))
   .set("json spaces", 2)
   .set("view engine", "ejs")
@@ -40,8 +45,7 @@ app
   .get("/", (req, res) => {
     res.render("../public/index");
   })
-  .use("/api", api)
-  .use("/admin", admin);
+  .use("/api", api);
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //Get single Time by id
