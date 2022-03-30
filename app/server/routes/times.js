@@ -94,7 +94,7 @@ router.route("/").post(async (req, res, next) => {
 
 //Update single Time by id
 
-// router.route("/settime/:id").put(getTime, async (req, res) => {
+// router.route("/reset/:id").put(getTime, async (req, res) => {
 //   // var userid = req.params.userid;
 //   // var userid = req.body.userid;
 //   // var endtime = req.body.endtime;

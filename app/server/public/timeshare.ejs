@@ -68,7 +68,7 @@
         clearTimeout(timeout);
         document.getElementById("timestamp").innerHTML = msg.timestamp;
         document.title = msg.timestamp
-        // console.log("TimeStamp:", msg)
+        console.log("TimeStamp:", msg)
 
         if (msg.expired === true) document.title = '00:00';
 
@@ -104,6 +104,7 @@
       const requestOrigin = window.location.host
       const pauseTimer = () => {
         socket.emit("pausetimer", { userId, requestOrigin });
+        console.log("this is paused")
       };
       const playTimer = () => {
         socket.emit("playtimer", { userId, requestOrigin });
@@ -112,8 +113,8 @@
         const id = window.location.pathname
         const host = window.location.origin
         console.log(host, id)
-        window.location.href = `${host}/settime${id}`;
         socket.emit("resettimer", { userId, requestOrigin });
+        window.location.href = `${host}/reset${id}`;
       };
 
 

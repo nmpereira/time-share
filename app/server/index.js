@@ -67,7 +67,7 @@ app.get("/:id", async (req, res) => {
     }
   });
 });
-app.get("/settime/:id", async (req, res) => {
+app.get("/reset/:id", async (req, res) => {
   var id = req.params.id;
   try {
     res.render("../public/resettimer", { userid: id });
@@ -77,9 +77,10 @@ app.get("/settime/:id", async (req, res) => {
 });
 
 //Update single Time by id
-app.post("/settime/:id", async (req, res) => {
-  console.log("abc");
-  const id = req.params.id;
+app.post("/reset/:id", async (req, res) => {
+  // console.log("abc");
+  const userID = req.params.id;
+  let reqHost = req.headers.host;
   const query = { user: req.params.id };
   const updated_at = Date.now();
   const update = {
@@ -100,14 +101,27 @@ app.post("/settime/:id", async (req, res) => {
     const times = await time.findOneAndUpdate(query, update, {
       new: true,
     });
+
     // res.send(times);
-    res.redirect(`/${id}`);
+    res.redirect(`/${userID}`);
+
+    clearInterval(runningTimerTrak[userID].interval);
+    runningTimerTrak[userID].interval = null;
+    setTimeout(() => {
+      // joinARoom.joinRoom(userID);
+      runATimer.runTheTimer(
+        helpers.endTime(reqHost, userID).then((e) => {
+          return e;
+        }),
+        userID
+      );
+    }, 500);
   } catch (err) {
     res.status(500).json({ msg1: err.message });
     console.log(err);
   }
 });
-// app.put("/settime/:id", async (req, res) => {
+// app.put("/reset/:id", async (req, res) => {
 //   console.log("def");
 //   // var userid = req.body.userid;
 //   // var endtime = req.body.endtime;
@@ -196,7 +210,9 @@ io.on("connection", (socket) => {
     // console.log("playtimer");
   });
   socket.on("resettimer", function (msg) {
-    console.log("resettimer");
+    // let reset;
+    // runningTimerTrak[reset] = true;
+    // console.log("resettimer", runningTimerTrak[reset]);
   });
 
   function sendAMessage(msg) {
@@ -223,6 +239,10 @@ io.on("connection", (socket) => {
 });
 const runningTimerTrak = {};
 const runTimer = async (socket, input, msg) => {
+  // var ref;
+  // clearInterval(ref);
+  let reset;
+  // console.log("you are in runTimer");
   const clientsConnected_Socket = 0;
   socket.emit("message", "Greetings Earthling");
   const roomID = socket.handshake.headers.referer.split("/").pop();
@@ -233,7 +253,12 @@ const runTimer = async (socket, input, msg) => {
     const currentRoom = runningTimerTrak[roomID];
 
     if (!currentRoom) return;
-    currentRoom.clients.splice(currentRoom.clients.indexOf(socket), 1);
+    // NOTE: find index of room and return if not found
+    const socket_index = currentRoom.clients.indexOf(socket);
+    if (socket_index == -1) return;
+    // console.log("socket_index_1", socket_index);
+    currentRoom.clients.splice(socket_index, 1);
+
     runningTimerTrak[roomID].connections -= 1;
     io.to(roomID).emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
@@ -246,7 +271,11 @@ const runTimer = async (socket, input, msg) => {
   // if (runningTimerTrak[roomID]) return;
   const param = await input;
   socket.emit("timestamp", formatter("Loading", "Loading...", param <= 0));
-  if (runningTimerTrak[roomID] !== undefined) {
+  // NOTE: if exists or if interval is running
+  if (
+    runningTimerTrak[roomID] !== undefined &&
+    runningTimerTrak[roomID].interval != null
+  ) {
     runningTimerTrak[roomID].clients.push(socket);
     runningTimerTrak[roomID].connections += 1;
     io.to(roomID).emit("localUserActivity", {
@@ -260,13 +289,20 @@ const runTimer = async (socket, input, msg) => {
     //   runningTimerTrak[roomID].connections,
     //   roomID
     // );
+    // console.log("you are in if Notundefined");
+    // NOTE: i am here. I need to add a property to an object "reset:true" and make sure it doesnt return here but goes and runs timer
     return;
   }
-  runningTimerTrak[roomID] = {
-    running: true,
-    clients: [socket],
-    connections: 1,
-  };
+  // console.log("runningTimerTrak[roomID]_1", runningTimerTrak[roomID]);
+  if (runningTimerTrak[roomID] == undefined) {
+    runningTimerTrak[roomID] = {
+      running: true,
+      clients: [socket],
+      connections: 1,
+      interval: null,
+    };
+  }
+  // console.log("runningTimerTrak[roomID]_2", runningTimerTrak[roomID]);
   io.to(roomID).emit("localUserActivity", {
     clientsConnected_Socket: runningTimerTrak[roomID].connections,
     Activity: "User Joined new room",
@@ -275,14 +311,18 @@ const runTimer = async (socket, input, msg) => {
   // console.log("Local Connections", runningTimerTrak[roomID].connections);
 
   // console.log("runningTimerTrak2", runningTimerTrak);
-  var ref;
+  // var ref;
 
+  // add the interval (ref) to the room obj (runningTimerTrak[roomID])
+  //
+
+  //
   function longForLoop(param) {
     // console.log("timeleft", param);
     var i = param;
 
     if (param > 0) {
-      ref = setInterval(() => {
+      runningTimerTrak[roomID].interval = setInterval(() => {
         // console.log("i and rooomID", i, roomID);
         if (runningTimerTrak[roomID].running === true) {
           i--;
@@ -294,7 +334,7 @@ const runTimer = async (socket, input, msg) => {
             s.emit("timestamp", formatter("paused", secondsToHMS(i), false));
           });
         }
-        if (i <= 0) clearInterval(ref);
+        if (i <= 0) clearInterval(runningTimerTrak[roomID].interval);
       }, 1000);
     }
   }
