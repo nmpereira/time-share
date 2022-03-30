@@ -15,7 +15,7 @@ const request = require("request");
 let timestamp = moment().add(10, "seconds");
 
 const helpers = require("./routes/helpers");
-const admin = require("./routes/admin");
+// const admin = require("./routes/admin");
 // const runATimer = require("runTheTimer");
 // const joinARoom = require("joinRoom");
 // const joinARoom = require("./index.js");
@@ -28,7 +28,7 @@ const methodOverride = require("method-override");
 const time = require("../server/models/time");
 const session = require("express-session");
 // const MemoryStore = require("memorystore")(session);
-var MongoDbStore = require("connect-mongo");
+// var MongoDbStore = require("connect-mongo");
 const mongoose = require("mongoose");
 
 app
@@ -37,16 +37,16 @@ app
       cookie: { maxAge: 60000 },
       resave: true,
       saveUninitialized: true,
-      store: MongoDbStore.create({
-        mongoUrl: process.env.dbURI_time,
-        checkPeriod: 86400000, // prune expired entries every 24h
-      }),
+      // store: MongoDbStore.create({
+      //   mongoUrl: process.env.dbURI_time,
+      //   checkPeriod: 86400000, // prune expired entries every 24h
+      // }),
 
       secret: "keyboard cat",
     })
   )
   .use(express.static(path.resolve(__dirname, "../server/public")))
-  .use("/admin", admin)
+  // .use("/admin", admin)
 
   .use(bodyParser.json())
   .use(express.json())
