@@ -88,7 +88,11 @@ router.route("/").post(async (req, res, next) => {
     const newTime = await Time.save();
     res.redirect(`/api/times/time/${newTime.user}`);
   } catch (err) {
-    res.status(400).json({ msg: err.message });
+    res.render("../public/error", {
+      err_msg: "This timer name already exists, please try another one!",
+    });
+    console.log("db error:", err);
+    // res.status(400).json({ msg: err.message });
   }
 });
 

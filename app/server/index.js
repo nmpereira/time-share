@@ -47,7 +47,9 @@ app.get("/:id", async (req, res) => {
   let reqHost = req.headers.host;
   helpers.endTime(reqHost, userID).then((e) => {
     if (!e) {
-      res.render("../public/error");
+      res.render("../public/error", {
+        err_msg: "Timer not found! Please check the url!",
+      });
     } else {
       try {
         res.render("../public/timeshare");
