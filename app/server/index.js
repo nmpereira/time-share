@@ -67,7 +67,7 @@ app.get("/:id", async (req, res) => {
     }
   });
 });
-app.get("/settime/:id", async (req, res) => {
+app.get("/reset/:id", async (req, res) => {
   var id = req.params.id;
   try {
     res.render("../public/resettimer", { userid: id });
@@ -77,8 +77,8 @@ app.get("/settime/:id", async (req, res) => {
 });
 
 //Update single Time by id
-app.post("/settime/:id", async (req, res) => {
-  console.log("abc");
+app.post("/reset/:id", async (req, res) => {
+  // console.log("abc");
   const userID = req.params.id;
   let reqHost = req.headers.host;
   const query = { user: req.params.id };
@@ -121,7 +121,7 @@ app.post("/settime/:id", async (req, res) => {
     console.log(err);
   }
 });
-// app.put("/settime/:id", async (req, res) => {
+// app.put("/reset/:id", async (req, res) => {
 //   console.log("def");
 //   // var userid = req.body.userid;
 //   // var endtime = req.body.endtime;
@@ -242,7 +242,7 @@ const runTimer = async (socket, input, msg) => {
   // var ref;
   // clearInterval(ref);
   let reset;
-  console.log("you are in runTimer");
+  // console.log("you are in runTimer");
   const clientsConnected_Socket = 0;
   socket.emit("message", "Greetings Earthling");
   const roomID = socket.handshake.headers.referer.split("/").pop();
@@ -256,7 +256,7 @@ const runTimer = async (socket, input, msg) => {
     // NOTE: find index of room and return if not found
     const socket_index = currentRoom.clients.indexOf(socket);
     if (socket_index == -1) return;
-    console.log("socket_index_1", socket_index);
+    // console.log("socket_index_1", socket_index);
     currentRoom.clients.splice(socket_index, 1);
 
     runningTimerTrak[roomID].connections -= 1;
@@ -289,7 +289,7 @@ const runTimer = async (socket, input, msg) => {
     //   runningTimerTrak[roomID].connections,
     //   roomID
     // );
-    console.log("you are in if Notundefined");
+    // console.log("you are in if Notundefined");
     // NOTE: i am here. I need to add a property to an object "reset:true" and make sure it doesnt return here but goes and runs timer
     return;
   }
