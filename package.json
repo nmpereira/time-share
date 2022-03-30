@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "16.14.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app/server/index.js",
@@ -20,13 +23,20 @@
   },
   "homepage": "https://github.com/nmpereira/time-share#readme",
   "dependencies": {
+    "admin-bro": "^3.2.5",
+    "admin-bro-expressjs": "^2.1.1",
+    "admin-bro-mongoose": "^0.5.2",
+    "body-parser": "^1.19.2",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.2",
+    "express-formidable": "^1.2.0",
+    "express-session": "^1.17.2",
     "method-override": "^3.0.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
-    "mongoose": "^6.2.1",
+    "mongoose": "^6.2.9",
     "node-fetch": "^2.6.1",
     "nodemon": "^2.0.15",
     "request": "^2.88.2",

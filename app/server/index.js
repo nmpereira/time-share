@@ -6,13 +6,16 @@ const logger = require("./routes/logger");
 const formatter = require("./routes/formatter");
 const api = require("./routes/api");
 const PORT = process.env.PORT || 3003;
+const bodyParser = require("body-parser");
 
 const { Server } = require("socket.io");
 const moment = require("moment");
 const fetch = require("node-fetch");
 const request = require("request");
 let timestamp = moment().add(10, "seconds");
+
 const helpers = require("./routes/helpers");
+const admin = require("./routes/admin");
 // const runATimer = require("runTheTimer");
 // const joinARoom = require("joinRoom");
 // const joinARoom = require("./index.js");
@@ -26,10 +29,14 @@ const time = require("../server/models/time");
 
 app
   .use(express.static(path.resolve(__dirname, "../server/public")))
+  .use("/admin", admin)
+
+  .use(bodyParser.json())
   .use(express.json())
   .use(logger)
   .use(express.json())
   .use(express.urlencoded({ extended: false }))
+
   .use(methodOverride("_method"))
   .set("json spaces", 2)
   .set("view engine", "ejs")
@@ -52,7 +59,7 @@ app.get("/:id", async (req, res) => {
       });
     } else {
       try {
-        res.render("../public/timeshare");
+        res.render("../public/timeshare", { title: userID });
       } catch (err) {
         res.status(500).json({ msg: err.message });
       }
@@ -72,7 +79,7 @@ app.get("/:id", async (req, res) => {
 app.get("/reset/:id", async (req, res) => {
   var id = req.params.id;
   try {
-    res.render("../public/resettimer", { userid: id });
+    res.render("../public/resettimer", { userid: id, title: id });
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
