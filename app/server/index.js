@@ -104,6 +104,17 @@ app.get("/reset/:id", async (req, res) => {
 
 //Update single Time by id
 app.post("/reset/:id", async (req, res) => {
+  // if (res.body.break == 1) {
+  //   console.log("its 1");
+  // } else {
+  //   console.log("its not 1");
+  // }
+  if (req.body.break !== undefined && req.body.break === "1") {
+    console.log("Break time", req.body.break);
+  } else {
+    console.log("Work Time");
+  }
+  console.log("req", req.body);
   // console.log("abc");
   const userID = req.params.id;
   let reqHost = req.headers.host;
