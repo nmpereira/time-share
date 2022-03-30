@@ -270,7 +270,10 @@ const runTimer = async (socket, input, msg) => {
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
   const param = await input;
-  socket.emit("timestamp", formatter("Loading", "Loading...", param <= 0));
+  socket.emit(
+    "timestamp",
+    formatter("Loading", secondsToHMS(param), param <= 0)
+  );
   // NOTE: if exists or if interval is running
   if (
     runningTimerTrak[roomID] !== undefined &&

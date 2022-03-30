@@ -64,9 +64,14 @@
         console.log("Message from server ", msg);
       });
       // Listen for timestamps from server
+      var audio = new Audio('./assets/Chime.wav');
       socket.on("timestamp", (msg) => {
         clearTimeout(timeout);
         document.getElementById("timestamp").innerHTML = msg.timestamp;
+        // console.log(secondsToHMS(msg.timestamp))
+        if (msg.timestamp != 0 && secondsToHMS(msg.timestamp) <= 1) {
+          audio.play();
+        }
         document.title = msg.timestamp
         console.log("TimeStamp:", msg)
 
@@ -86,6 +91,23 @@
           document.getElementById('pauseTimer').style.display = "none"
         };
       });
+      var secondsToHMS = (secs) => {
+        if (secs == 0) return 0
+
+        // your input string
+        var a = secs.split(':'); // split it at the colons
+        var result = 0
+        if (a.length == 3) {
+          result = ((+a[0]) * 60 * 60) + ((+a[1]) * 60) + (+a[2])
+        }
+        if (a.length == 2) {
+          result = ((+a[0]) * 60) + (+a[1])
+        }
+
+        return result
+
+      }
+
       // socket.on("userActivity", (msg) => {
       //   // console.log("User Activity ", msg);
 
