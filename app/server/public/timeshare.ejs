@@ -104,6 +104,7 @@
       const requestOrigin = window.location.host
       const pauseTimer = () => {
         socket.emit("pausetimer", { userId, requestOrigin });
+        console.log("this is paused")
       };
       const playTimer = () => {
         socket.emit("playtimer", { userId, requestOrigin });
