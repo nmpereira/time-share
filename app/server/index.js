@@ -27,9 +27,24 @@ const io = new Server(server);
 const methodOverride = require("method-override");
 const time = require("../server/models/time");
 const session = require("express-session");
-const MemoryStore = require("memorystore")(session);
+// const MemoryStore = require("memorystore")(session);
+var MongoDbStore = require("connect-mongo");
+const mongoose = require("mongoose");
 
 app
+  .use(
+    session({
+      cookie: { maxAge: 60000 },
+      resave: true,
+      saveUninitialized: true,
+      store: MongoDbStore.create({
+        mongoUrl: process.env.dbURI_time,
+        checkPeriod: 86400000, // prune expired entries every 24h
+      }),
+
+      secret: "keyboard cat",
+    })
+  )
   .use(express.static(path.resolve(__dirname, "../server/public")))
   .use("/admin", admin)
 
@@ -47,17 +62,7 @@ app
   .get("/", (req, res) => {
     res.render("../public/index");
   })
-  .use("/api", api)
-  .use(
-    session({
-      cookie: { maxAge: 86400000 },
-      store: new MemoryStore({
-        checkPeriod: 86400000, // prune expired entries every 24h
-      }),
-      resave: false,
-      secret: "keyboard cat",
-    })
-  );
+  .use("/api", api);
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //Get single Time by id
@@ -379,7 +384,7 @@ const timeFromNow = async (timestamp) => {
 };
 
 //Mongoose
-const mongoose = require("mongoose");
+
 mongoose.connect(process.env.dbURI_time);
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
