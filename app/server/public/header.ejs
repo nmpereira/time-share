@@ -75,11 +75,16 @@
         document.getElementById("homeLinkName").innerHTML = window.location.host
         if (window.location.href === homeLink.concat("/")) userNameForm.style.display = "none"
         userNameForm.style.display = "none"
+        let isTimerPage
 
 
 
     </script>
 </body>
+<script src="/socket.io/socket.io.js"></script>
 
+<script>
+    const socket = io();
+</script>
 
 </html>

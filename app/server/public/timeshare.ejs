@@ -35,25 +35,28 @@
         </h1>
         <div class="d-flex justify-content-center">
 
-          <button id=" pauseTimer" class="btn btn-secondary btnSpace" onclick="pauseTimer()">Pause</button>
-          <button id="playTimer" class="btn btn-secondary btnSpace" onclick="playTimer()">Play</button>
+          <button id="pauseTimer" class="btn btn-primary btnSpace" onclick="pauseTimer()">Pause</button>
+          <button id="playTimer" class="btn btn-danger btnSpace" onclick="playTimer()">Resume</button>
+          <button id="resetTimer" class="btn btn-secondary btnSpace" onclick="resetTimer()">Reset</button>
           <button id="shareTimer" class="btn btn-success btnSpace" onclick="shareTimer()">Share Timer
             (Clipboard)</button>
         </div>
       </div>
       <!-- <button id="resetTimer" onclick="resetTimer()">Reset</button> -->
     </div>
-    <div id="userCountGlobalContainer">Users Online: &thinsp;<span id="userCountGlobal"> 0</span></div>
-    <div id="userCountGlobalContainer">Connected to this timer: &thinsp;<span id="userCountLocal"> 0</span></div>
+    <!-- <div id="userCountGlobalContainer">Users Online: &thinsp;<span id="userCountGlobal"> 0</span></div> -->
+    <!-- <div id="userCountGlobalContainer">Connected to this timer: &thinsp;<span id="userCountLocal"> 0</span></div> -->
     <div id="snackbar">Copied Link to Clipboard</div>
-    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
 
     <script>
-      const socket = io();
+      // const socket = io();
     </script>
 
     <script>
-
+      isTimerPage = true
+      document.getElementById('pauseTimer').style.display = "none"
+      document.getElementById('playTimer').style.display = "none"
       // Listen for messages from server
 
       const timeout = setTimeout(() => { window.location.reload() }, 5000)
@@ -65,17 +68,33 @@
         clearTimeout(timeout);
         document.getElementById("timestamp").innerHTML = msg.timestamp;
         document.title = msg.timestamp
-        // console.log("TimeStamp:", msg)
-        if (msg.expired === true) document.getElementById("timestamp").innerHTML = '00:00:00';
-      });
-      socket.on("userActivity", (msg) => {
-        // console.log("User Activity ", msg);
+        console.log("TimeStamp:", msg)
 
-        document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
+        if (msg.expired === true) document.title = '00:00';
+
+        if (msg.action == 'run') {
+          document.getElementById('playTimer').style.display = "none"
+          document.getElementById('pauseTimer').style.display = "inline"
+          // console.log(msg.action)
+        } else if (msg.action == 'paused') {
+          document.getElementById('pauseTimer').style.display = "none"
+          document.getElementById('playTimer').style.display = "inline"
+          // console.log(msg.action)
+        }
+        if (msg.expired === true) {
+          document.getElementById("timestamp").innerHTML = '00:00:00'
+          document.getElementById('pauseTimer').style.display = "none"
+        };
       });
+      // socket.on("userActivity", (msg) => {
+      //   // console.log("User Activity ", msg);
+
+      //   document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
+      // });
       socket.on("localUserActivity", (msg) => {
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
+
       })
 
 
@@ -85,10 +104,19 @@
       const requestOrigin = window.location.host
       const pauseTimer = () => {
         socket.emit("pausetimer", { userId, requestOrigin });
+        console.log("this is paused")
       };
       const playTimer = () => {
         socket.emit("playtimer", { userId, requestOrigin });
       };
+      const resetTimer = () => {
+        const id = window.location.pathname
+        const host = window.location.origin
+        console.log(host, id)
+        socket.emit("resettimer", { userId, requestOrigin });
+        window.location.href = `${host}/reset${id}`;
+      };
+
 
     </script>
 
@@ -108,3 +136,4 @@
   </body>
 
   </html>
+  <%- include('footer') -%>
