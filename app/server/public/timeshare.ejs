@@ -25,6 +25,14 @@
     <title> Join /<%= title %>'s shared timer</title>
     <meta name="description" content="Create a sharable timer for your team or friends!">
 
+
+    <meta name="image"
+      content="https://raw.githubusercontent.com/nmpereira/time-share/main/app/server/public/images/wall-clock.png">
+    <meta property="og:title" content="Join /<%= title %>'s shared timer" />
+    <meta property="og:description" content="Create a sharable timer for your team or friends!" />
+    <meta property="og:image"
+      content="https://raw.githubusercontent.com/nmpereira/time-share/main/app/server/public/images/wall-clock.png" />
+
     <!-- <title>Time-Share</title> -->
   </head>
 
@@ -128,7 +136,7 @@
       const requestOrigin = window.location.host
       const pauseTimer = () => {
         socket.emit("pausetimer", { userId, requestOrigin });
-        console.log("this is paused")
+        // console.log("this is paused")
       };
       const playTimer = () => {
         socket.emit("playtimer", { userId, requestOrigin });

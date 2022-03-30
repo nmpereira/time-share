@@ -26,6 +26,8 @@ const server = http.createServer(app);
 const io = new Server(server);
 const methodOverride = require("method-override");
 const time = require("../server/models/time");
+const session = require("express-session");
+const MemoryStore = require("memorystore")(session);
 
 app
   .use(express.static(path.resolve(__dirname, "../server/public")))
@@ -45,7 +47,17 @@ app
   .get("/", (req, res) => {
     res.render("../public/index");
   })
-  .use("/api", api);
+  .use("/api", api)
+  .use(
+    session({
+      cookie: { maxAge: 86400000 },
+      store: new MemoryStore({
+        checkPeriod: 86400000, // prune expired entries every 24h
+      }),
+      resave: false,
+      secret: "keyboard cat",
+    })
+  );
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //Get single Time by id
@@ -203,7 +215,7 @@ io.on("connection", (socket) => {
     if (currentRoom) {
       io.to(msg.userId).emit("message", [
         msg.userId,
-        (runningTimerTrak[msg.userId].running = false),
+        `paused: ${(runningTimerTrak[msg.userId].running = false)}`,
       ]);
     }
     // console.log("pausetimer", msg);
@@ -213,7 +225,7 @@ io.on("connection", (socket) => {
     if (currentRoom) {
       io.to(msg.userId).emit("message", [
         msg.userId,
-        (runningTimerTrak[msg.userId].running = true),
+        `paused: ${(runningTimerTrak[msg.userId].running = true)}`,
       ]);
     }
     // console.log("playtimer");
