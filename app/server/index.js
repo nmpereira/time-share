@@ -216,7 +216,7 @@ io.on("connection", (socket) => {
     });
   }, 200);
   if (runningTimerTrak[roomID].connections == 0) {
-    console.log("adding 1st client");
+    // Adding First Client
     runningTimerTrak[roomID].connections += 1;
   }
   clientsConnected_Global += 1;
@@ -311,7 +311,6 @@ let liveClientCount = (_roomID) => {
     typeof clientsInRoom.get(_roomID) != "object" ||
     clientsInRoom.get(_roomID).size == undefined
   ) {
-    // console.log("2", clientsInRoom.get(_roomID));
     return 0;
   } else if (clientsInRoom.get(_roomID).size == 0) {
     return 1 + "shouldnt happen";
@@ -320,11 +319,8 @@ let liveClientCount = (_roomID) => {
   }
 };
 const runTimer = async (socket, input, msg) => {
-  console.log("we are in runtimer######################");
-  // var ref;
-  // clearInterval(ref);
   let reset;
-  // console.log("you are in runTimer");
+
   const clientsConnected_Socket = 0;
   socket.emit("message", "Greetings Earthling");
   const roomID = socket.handshake.headers.referer.split("/").pop();
@@ -433,7 +429,6 @@ true
     // console.log("Local Connections", runningTimerTrak[roomID].connections);
 
     setTimeout(() => {
-      console.log("how long is this taking##########################");
       if (runningTimerTrak[roomID].connections > 0) {
         console.log(
           "clients",
@@ -481,7 +476,7 @@ true
     //   runningTimerTrak[roomID].connections,
     //   roomID
     // );
-    console.log("you are in if Notundefined####################");
+    console.log("##Undefined roomID!##");
     // NOTE: i am here. I need to add a property to an object "reset:true" and make sure it doesnt return here but goes and runs  timer
     return;
   }
@@ -513,19 +508,20 @@ true
   //
 
   //
-  console.log("we are before longForLoop######################");
+
   function longForLoop(param) {
-    console.log("we are in longForLoop######################");
     let delay;
     // console.log("timeleft", param);
     var i = param;
 
     if (param > 0) {
       runningTimerTrak[roomID].interval = setInterval(() => {
-        console.log(
-          "connections in this loop",
-          runningTimerTrak[roomID].connections
-        );
+        if (runningTimerTrak[roomID].connections < 1) {
+          console.log(
+            `Timer${roomID} has ${runningTimerTrak[roomID].connections} connections, stopping...`
+          );
+        }
+
         // console.log("paused..?", runningTimerTrak[roomID].isBreak);
         // console.log(
         //   "connections..?",
@@ -533,11 +529,7 @@ true
         //   typeof runningTimerTrak[roomID].connections
         // );
         // console.log("i and rooomID", i, roomID);
-        console.log(
-          "we before running=true",
-          runningTimerTrak[roomID].running
-          // runningTimerTrak[roomID].clients.id
-        );
+
         if (runningTimerTrak[roomID].running === true) {
           i--;
           runningTimerTrak[roomID].clients.forEach((s) => {
