@@ -30,6 +30,7 @@ const session = require("express-session");
 // const MemoryStore = require("memorystore")(session);
 // var MongoDbStore = require("connect-mongo");
 const mongoose = require("mongoose");
+const NODE_ENV = process.env.NODE_ENV || "Local";
 
 app
   .use(
@@ -65,6 +66,8 @@ app
   .use("/api", api);
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+console.log("Env:", NODE_ENV);
 //Get single Time by id
 app.get("/:id", async (req, res) => {
   let userID = req.params.id;
@@ -195,10 +198,6 @@ const runningTimerTrak = {};
 io.on("connection", (socket) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
 
-  roomID != ""
-    ? console.log("New client Connected! Room ID:", roomID)
-    : console.log("New client Connected!");
-
   socket.join(roomID);
 
   if (runningTimerTrak[roomID] == undefined) {
@@ -226,6 +225,12 @@ io.on("connection", (socket) => {
     clientsConnected_Global,
     Activity: "Client Joined",
   });
+
+  roomID != ""
+    ? console.log(
+        `New client Connected! Room ID: ${roomID} Clients connected: ${runningTimerTrak[roomID].connections}`
+      )
+    : console.log("New client Connected!");
   // console.log("Global Connections", clientsConnected_Global);
 
   //Whenever someone disconnects this piece of code executed
@@ -239,7 +244,7 @@ io.on("connection", (socket) => {
 
     console.log(
       reason
-        ? `Client has Disconnected from:  ${roomID} due to ${reason}`
+        ? `Client has Disconnected from:  ${roomID} due to ${reason}! Clients left: ${runningTimerTrak[roomID].connections}`
         : "Client has Disconnected"
     );
     setTimeout(() => {
