@@ -195,7 +195,9 @@ const runningTimerTrak = {};
 io.on("connection", (socket) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
 
-  console.log("New client Connected!", "Room ID:", roomID);
+  roomID != ""
+    ? console.log("New client Connected! Room ID:", roomID)
+    : console.log("New client Connected!");
 
   socket.join(roomID);
 
@@ -208,7 +210,7 @@ io.on("connection", (socket) => {
 
   setTimeout(() => {
     runningTimerTrak[roomID].connections = liveClientCount(roomID);
-    console.log("connected:", liveClientCount(roomID));
+    // console.log("connected:", liveClientCount(roomID));
     io.to(roomID).emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
       Activity: "Socket Client Left",
@@ -242,7 +244,7 @@ io.on("connection", (socket) => {
     );
     setTimeout(() => {
       runningTimerTrak[roomID].connections = liveClientCount(roomID);
-      console.log("connected:", liveClientCount(roomID));
+      // console.log("connected:", liveClientCount(roomID));
       io.to(roomID).emit("localUserActivity", {
         clientsConnected_Socket: runningTimerTrak[roomID].connections,
         Activity: "Socket Client Left",
@@ -384,7 +386,7 @@ true
         roomID,
       });
     }, 200);
-    console.log("disconnected:", liveClientCount(roomID));
+    // console.log("disconnected:", liveClientCount(roomID));
     // console.log("3", io.of(roomID).allSockets());
     // io.in(roomID)
     //   .allSockets()
@@ -429,24 +431,18 @@ true
     // console.log("Local Connections", runningTimerTrak[roomID].connections);
 
     setTimeout(() => {
-      if (runningTimerTrak[roomID].connections > 0) {
-        console.log(
-          "clients",
-          runningTimerTrak[roomID].connections,
-          true,
-          roomID
-        );
-      } else {
+      if (!runningTimerTrak[roomID].connections > 0) {
+        //   console.log(
+        //     "clients:",
+        //     runningTimerTrak[roomID].connections,
+        //     "roomID:",
+        //     roomID
+        //   );
+        // } else {
         clearInterval(runningTimerTrak[roomID].interval);
         runningTimerTrak[roomID].interval = null;
         console.log(
           `#################### Clearing# ${roomID} #########################`
-        );
-        console.log(
-          "clients2",
-          runningTimerTrak[roomID].connections,
-          true,
-          roomID
         );
       }
     }, 2000);
@@ -476,7 +472,7 @@ true
     //   runningTimerTrak[roomID].connections,
     //   roomID
     // );
-    console.log("##Undefined roomID!##");
+    // console.log("##Undefined roomID!##");
     // NOTE: i am here. I need to add a property to an object "reset:true" and make sure it doesnt return here but goes and runs  timer
     return;
   }
@@ -518,7 +514,7 @@ true
       runningTimerTrak[roomID].interval = setInterval(() => {
         if (runningTimerTrak[roomID].connections < 1) {
           console.log(
-            `Timer${roomID} has ${runningTimerTrak[roomID].connections} connections, stopping...`
+            `Timer ${roomID} has ${runningTimerTrak[roomID].connections} connections, stopping...`
           );
         }
 
