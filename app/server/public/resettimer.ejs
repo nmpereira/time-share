@@ -57,18 +57,20 @@
 
                     <input name="_method" type="hidden" value="PUT">
                     <div class="time_label-container">
-                        <div class="line d-flex justify-content-end">
-                            <label class="form__label" for="isBreak"> Break?
-                            </label>
-                            <input type="checkbox" class="form__input" name="isBreak" value="1" id="isBreak" />
 
-                        </div>
                         <div class="line d-flex justify-content-end">
                             <label class="form__label" for="time_work"> Work Time:
                             </label>
                             <input type="text" class="form__input" name="time_hms" value="0:25:00" id="time_hms" />
                             <input type="text" class="formhidden__input" name="time_work" value="" id="time_work"
                                 hidden />
+                        </div>
+                        <div class="line d-flex justify-content-center">
+                            <label class="form__label" for="isBreak">
+                                <input type="checkbox" class="form-check-input" name="isBreak" value="1" id="isBreak" />
+                                Break?
+                            </label>
+
                         </div>
                         <div class="line d-flex justify-content-end">
                             <label class="form__label" for="end_time" hidden> Ending Time:
