@@ -201,14 +201,9 @@ io.on("connection", (socket) => {
 
   if (runningTimerTrak[roomID] == undefined) {
     runningTimerTrak[roomID] = {
-      running: true,
-      clients: [socket],
+      clients: [],
       connections: 1,
-      interval: null,
-      isBreak: false,
     };
-  } else {
-    runningTimerTrak[roomID].isBreak;
   }
   setTimeout(() => {
     runningTimerTrak[roomID].connections = liveClientCount(roomID);
@@ -461,12 +456,15 @@ true
     return;
   }
   // console.log("runningTimerTrak[roomID]_1", runningTimerTrak[roomID]);
-  if (runningTimerTrak[roomID] == undefined) {
+  if (
+    runningTimerTrak[roomID] == undefined ||
+    runningTimerTrak[roomID].clients.length == 0
+  ) {
     runningTimerTrak[roomID] = {
       running: true,
       clients: [socket],
-      connections,
-      interval,
+      connections: 1,
+      interval: null,
       isBreak: false,
     };
   }
@@ -517,8 +515,8 @@ true
         // console.log("i and rooomID", i, roomID);
         console.log(
           "we before running=true",
-          runningTimerTrak[roomID].running,
-          runningTimerTrak[roomID].clients.id
+          runningTimerTrak[roomID].running
+          // runningTimerTrak[roomID].clients.id
         );
         if (runningTimerTrak[roomID].running === true) {
           i--;
