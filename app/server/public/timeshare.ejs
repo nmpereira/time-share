@@ -126,7 +126,7 @@
       socket.on("localUserActivity", (msg) => {
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
-
+        console.log("localUserActivity ", msg);
       })
 
 

@@ -205,6 +205,7 @@ io.on("connection", (socket) => {
       connections: 1,
     };
   }
+
   setTimeout(() => {
     runningTimerTrak[roomID].connections = liveClientCount(roomID);
     console.log("connected:", liveClientCount(roomID));
@@ -214,6 +215,10 @@ io.on("connection", (socket) => {
       roomID,
     });
   }, 200);
+  if (runningTimerTrak[roomID].connections == 0) {
+    console.log("adding 1st client");
+    runningTimerTrak[roomID].connections += 1;
+  }
   clientsConnected_Global += 1;
   io.emit("userActivity", {
     clientsConnected_Global,
@@ -315,6 +320,7 @@ let liveClientCount = (_roomID) => {
   }
 };
 const runTimer = async (socket, input, msg) => {
+  console.log("we are in runtimer######################");
   // var ref;
   // clearInterval(ref);
   let reset;
@@ -451,7 +457,7 @@ true
     //   runningTimerTrak[roomID].connections,
     //   roomID
     // );
-    // console.log("you are in if Notundefined");
+    console.log("you are in if Notundefined####################");
     // NOTE: i am here. I need to add a property to an object "reset:true" and make sure it doesnt return here but goes and runs  timer
     return;
   }
@@ -483,25 +489,31 @@ true
   //
 
   //
+  console.log("we are before longForLoop######################");
   function longForLoop(param) {
-    console.log("we are in longForLoop");
+    console.log("we are in longForLoop######################");
     let delay;
     // console.log("timeleft", param);
     var i = param;
 
     if (param > 0) {
       runningTimerTrak[roomID].interval = setInterval(() => {
-        // setTimeout(() => {
-        //   console.log("how long is this taking##########################");
-        //   if (runningTimerTrak[roomID].connections > 0) {
-        //     console.log(true, roomID);
-        //   } else {
-        //     clearInterval(runningTimerTrak[roomID].interval);
-        //     console.log(
-        //       "####################Clearing##########################"
-        //     );
-        //   }
-        // }, 2000);
+        setTimeout(() => {
+          console.log("how long is this taking##########################");
+          if (runningTimerTrak[roomID].connections > 0) {
+            console.log(
+              "clients",
+              runningTimerTrak[roomID].connections,
+              true,
+              roomID
+            );
+          } else {
+            clearInterval(runningTimerTrak[roomID].interval);
+            console.log(
+              "####################Clearing##########################"
+            );
+          }
+        }, 2000);
         console.log(
           "connections in this loop",
           runningTimerTrak[roomID].connections
