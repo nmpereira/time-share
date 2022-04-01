@@ -40,7 +40,7 @@
 
     <div class="container">
       <div class="center">
-
+        <h2 id="breakText" class="d-flex justify-content-center"></h2>
         <h1 id="timestamp" class="d-flex justify-content-center">Loading...
         </h1>
         <div class="d-flex justify-content-center">
@@ -100,6 +100,13 @@
           document.getElementById("timestamp").innerHTML = '00:00:00'
           document.getElementById('pauseTimer').style.display = "none"
         };
+        if (msg.isBreak === true) {
+          document.body.style.backgroundColor = "#56A0DF";
+          document.getElementById("breakText").innerHTML = "Break time!"
+        } else {
+          document.body.style.backgroundColor = `#4e50bf`;
+          document.getElementById("breakText").innerHTML = "Work time!"
+        }
       });
       var secondsToHMS = (secs) => {
         if (secs == 0) return 0
@@ -126,7 +133,7 @@
       socket.on("localUserActivity", (msg) => {
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
-
+        console.log("localUserActivity ", msg);
       })
 
 
