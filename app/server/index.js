@@ -431,6 +431,30 @@ true
     // runningTimerTrak[roomID].connections -= 1;
 
     // console.log("Local Connections", runningTimerTrak[roomID].connections);
+
+    setTimeout(() => {
+      console.log("how long is this taking##########################");
+      if (runningTimerTrak[roomID].connections > 0) {
+        console.log(
+          "clients",
+          runningTimerTrak[roomID].connections,
+          true,
+          roomID
+        );
+      } else {
+        clearInterval(runningTimerTrak[roomID].interval);
+        runningTimerTrak[roomID].interval = null;
+        console.log(
+          `#################### Clearing# ${roomID} #########################`
+        );
+        console.log(
+          "clients2",
+          runningTimerTrak[roomID].connections,
+          true,
+          roomID
+        );
+      }
+    }, 2000);
   });
   // console.log("runningTimerTrak1", runningTimerTrak);
   // if (runningTimerTrak[roomID]) return;
@@ -498,22 +522,6 @@ true
 
     if (param > 0) {
       runningTimerTrak[roomID].interval = setInterval(() => {
-        setTimeout(() => {
-          console.log("how long is this taking##########################");
-          if (runningTimerTrak[roomID].connections > 0) {
-            console.log(
-              "clients",
-              runningTimerTrak[roomID].connections,
-              true,
-              roomID
-            );
-          } else {
-            clearInterval(runningTimerTrak[roomID].interval);
-            console.log(
-              "####################Clearing##########################"
-            );
-          }
-        }, 2000);
         console.log(
           "connections in this loop",
           runningTimerTrak[roomID].connections
