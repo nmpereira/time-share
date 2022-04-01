@@ -88,7 +88,8 @@ app.get("/:id", async (req, res) => {
           helpers.endTime(reqHost, userID).then((e) => {
             return e;
           }),
-          userID
+          userID,
+          req
         );
       }, 500);
     }
@@ -103,6 +104,7 @@ app.get("/reset/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
+  console.log("paused_6?", runningTimerTrak[userID].isBreak);
 });
 
 //Update single Time by id
@@ -125,22 +127,27 @@ app.post("/reset/:id", async (req, res) => {
     },
     updated_at,
   };
-
+  // here
+  if (runningTimerTrak[userID].isBreak == undefined) {
+    runningTimerTrak[userID].isBreak = false;
+  }
   if (req.body.isBreak !== undefined && req.body.isBreak == "1") {
     runningTimerTrak[userID].isBreak = true;
-    console.log("paused?", runningTimerTrak[userID].isBreak);
+    console.log("paused_1?", runningTimerTrak[userID].isBreak);
   } else {
     console.log("Work Time");
     runningTimerTrak[userID].isBreak = false;
   }
+  console.log("paused_5?", runningTimerTrak[userID].isBreak);
 
   try {
     // TODO: fix this, seems like times isnt used
     const times = await time.findOneAndUpdate(query, update, {
       new: true,
     });
-
+    console.log("paused_8?", runningTimerTrak[userID].isBreak);
     res.redirect(`/${userID}`);
+    console.log("paused_9?", runningTimerTrak[userID].isBreak);
 
     clearInterval(runningTimerTrak[userID].interval);
     runningTimerTrak[userID].interval = null;
@@ -149,13 +156,15 @@ app.post("/reset/:id", async (req, res) => {
         helpers.endTime(reqHost, userID).then((e) => {
           return e;
         }),
-        userID
+        userID,
+        req
       );
     }, 500);
   } catch (err) {
     res.status(500).json({ msg1: err.message });
     console.log(err);
   }
+  console.log("paused_10?", runningTimerTrak[userID].isBreak);
 });
 
 //Websocket
@@ -170,6 +179,7 @@ io.on("connection", (socket) => {
     runningTimerTrak[roomID] = {
       clients: [],
       connections: 1,
+      isBreak: false,
     };
   }
 
@@ -251,12 +261,12 @@ io.on("connection", (socket) => {
     console.log("send a message:" + msg);
     socket.emit("message", `send a message ${msg}`);
   }
-  function runTheTimer(msg, userID) {
+  function runTheTimer(msg, userID, req) {
     msg = msg.then((msg) => {
       return timeFromNow(msg);
     });
 
-    runTimer(socket, msg, msg);
+    runTimer(socket, msg, req);
   }
 
   module.exports.sendAMessage = sendAMessage;
@@ -276,12 +286,16 @@ let liveClientCount = (_roomID) => {
     return clientsInRoom.get(_roomID).size;
   }
 };
-const runTimer = async (socket, input, msg) => {
+const runTimer = async (socket, input, req) => {
   let reset;
 
   const clientsConnected_Socket = 0;
   socket.emit("message", "Greetings Earthling");
   const roomID = socket.handshake.headers.referer.split("/").pop();
+  // req.then((x) => console.log("req_1", x));
+  // console.log("req", req.body);
+  input.then((x) => console.log("input_1", x));
+  console.log("paused_7?", runningTimerTrak[roomID].isBreak);
 
   socket.on("disconnect", function () {
     const currentRoom = runningTimerTrak[roomID];
@@ -319,7 +333,7 @@ const runTimer = async (socket, input, msg) => {
   const param = await input;
   socket.emit(
     "timestamp",
-    formatter("Loading", secondsToHMS(param), param <= 0, false)
+    formatter("Loading", secondsToHMS(param), param <= 0)
   );
   // NOTE: if exists or if interval is running
   if (
@@ -337,6 +351,7 @@ const runTimer = async (socket, input, msg) => {
     return;
   }
 
+  console.log("paused_3?", runningTimerTrak[roomID].isBreak);
   if (
     runningTimerTrak[roomID] == undefined ||
     runningTimerTrak[roomID].clients.length == 0
@@ -346,10 +361,21 @@ const runTimer = async (socket, input, msg) => {
       clients: [socket],
       connections: 1,
       interval: null,
-      isBreak: false,
+      // isBreak: false,
     };
+    if (
+      runningTimerTrak[roomID].isBreak == undefined &&
+      req.body.isBreak !== undefined &&
+      req.body.isBreak == "1"
+    ) {
+      runningTimerTrak[roomID].isBreak = true;
+      console.log("paused_11?", runningTimerTrak[roomID].isBreak);
+    } else {
+      console.log("Work Time_2");
+      runningTimerTrak[roomID].isBreak = false;
+    }
   }
-
+  console.log("paused_4?", runningTimerTrak[roomID].isBreak);
   io.to(roomID).emit("localUserActivity", {
     clientsConnected_Socket: runningTimerTrak[roomID].connections,
     Activity: "User Joined new room",
@@ -359,6 +385,7 @@ const runTimer = async (socket, input, msg) => {
   function longForLoop(param) {
     let delay;
     var i = param;
+    console.log("paused_2?", runningTimerTrak[roomID].isBreak);
 
     if (param > 0) {
       runningTimerTrak[roomID].interval = setInterval(() => {

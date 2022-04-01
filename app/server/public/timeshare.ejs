@@ -103,7 +103,7 @@
         if (msg.isBreak === true) {
           document.body.style.backgroundColor = "#56A0DF";
           document.getElementById("breakText").innerHTML = "Break time!"
-        } else {
+        } else if (msg.isBreak === false) {
           document.body.style.backgroundColor = `#4e50bf`;
           document.getElementById("breakText").innerHTML = "Work time!"
         }
