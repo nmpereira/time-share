@@ -92,6 +92,7 @@ app.get("/:id", async (req, res) => {
           req
         );
       }, 500);
+      console.log("reqHost", reqHost);
     }
   });
 });
@@ -183,7 +184,7 @@ io.on("connection", (socket) => {
 
     io.to(roomID).emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
-      Activity: "Socket Client Left",
+      Activity: "Socket Client Joined_1",
       roomID,
     });
   }, 200);
@@ -221,7 +222,7 @@ io.on("connection", (socket) => {
 
       io.to(roomID).emit("localUserActivity", {
         clientsConnected_Socket: runningTimerTrak[roomID].connections,
-        Activity: "Socket Client Left",
+        Activity: "Socket Client Left_2",
         roomID,
       });
     }, 200);
@@ -263,7 +264,13 @@ io.on("connection", (socket) => {
 
     runTimer(socket, msg, req);
   }
-
+  runTheTimer(
+    helpers.endTime("localhost:3003", roomID).then((e) => {
+      return e;
+    }),
+    roomID,
+    { body: { a: "a" } }
+  );
   module.exports.sendAMessage = sendAMessage;
   module.exports.runTheTimer = runTheTimer;
 });
@@ -282,7 +289,10 @@ let liveClientCount = (_roomID) => {
   }
 };
 const runTimer = async (socket, input, req) => {
-  // console.log("Run the timer");
+  console.log("Run the timer");
+  console.log("socket", socket.id);
+  console.log("params", req.body);
+  input.then((x) => console.log("params2", x));
   let reset;
 
   const clientsConnected_Socket = 0;
@@ -306,7 +316,7 @@ const runTimer = async (socket, input, req) => {
       runningTimerTrak[roomID].connections = liveClientCount(roomID);
       io.to(roomID).emit("localUserActivity", {
         clientsConnected_Socket: runningTimerTrak[roomID].connections,
-        Activity: "Socket Client Left",
+        Activity: "Socket Client Left_1",
         roomID,
       });
     }, 200);
@@ -320,7 +330,7 @@ const runTimer = async (socket, input, req) => {
           `#################### Clearing# ${roomID} #########################`
         );
       }
-    }, 2000);
+    }, 10000);
   });
 
   const param = await input;
@@ -335,10 +345,11 @@ const runTimer = async (socket, input, req) => {
     runningTimerTrak[roomID].interval != null
   ) {
     runningTimerTrak[roomID].clients.push(socket);
+    runningTimerTrak[roomID].stoppedCounter = 0;
     // runningTimerTrak[roomID].connections += 1;
     io.to(roomID).emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
-      Activity: "Socket Client Joined",
+      Activity: "Socket Client Joined_2",
       roomID,
     });
 
@@ -377,7 +388,7 @@ const runTimer = async (socket, input, req) => {
   function longForLoop(param) {
     let delay;
     var i = param;
-
+    console.log("param3", param);
     if (param > 0) {
       runningTimerTrak[roomID].interval = setInterval(() => {
         if (runningTimerTrak[roomID].connections < 1) {
@@ -386,7 +397,7 @@ const runTimer = async (socket, input, req) => {
           console.log(
             `Timer ${roomID} has ${runningTimerTrak[roomID].connections} connections. Ran ${runningTimerTrak[roomID].stoppedCounter} times, Trying to stop...`
           );
-          if (runningTimerTrak[roomID].stoppedCounter > 10) {
+          if (runningTimerTrak[roomID].stoppedCounter > 20) {
             clearInterval(runningTimerTrak[roomID].interval);
             runningTimerTrak[roomID].interval = null;
             runningTimerTrak[roomID].stoppedCounter = 0;
