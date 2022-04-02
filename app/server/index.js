@@ -264,6 +264,7 @@ io.on("connection", (socket) => {
 
     runTimer(socket, msg, req);
   }
+  // this helps! DO NOT DELETE :) :)
   runTheTimer(
     helpers.endTime("localhost:3003", roomID).then((e) => {
       return e;
@@ -304,13 +305,13 @@ const runTimer = async (socket, input, req) => {
 
     if (!currentRoom) return;
     // NOTE: find index of room and return if not found
-    const socket_index = currentRoom.clients.indexOf(socket);
+    // const socket_index = currentRoom.clients.indexOf(socket);
 
-    if (socket_index == -1) {
-      return;
-    }
+    // if (socket_index == -1) {
+    //   return;
+    // }
 
-    currentRoom.clients.splice(socket_index, 1);
+    // currentRoom.clients.splice(socket_index, 1);
 
     setTimeout(() => {
       runningTimerTrak[roomID].connections = liveClientCount(roomID);
@@ -344,7 +345,7 @@ const runTimer = async (socket, input, req) => {
     runningTimerTrak[roomID] !== undefined &&
     runningTimerTrak[roomID].interval != null
   ) {
-    runningTimerTrak[roomID].clients.push(socket);
+    // runningTimerTrak[roomID].clients.push(socket);
     runningTimerTrak[roomID].stoppedCounter = 0;
     // runningTimerTrak[roomID].connections += 1;
     io.to(roomID).emit("localUserActivity", {
@@ -357,12 +358,13 @@ const runTimer = async (socket, input, req) => {
   }
 
   if (
-    runningTimerTrak[roomID] == undefined ||
-    runningTimerTrak[roomID].clients.length == 0
+    runningTimerTrak[roomID] == undefined
+    // ||io.of(roomID).connected.size == 0
+    // runningTimerTrak[roomID].clients.length == 0
   ) {
     runningTimerTrak[roomID] = {
       running: true,
-      clients: [socket],
+      clients: [],
       connections: 1,
       interval: null,
       stoppedCounter: 0,
@@ -409,29 +411,33 @@ const runTimer = async (socket, input, req) => {
 
         if (runningTimerTrak[roomID].running === true) {
           i--;
-          runningTimerTrak[roomID].clients.forEach((s) => {
-            s.emit(
-              "timestamp",
-              formatter(
-                "run",
-                secondsToHMS(i),
-                false,
-                runningTimerTrak[roomID].isBreak
-              )
-            );
-          });
+          io.to(roomID).emit(
+            "timestamp",
+            formatter(
+              "run",
+              secondsToHMS(i),
+              false,
+              runningTimerTrak[roomID].isBreak
+            )
+          );
+          // runningTimerTrak[roomID].clients.forEach((s) => {
+          // s.emit(
+
+          // );
+          // });
         } else {
-          runningTimerTrak[roomID].clients.forEach((s) => {
-            s.emit(
-              "timestamp",
-              formatter(
-                "paused",
-                secondsToHMS(i),
-                false,
-                runningTimerTrak[roomID].isBreak
-              )
-            );
-          });
+          io.to(roomID).emit(
+            "timestamp",
+            formatter(
+              "paused",
+              secondsToHMS(i),
+              false,
+              runningTimerTrak[roomID].isBreak
+            )
+          );
+          // runningTimerTrak[roomID].clients.forEach((s) => {
+          // s.emit(
+          // });
         }
 
         if (i <= 0) clearInterval(runningTimerTrak[roomID].interval);
