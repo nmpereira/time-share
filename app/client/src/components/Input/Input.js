@@ -1,15 +1,15 @@
-import "./Button.css";
+import "./Input.css";
 import PropTypes from "prop-types";
 
-const Button = ({ href, text }) => {
+const Input = ({ href, text }) => {
   return (
     <header>
-      <a href={href}>{text}</a>
+      <input id="" type="input" />
     </header>
   );
 };
-Button.propTypes = {
+Input.propTypes = {
   text: PropTypes.string.isRequired,
   href: PropTypes.string.isRequired,
 };
-export default Button;
+export default Input;

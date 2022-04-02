@@ -1,32 +1,31 @@
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import TimerView from "./views/TimerView";
+import ResetView from "./views/ResetView";
+import InputView from "./views/InputView";
+import NavBar from "./components/Layout/NavBar";
+// import Button from "../components/Button/Button";
 import "./App.css";
-import TimeStamp from "./components/TimeStamp/TimeStamp";
-import Button from "./components/Button/Button";
-import PropTypes from "prop-types";
+import Layout from "./components/Layout/Layout";
 
 const App = () => {
   return (
     <div className="App">
+      <NavBar />
       <header className="App-header">
-        <TimeStamp time="00:00" />
-        <Button text="start" href="#" />
-        <Button text="stop" href="#" />
-        <Button text="reset" href="#" />
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route path="/reset/:id" element={<TimerView />} />
+            <Route index element={<InputView />} />
+            <Route path="/timer" element={<TimerView />} />
+            <Route path="/reset" element={<ResetView />} />
+          </Route>
+
+          {/* <Button text="reset" href="/reset" /> */}
+        </Routes>
       </header>
     </div>
   );
-};
-
-TimeStamp.defaultProps = {
-  time: "00:00:00",
-};
-
-TimeStamp.propTypes = {
-  time: PropTypes.string.isRequired,
-};
-Button.propTypes = {
-  text: PropTypes.string.isRequired,
-  href: PropTypes.string.isRequired,
 };
 
 export default App;

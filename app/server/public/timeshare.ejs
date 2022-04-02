@@ -69,7 +69,7 @@
       document.getElementById('playTimer').style.display = "none"
       // Listen for messages from server
 
-      const timeout = setTimeout(() => { window.location.reload() }, 5000)
+      // const timeout = setTimeout(() => { window.location.reload() }, 10000)
       socket.on("message", (msg) => {
         console.log("Message from server ", msg);
       });
@@ -83,7 +83,7 @@
           audio.play();
         }
         document.title = msg.timestamp
-        // console.log("TimeStamp:", msg)
+        console.log("TimeStamp:", msg)
 
         if (msg.expired === true) document.title = '00:00';
 
