@@ -174,6 +174,7 @@ io.on("connection", (socket) => {
       clients: [],
       connections: 1,
       isBreak: false,
+      stoppedCounter: 0,
     };
   }
 
@@ -281,6 +282,7 @@ let liveClientCount = (_roomID) => {
   }
 };
 const runTimer = async (socket, input, req) => {
+  // console.log("Run the timer");
   let reset;
 
   const clientsConnected_Socket = 0;
@@ -313,6 +315,7 @@ const runTimer = async (socket, input, req) => {
       if (!runningTimerTrak[roomID].connections > 0) {
         clearInterval(runningTimerTrak[roomID].interval);
         runningTimerTrak[roomID].interval = null;
+        runningTimerTrak[roomID].stoppedCounter = 0;
         console.log(
           `#################### Clearing# ${roomID} #########################`
         );
@@ -321,6 +324,7 @@ const runTimer = async (socket, input, req) => {
   });
 
   const param = await input;
+  // console.log("timestamp socket emit1");
   socket.emit(
     "timestamp",
     formatter("Loading", secondsToHMS(param), param <= 0)
@@ -350,6 +354,7 @@ const runTimer = async (socket, input, req) => {
       clients: [socket],
       connections: 1,
       interval: null,
+      stoppedCounter: 0,
       // isBreak: false,
     };
     if (
@@ -368,7 +373,7 @@ const runTimer = async (socket, input, req) => {
     Activity: "User Joined new room",
     roomID,
   });
-
+  // console.log("timestamp socket emit2");
   function longForLoop(param) {
     let delay;
     var i = param;
@@ -376,9 +381,19 @@ const runTimer = async (socket, input, req) => {
     if (param > 0) {
       runningTimerTrak[roomID].interval = setInterval(() => {
         if (runningTimerTrak[roomID].connections < 1) {
+          runningTimerTrak[roomID].stoppedCounter++;
+
           console.log(
-            `Timer ${roomID} has ${runningTimerTrak[roomID].connections} connections, stopping...`
+            `Timer ${roomID} has ${runningTimerTrak[roomID].connections} connections. Ran ${runningTimerTrak[roomID].stoppedCounter} times, Trying to stop...`
           );
+          if (runningTimerTrak[roomID].stoppedCounter > 10) {
+            clearInterval(runningTimerTrak[roomID].interval);
+            runningTimerTrak[roomID].interval = null;
+            runningTimerTrak[roomID].stoppedCounter = 0;
+            console.log(
+              `#################### Cleared # ${roomID} #########################`
+            );
+          }
         }
 
         if (runningTimerTrak[roomID].running === true) {
@@ -412,7 +427,7 @@ const runTimer = async (socket, input, req) => {
       }, 1000);
     }
   }
-
+  // console.log("before long for loop input");
   input.then((result) => {
     longForLoop(result);
   });
