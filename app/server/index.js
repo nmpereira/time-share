@@ -132,11 +132,11 @@ app.post("/reset/:id", async (req, res) => {
     runningTimerTrak[userID].isBreak = false;
   }
   if (req.body.isBreak !== undefined && req.body.isBreak == "1") {
-    console.log("break params 1", req.body.isBreak);
+    // console.log("break params 1", req.body.isBreak);
     runningTimerTrak[userID].isBreak = true;
   } else {
     // console.log("Work Time");
-    console.log("break params 2", req.body.isBreak || "not found");
+    // console.log("break params 2", req.body.isBreak || "not found");
     runningTimerTrak[userID].isBreak = false;
   }
 
@@ -380,10 +380,10 @@ const runTimer = async (socket, input, req) => {
       req.body.isBreak !== undefined &&
       req.body.isBreak == "1"
     ) {
-      console.log("break params 3", req.body.isBreak || "not found");
+      // console.log("break params 3", req.body.isBreak || "not found");
       runningTimerTrak[roomID].isBreak = true;
     } else {
-      console.log("break params 4", req.body.isBreak || "not found");
+      // console.log("break params 4", req.body.isBreak || "not found");
       runningTimerTrak[roomID].isBreak = false;
     }
   }
