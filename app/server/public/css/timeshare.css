@@ -18,7 +18,8 @@
   }
 }
 body {
-  background: #4e50bf;
+  /* background: #4e50bf; */
+  background: #808080;
 }
 
 #userCountGlobalContainer,

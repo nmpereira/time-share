@@ -10,9 +10,9 @@ const bodyParser = require("body-parser");
 
 const { Server } = require("socket.io");
 const moment = require("moment");
-const fetch = require("node-fetch");
-const request = require("request");
-let timestamp = moment().add(10, "seconds");
+// const fetch = require("node-fetch");
+// const request = require("request");
+// let timestamp = moment().add(10, "seconds");
 
 const helpers = require("./routes/helpers");
 // const admin = require("./routes/admin");
@@ -92,12 +92,13 @@ app.get("/:id", async (req, res) => {
           req
         );
       }, 500);
+      // console.log("reqHost", reqHost);
     }
   });
 });
 app.get("/reset/:id", async (req, res) => {
   const userID = req.params.id;
-  runningTimerTrak[userID].isBreak;
+  // runningTimerTrak[userID].isBreak;
   var id = req.params.id;
   try {
     res.render("../public/resettimer", { userid: id, title: id });
@@ -125,14 +126,17 @@ app.post("/reset/:id", async (req, res) => {
     },
     updated_at,
   };
+
   // here
   if (runningTimerTrak[userID].isBreak == undefined) {
     runningTimerTrak[userID].isBreak = false;
   }
   if (req.body.isBreak !== undefined && req.body.isBreak == "1") {
+    // console.log("break params 1", req.body.isBreak);
     runningTimerTrak[userID].isBreak = true;
   } else {
-    console.log("Work Time");
+    // console.log("Work Time");
+    // console.log("break params 2", req.body.isBreak || "not found");
     runningTimerTrak[userID].isBreak = false;
   }
 
@@ -146,6 +150,7 @@ app.post("/reset/:id", async (req, res) => {
 
     clearInterval(runningTimerTrak[userID].interval);
     runningTimerTrak[userID].interval = null;
+    // console.log("reqHost", reqHost);
     setTimeout(() => {
       runATimer.runTheTimer(
         helpers.endTime(reqHost, userID).then((e) => {
@@ -166,6 +171,8 @@ let clientsConnected_Global = 0;
 const runningTimerTrak = {};
 io.on("connection", (socket) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
+  const host = socket.handshake.headers.host;
+  // console.log("host", host);
 
   socket.join(roomID);
 
@@ -175,6 +182,7 @@ io.on("connection", (socket) => {
       connections: 1,
       isBreak: false,
       stoppedCounter: 0,
+      running: true,
     };
   }
 
@@ -183,7 +191,7 @@ io.on("connection", (socket) => {
 
     io.to(roomID).emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
-      Activity: "Socket Client Left",
+      Activity: "Socket Client Joined_1",
       roomID,
     });
   }, 200);
@@ -221,7 +229,7 @@ io.on("connection", (socket) => {
 
       io.to(roomID).emit("localUserActivity", {
         clientsConnected_Socket: runningTimerTrak[roomID].connections,
-        Activity: "Socket Client Left",
+        Activity: "Socket Client Left_2",
         roomID,
       });
     }, 200);
@@ -263,7 +271,15 @@ io.on("connection", (socket) => {
 
     runTimer(socket, msg, req);
   }
+  // this helps! DO NOT DELETE :) :)
 
+  // runTheTimer(
+  //   helpers.endTime(host, roomID).then((e) => {
+  //     return e;
+  //   }),
+  //   roomID,
+  //   { body: { a: "a" } }
+  // );
   module.exports.sendAMessage = sendAMessage;
   module.exports.runTheTimer = runTheTimer;
 });
@@ -283,9 +299,12 @@ let liveClientCount = (_roomID) => {
 };
 const runTimer = async (socket, input, req) => {
   // console.log("Run the timer");
-  let reset;
+  // console.log("socket", socket.id);
+  // console.log("params", req.body);
+  // input.then((x) => console.log("params2", x));
+  // let reset;
 
-  const clientsConnected_Socket = 0;
+  // const clientsConnected_Socket = 0;
   socket.emit("message", "Greetings Earthling");
   const roomID = socket.handshake.headers.referer.split("/").pop();
 
@@ -294,19 +313,19 @@ const runTimer = async (socket, input, req) => {
 
     if (!currentRoom) return;
     // NOTE: find index of room and return if not found
-    const socket_index = currentRoom.clients.indexOf(socket);
+    // const socket_index = currentRoom.clients.indexOf(socket);
 
-    if (socket_index == -1) {
-      return;
-    }
+    // if (socket_index == -1) {
+    //   return;
+    // }
 
-    currentRoom.clients.splice(socket_index, 1);
+    // currentRoom.clients.splice(socket_index, 1);
 
     setTimeout(() => {
       runningTimerTrak[roomID].connections = liveClientCount(roomID);
       io.to(roomID).emit("localUserActivity", {
         clientsConnected_Socket: runningTimerTrak[roomID].connections,
-        Activity: "Socket Client Left",
+        Activity: "Socket Client Left_1",
         roomID,
       });
     }, 200);
@@ -320,25 +339,23 @@ const runTimer = async (socket, input, req) => {
           `#################### Clearing# ${roomID} #########################`
         );
       }
-    }, 2000);
+    }, 20000);
   });
 
   const param = await input;
   // console.log("timestamp socket emit1");
-  socket.emit(
-    "timestamp",
-    formatter("Loading", secondsToHMS(param), param <= 0)
-  );
+  socket.emit("timestamp", formatter("Loading", "...", param <= 0));
   // NOTE: if exists or if interval is running
   if (
     runningTimerTrak[roomID] !== undefined &&
     runningTimerTrak[roomID].interval != null
   ) {
-    runningTimerTrak[roomID].clients.push(socket);
+    // runningTimerTrak[roomID].clients.push(socket);
+    runningTimerTrak[roomID].stoppedCounter = 0;
     // runningTimerTrak[roomID].connections += 1;
     io.to(roomID).emit("localUserActivity", {
       clientsConnected_Socket: runningTimerTrak[roomID].connections,
-      Activity: "Socket Client Joined",
+      Activity: "Socket Client Joined_2",
       roomID,
     });
 
@@ -346,12 +363,13 @@ const runTimer = async (socket, input, req) => {
   }
 
   if (
-    runningTimerTrak[roomID] == undefined ||
-    runningTimerTrak[roomID].clients.length == 0
+    runningTimerTrak[roomID] == undefined
+    // ||io.of(roomID).connected.size == 0
+    // runningTimerTrak[roomID].clients.length == 0
   ) {
     runningTimerTrak[roomID] = {
       running: true,
-      clients: [socket],
+      clients: [],
       connections: 1,
       interval: null,
       stoppedCounter: 0,
@@ -362,8 +380,10 @@ const runTimer = async (socket, input, req) => {
       req.body.isBreak !== undefined &&
       req.body.isBreak == "1"
     ) {
+      // console.log("break params 3", req.body.isBreak || "not found");
       runningTimerTrak[roomID].isBreak = true;
     } else {
+      // console.log("break params 4", req.body.isBreak || "not found");
       runningTimerTrak[roomID].isBreak = false;
     }
   }
@@ -375,52 +395,56 @@ const runTimer = async (socket, input, req) => {
   });
   // console.log("timestamp socket emit2");
   function longForLoop(param) {
-    let delay;
+    // let delay;
     var i = param;
-
+    // console.log("param3", param);
     if (param > 0) {
       runningTimerTrak[roomID].interval = setInterval(() => {
         if (runningTimerTrak[roomID].connections < 1) {
           runningTimerTrak[roomID].stoppedCounter++;
 
-          console.log(
-            `Timer ${roomID} has ${runningTimerTrak[roomID].connections} connections. Ran ${runningTimerTrak[roomID].stoppedCounter} times, Trying to stop...`
-          );
-          if (runningTimerTrak[roomID].stoppedCounter > 10) {
+          // console.log(
+          //   `Timer ${roomID} ha4 ${runningTimerTrak[roomID].connections} connections. Ran ${runningTimerTrak[roomID].stoppedCounter} times, Trying to stop...`
+          // );
+          if (runningTimerTrak[roomID].stoppedCounter > 50) {
             clearInterval(runningTimerTrak[roomID].interval);
             runningTimerTrak[roomID].interval = null;
             runningTimerTrak[roomID].stoppedCounter = 0;
             console.log(
-              `#################### Cleared # ${roomID} #########################`
+              `#################### Cleared # ${roomID} ######################### Timer ${roomID} ha4 ${runningTimerTrak[roomID].connections} connections. Ran ${runningTimerTrak[roomID].stoppedCounter} times, Trying to stop...`
             );
           }
         }
 
         if (runningTimerTrak[roomID].running === true) {
           i--;
-          runningTimerTrak[roomID].clients.forEach((s) => {
-            s.emit(
-              "timestamp",
-              formatter(
-                "run",
-                secondsToHMS(i),
-                false,
-                runningTimerTrak[roomID].isBreak
-              )
-            );
-          });
+          io.to(roomID).emit(
+            "timestamp",
+            formatter(
+              "run",
+              secondsToHMS(i),
+              false,
+              runningTimerTrak[roomID].isBreak
+            )
+          );
+          // runningTimerTrak[roomID].clients.forEach((s) => {
+          // s.emit(
+
+          // );
+          // });
         } else {
-          runningTimerTrak[roomID].clients.forEach((s) => {
-            s.emit(
-              "timestamp",
-              formatter(
-                "paused",
-                secondsToHMS(i),
-                false,
-                runningTimerTrak[roomID].isBreak
-              )
-            );
-          });
+          io.to(roomID).emit(
+            "timestamp",
+            formatter(
+              "paused",
+              secondsToHMS(i),
+              false,
+              runningTimerTrak[roomID].isBreak
+            )
+          );
+          // runningTimerTrak[roomID].clients.forEach((s) => {
+          // s.emit(
+          // });
         }
 
         if (i <= 0) clearInterval(runningTimerTrak[roomID].interval);

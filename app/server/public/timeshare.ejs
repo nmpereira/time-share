@@ -69,7 +69,7 @@
       document.getElementById('playTimer').style.display = "none"
       // Listen for messages from server
 
-      const timeout = setTimeout(() => { window.location.reload() }, 5000)
+      const timeout = setTimeout(() => { window.location.reload() }, 10000)
       socket.on("message", (msg) => {
         console.log("Message from server ", msg);
       });
@@ -79,11 +79,11 @@
         clearTimeout(timeout);
         document.getElementById("timestamp").innerHTML = msg.timestamp;
         // console.log(secondsToHMS(msg.timestamp))
-        if (msg.timestamp != 0 && secondsToHMS(msg.timestamp) <= 1) {
+        if (msg.timestamp != 0 && msg.timestamp != "..." && secondsToHMS(msg.timestamp) <= 1) {
           audio.play();
         }
         document.title = msg.timestamp
-        // console.log("TimeStamp:", msg)
+        console.log("TimeStamp:", msg)
 
         if (msg.expired === true) document.title = '00:00';
 
@@ -125,11 +125,11 @@
 
       }
 
-      // socket.on("userActivity", (msg) => {
-      //   // console.log("User Activity ", msg);
+      socket.on("userActivity", (msg) => {
+        console.log("User Activity", msg);
 
-      //   document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
-      // });
+        // document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
+      });
       socket.on("localUserActivity", (msg) => {
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
