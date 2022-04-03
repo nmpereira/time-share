@@ -76,7 +76,7 @@
       // Listen for timestamps from server
       var audio = new Audio('./assets/Chime.wav');
       socket.on("timestamp", (msg) => {
-        // clearTimeout(timeout);
+        clearTimeout(timeout);
         document.getElementById("timestamp").innerHTML = msg.timestamp;
         // console.log(secondsToHMS(msg.timestamp))
         if (msg.timestamp != 0 && msg.timestamp != "..." && secondsToHMS(msg.timestamp) <= 1) {
