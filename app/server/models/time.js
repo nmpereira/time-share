@@ -8,7 +8,7 @@ const timeSchema = new mongoose.Schema({
   time_break: { type: Number },
   sets: { type: Number },
   paused: { type: Boolean },
-  end_time: { type: Date, required: true },
+  end_time: { type: Date },
   created_at: { type: Date, required: true, default: Date.now },
   updated_at: { type: Date, required: true },
 });

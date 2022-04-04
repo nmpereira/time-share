@@ -71,30 +71,30 @@ app.get("/:id", async (req, res) => {
   let userID = req.params.id;
 
   let reqHost = req.headers.host;
-  helpers.endTime(reqHost, userID).then((e) => {
-    if (!e) {
-      res.render("../public/error", {
-        err_msg: "Timer not found! Please check the url!",
-      });
-    } else {
-      try {
-        res.render("../public/timeshare", { title: userID });
-      } catch (err) {
-        res.status(500).json({ msg: err.message });
-      }
+  // helpers.endTime(reqHost, userID).then((e) => {
+  //   if (!e) {
+  //     res.render("../public/error", {
+  //       err_msg: "Timer not found! Please check the url!",
+  //     });
+  //   } else {
+  try {
+    res.render("../public/timeshare", { title: userID });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 
-      setTimeout(() => {
-        runATimer.runTheTimer(
-          helpers.endTime(reqHost, userID).then((e) => {
-            return e;
-          }),
-          userID,
-          req
-        );
-      }, 500);
-      // console.log("reqHost", reqHost);
-    }
-  });
+  setTimeout(() => {
+    runATimer.runTheTimer(
+      helpers.endTime(reqHost, userID).then((e) => {
+        return e;
+      }),
+      userID,
+      req
+    );
+  }, 500);
+  // console.log("reqHost", reqHost);
+  // }
+  // });
 });
 app.get("/reset/:id", async (req, res) => {
   const userID = req.params.id;
