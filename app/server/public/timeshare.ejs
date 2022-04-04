@@ -44,6 +44,8 @@
         <h1 id="timestamp" class="d-flex justify-content-center">Loading...
         </h1>
         <div class="d-flex justify-content-center">
+          <button id="min_25" class="btn btn-primary btnSpace" onclick="addmin(25)">25 minutes</button>
+          <button id="min_5" class="btn btn-primary btnSpace" onclick="addmin(5)">5 minutes</button>
 
           <button id="pauseTimer" class="btn btn-primary btnSpace" onclick="pauseTimer()">Pause</button>
           <button id="playTimer" class="btn btn-danger btnSpace" onclick="playTimer()">Resume</button>
@@ -86,6 +88,7 @@
         console.log("TimeStamp:", msg)
 
         if (msg.expired === true) document.title = '00:00';
+
 
         if (msg.action == 'run') {
           document.getElementById('playTimer').style.display = "none"
@@ -143,6 +146,10 @@
       const requestOrigin = window.location.host
       const pauseTimer = () => {
         socket.emit("pausetimer", { userId, requestOrigin });
+        // console.log("this is paused")
+      };
+      const addmin = (min) => {
+        socket.emit("addmin", { min, userId, requestOrigin });
         // console.log("this is paused")
       };
       const playTimer = () => {

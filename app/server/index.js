@@ -259,6 +259,9 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("resettimer", function (msg) {});
+  socket.on("addmin", function (msg) {
+    console.log(msg);
+  });
 
   function sendAMessage(msg) {
     console.log("send a message:" + msg);
