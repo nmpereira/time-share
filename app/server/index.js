@@ -183,6 +183,7 @@ io.on("connection", (socket) => {
       isBreak: false,
       stoppedCounter: 0,
       running: true,
+      isUpdateTimer: true,
     };
   }
 
@@ -259,6 +260,18 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("resettimer", function (msg) {});
+  socket.on("changetimer", function (msg) {
+    // timer_data[roomID].isUpdateTimer = true;
+    if (timer_data[roomID].isUpdateTimer == true) {
+      timer_data[roomID].isUpdateTimer = false;
+    } else {
+      timer_data[roomID].isUpdateTimer = true;
+    }
+    // console.log("updated isUpdateTimer to ", timer_data[roomID].isUpdateTimer);
+    io.to(roomID).emit("changetimer", {
+      isUpdateTimer: timer_data[roomID].isUpdateTimer,
+    });
+  });
   socket.on("addmin", function (msg) {
     clearInterval(timer_data[msg.userId].interval);
 
@@ -359,7 +372,16 @@ const runTimer = async (socket, input, req) => {
 
   const param = await input;
   // console.log("timestamp socket emit1");
-  socket.emit("timestamp", formatter("Loading", "...", param <= 0));
+  socket.emit(
+    "timestamp",
+    formatter(
+      "Loading",
+      "...",
+      secondsToHMS(param),
+      timer_data[roomID].isBreak,
+      timer_data[roomID].isUpdateTimer
+    )
+  );
   // NOTE: if exists or if interval is running
   if (timer_data[roomID] !== undefined && timer_data[roomID].interval != null) {
     // timer_data[roomID].clients.push(socket);
@@ -385,6 +407,7 @@ const runTimer = async (socket, input, req) => {
       connections: 1,
       interval: null,
       stoppedCounter: 0,
+      isUpdateTimer: true,
       // isBreak: false,
     };
     if (
@@ -439,7 +462,13 @@ function longForLoop(param, _roomID) {
         i--;
         io.to(_roomID).emit(
           "timestamp",
-          formatter("run", secondsToHMS(i), false, timer_data[_roomID].isBreak)
+          formatter(
+            "run",
+            secondsToHMS(i),
+            false,
+            timer_data[_roomID].isBreak,
+            timer_data[_roomID].isUpdateTimer
+          )
         );
         // timer_data[roomID].clients.forEach((s) => {
         // s.emit(
@@ -453,7 +482,8 @@ function longForLoop(param, _roomID) {
             "paused",
             secondsToHMS(i),
             false,
-            timer_data[_roomID].isBreak
+            timer_data[_roomID].isBreak,
+            timer_data[_roomID].isUpdateTimer
           )
         );
         // timer_data[_roomID].clients.forEach((s) => {

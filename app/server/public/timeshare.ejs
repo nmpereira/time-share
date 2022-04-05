@@ -41,15 +41,16 @@
     <div class="container">
       <div class="center">
         <h2 id="breakText" class="d-flex justify-content-center"></h2>
-        <h1 id="timestamp" class="d-flex justify-content-center">Loading...
-        </h1>
+        <h1 id="timestamp" class="d-flex justify-content-center"></h1>
         <div class="d-flex justify-content-center">
-          <button id="min_25" class="btn btn-primary btnSpace" onclick="addmin(25,'work')">25 minutes</button>
-          <button id="min_5" class="btn btn-primary btnSpace" onclick="addmin(5,'break')">5 minutes</button>
+          <button id="min_25" class="btn btn-primary btnSpace updateTimer" onclick="addmin(25,'work')">25
+            minutes</button>
+          <button id="min_5" class="btn btn-primary btnSpace updateTimer" onclick="addmin(5,'break')">5 minutes</button>
 
-          <button id="pauseTimer" class="btn btn-primary btnSpace" onclick="pauseTimer()">Pause</button>
-          <button id="playTimer" class="btn btn-danger btnSpace" onclick="playTimer()">Resume</button>
-          <button id="resetTimer" class="btn btn-secondary btnSpace" onclick="resetTimer()">Reset</button>
+          <button id="pauseTimer" class="btn btn-primary btnSpace timerControl" onclick="pauseTimer()">Pause</button>
+          <button id="playTimer" class="btn btn-danger btnSpace timerControl" onclick="playTimer()">Resume</button>
+          <!-- <button id="resetTimer" class="btn btn-secondary btnSpace" onclick="resetTimer()">Reset</button> -->
+          <button id="changeTimer" class="btn btn-secondary btnSpace" onclick="changeTimer()">Change Timer</button>
           <button id="shareTimer" class="btn btn-success btnSpace" onclick="shareTimer()">Share Timer
             (Clipboard)</button>
         </div>
@@ -66,7 +67,8 @@
     </script>
 
     <script>
-      isTimerPage = true
+
+      let isUpdateTimer = true
       document.getElementById('pauseTimer').style.display = "none"
       document.getElementById('playTimer').style.display = "none"
       // Listen for messages from server
@@ -79,36 +81,41 @@
       var audio = new Audio('./assets/Chime.wav');
       socket.on("timestamp", (msg) => {
         clearTimeout(timeout);
-        document.getElementById("timestamp").innerHTML = msg.timestamp;
-        // console.log(secondsToHMS(msg.timestamp))
-        if (msg.timestamp != 0 && msg.timestamp != "..." && secondsToHMS(msg.timestamp) <= 1) {
-          audio.play();
-        }
-        document.title = msg.timestamp
         console.log("TimeStamp:", msg)
+        if (msg.isUpdateTimer == true) {
+          return
+        } else {
 
-        if (msg.expired === true) document.title = '00:00';
+          document.getElementById("timestamp").innerHTML = msg.timestamp;
+          // console.log(secondsToHMS(msg.timestamp))
+          if (msg.timestamp != 0 && msg.timestamp != "..." && secondsToHMS(msg.timestamp) <= 1) {
+            audio.play();
+          }
+          document.title = msg.timestamp
+
+          if (msg.expired === true) document.title = '00:00';
 
 
-        if (msg.action == 'run') {
-          document.getElementById('playTimer').style.display = "none"
-          document.getElementById('pauseTimer').style.display = "inline"
-          // console.log(msg.action)
-        } else if (msg.action == 'paused') {
-          document.getElementById('pauseTimer').style.display = "none"
-          document.getElementById('playTimer').style.display = "inline"
-          // console.log(msg.action)
-        }
-        if (msg.expired === true) {
-          document.getElementById("timestamp").innerHTML = '00:00:00'
-          document.getElementById('pauseTimer').style.display = "none"
-        };
-        if (msg.isBreak === true) {
-          document.body.style.backgroundColor = "#56A0DF";
-          document.getElementById("breakText").innerHTML = "Break time!"
-        } else if (msg.isBreak === false) {
-          document.body.style.backgroundColor = `#4e50bf`;
-          document.getElementById("breakText").innerHTML = "Work time!"
+          if (msg.action == 'run') {
+            document.getElementById('playTimer').style.display = "none"
+            document.getElementById('pauseTimer').style.display = "inline"
+            // console.log(msg.action)
+          } else if (msg.action == 'paused') {
+            document.getElementById('pauseTimer').style.display = "none"
+            document.getElementById('playTimer').style.display = "inline"
+            // console.log(msg.action)
+          }
+          if (msg.expired === true) {
+            document.getElementById("timestamp").innerHTML = '00:00:00'
+            document.getElementById('pauseTimer').style.display = "none"
+          };
+          if (msg.isBreak === true) {
+            document.body.style.backgroundColor = "#56A0DF";
+            document.getElementById("breakText").innerHTML = "Break time!"
+          } else if (msg.isBreak === false) {
+            document.body.style.backgroundColor = `#4e50bf`;
+            document.getElementById("breakText").innerHTML = "Work time!"
+          }
         }
       });
       var secondsToHMS = (secs) => {
@@ -138,8 +145,16 @@
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
         console.log("localUserActivity ", msg);
       })
+      socket.on("changetimer", (msg) => {
+        if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }
+        // console.log("changetimer ", msg);
 
+        toggleTimerVisibility(msg.isUpdateTimer)
+        // changeTimer()
+      })
 
+      // if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }
+      if (isUpdateTimer == undefined) { isUpdateTimer = true }
 
       // parse url to get id and put in var
       const userId = document.location.pathname.split("/").pop()
@@ -152,11 +167,36 @@
         socket.emit("addmin", { min, userId, requestOrigin, status });
         // console.log("this is paused")
       };
+
       const changeTimer = () => {
-
-
-
+        socket.emit("changetimer");
       }
+      const toggleTimerVisibility = (bool) => {
+
+        // console.log("toggleTimerVisibility", bool)
+        let updateTimerElements = document.querySelectorAll('.updateTimer')
+        let timerControl = document.querySelectorAll('.timerControl')
+        if (bool == true) {
+          // update timer view
+
+          updateTimerElements.forEach((x) => x.style.display = 'inline')
+          timerControl.forEach((x) => x.style.display = 'none')
+          document.getElementById("timestamp").style.display = 'none'
+          document.getElementById("breakText").style.display = 'none'
+
+
+        } else {
+          // timer view
+          updateTimerElements.forEach((x) => x.style.display = 'none')
+          timerControl.forEach((x) => x.style.display = 'inline')
+          document.getElementById("timestamp").style.display = 'inline'
+          document.getElementById("breakText").style.display = 'inline'
+        }
+      }
+
+      toggleTimerVisibility(true)
+
+
       const playTimer = () => {
         socket.emit("playtimer", { userId, requestOrigin });
       };
