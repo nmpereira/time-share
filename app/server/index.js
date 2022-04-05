@@ -260,6 +260,18 @@ io.on("connection", (socket) => {
   });
   socket.on("resettimer", function (msg) {});
   socket.on("addmin", function (msg) {
+    clearInterval(timer_data[msg.userId].interval);
+
+    if (msg.status == "work") {
+      timer_data[roomID].isBreak = false;
+    } else if (msg.status == "break") {
+      timer_data[roomID].isBreak = true;
+    } else {
+      timer_data[roomID].isBreak = false;
+    }
+    longForLoop(minToSeconds(msg.min), msg.userId);
+    minToSeconds(msg.min);
+
     console.log(msg);
   });
 
@@ -394,63 +406,65 @@ const runTimer = async (socket, input, req) => {
     roomID,
   });
   // console.log("timestamp socket emit2");
-  function longForLoop(param) {
-    // let delay;
-    var i = param;
-    // console.log("param3", param);
-    if (param > 0) {
-      timer_data[roomID].interval = setInterval(() => {
-        if (timer_data[roomID].connections < 1) {
-          timer_data[roomID].stoppedCounter++;
 
-          // console.log(
-          //   `Timer ${roomID} ha4 ${timer_data[roomID].connections} connections. Ran ${timer_data[roomID].stoppedCounter} times, Trying to stop...`
-          // );
-          if (timer_data[roomID].stoppedCounter > 50) {
-            clearInterval(timer_data[roomID].interval);
-            timer_data[roomID].interval = null;
-            timer_data[roomID].stoppedCounter = 0;
-            console.log(
-              `#################### Cleared # ${roomID} ######################### Timer ${roomID} ha4 ${timer_data[roomID].connections} connections. Ran ${timer_data[roomID].stoppedCounter} times, Trying to stop...`
-            );
-          }
-        }
-
-        if (timer_data[roomID].running === true) {
-          i--;
-          io.to(roomID).emit(
-            "timestamp",
-            formatter("run", secondsToHMS(i), false, timer_data[roomID].isBreak)
-          );
-          // timer_data[roomID].clients.forEach((s) => {
-          // s.emit(
-
-          // );
-          // });
-        } else {
-          io.to(roomID).emit(
-            "timestamp",
-            formatter(
-              "paused",
-              secondsToHMS(i),
-              false,
-              timer_data[roomID].isBreak
-            )
-          );
-          // timer_data[roomID].clients.forEach((s) => {
-          // s.emit(
-          // });
-        }
-
-        if (i <= 0) clearInterval(timer_data[roomID].interval);
-      }, 1000);
-    }
-  }
   // console.log("before long for loop input");
   input.then((result) => {
     longForLoop(result);
   });
 };
+
+function longForLoop(param, _roomID) {
+  // let delay;
+  var i = param;
+  // console.log("param3", param);
+  if (param > 0) {
+    timer_data[_roomID].interval = setInterval(() => {
+      if (timer_data[_roomID].connections < 1) {
+        timer_data[_roomID].stoppedCounter++;
+
+        // console.log(
+        //   `Timer ${roomID} ha4 ${timer_data[roomID].connections} connections. Ran ${timer_data[roomID].stoppedCounter} times, Trying to stop...`
+        // );
+        if (timer_data[_roomID].stoppedCounter > 50) {
+          clearInterval(timer_data[_roomID].interval);
+          timer_data[_roomID].interval = null;
+          timer_data[_roomID].stoppedCounter = 0;
+          console.log(
+            `#################### Cleared # ${_roomID} ######################### Timer ${_roomID} ha4 ${timer_data[_roomID].connections} connections. Ran ${timer_data[_roomID].stoppedCounter} times, Trying to stop...`
+          );
+        }
+      }
+
+      if (timer_data[_roomID].running === true) {
+        i--;
+        io.to(_roomID).emit(
+          "timestamp",
+          formatter("run", secondsToHMS(i), false, timer_data[_roomID].isBreak)
+        );
+        // timer_data[roomID].clients.forEach((s) => {
+        // s.emit(
+
+        // );
+        // });
+      } else {
+        io.to(_roomID).emit(
+          "timestamp",
+          formatter(
+            "paused",
+            secondsToHMS(i),
+            false,
+            timer_data[_roomID].isBreak
+          )
+        );
+        // timer_data[_roomID].clients.forEach((s) => {
+        // s.emit(
+        // });
+      }
+
+      if (i <= 0) clearInterval(timer_data[_roomID].interval);
+    }, 1000);
+  }
+}
 
 const timeFromNow = async (timestamp) => {
   let secs;
@@ -478,4 +492,9 @@ var secondsToHMS = (secs) => {
       .filter((v, i) => v !== "00" || i > 0)
       .join(":");
   } else return 0;
+};
+const minToSeconds = (min) => {
+  if (parseInt(min) != min) return 1;
+  if (min < 0 || min == "") return 2;
+  return min * 60;
 };
