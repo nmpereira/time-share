@@ -83,42 +83,70 @@
         clearTimeout(timeout);
         console.log("TimeStamp:", msg)
         if (msg.isUpdateTimer == true) {
-          return
+          toggleTimerVisibility(msg.isUpdateTimer)
+
         } else {
 
+
           document.getElementById("timestamp").innerHTML = msg.timestamp;
-          // console.log(secondsToHMS(msg.timestamp))
           if (msg.timestamp != 0 && msg.timestamp != "..." && secondsToHMS(msg.timestamp) <= 1) {
             audio.play();
           }
           document.title = msg.timestamp
-
-          if (msg.expired === true) document.title = '00:00';
-
-
-          if (msg.action == 'run') {
-            document.getElementById('playTimer').style.display = "none"
-            document.getElementById('pauseTimer').style.display = "inline"
-            // console.log(msg.action)
-          } else if (msg.action == 'paused') {
-            document.getElementById('pauseTimer').style.display = "none"
-            document.getElementById('playTimer').style.display = "inline"
-            // console.log(msg.action)
-          }
-          if (msg.expired === true) {
-            document.getElementById("timestamp").innerHTML = '00:00:00'
-            document.getElementById('pauseTimer').style.display = "none"
-          };
-          if (msg.isBreak === true) {
-            document.body.style.backgroundColor = "#56A0DF";
-            document.getElementById("breakText").innerHTML = "Break time!"
-          } else if (msg.isBreak === false) {
-            document.body.style.backgroundColor = `#4e50bf`;
-            document.getElementById("breakText").innerHTML = "Work time!"
-          }
+          timerVisibility(true)
+          if (msg.action == 'run') { pausedVisibility(true) }
+          if (msg.action == 'paused') { pausedVisibility(false) }
+          pausedVisibility(msg.action)
+          expiredVisibility(msg.expired)
+          breakVisibility(msg.isBreak)
         }
       });
+
+
+      const timerVisibility = (bool) => {
+        if (bool == true) {
+          return
+          // document.getElementById('timestamp').innerHTML = "none"
+          // document.getElementById('breakText').style.display = "inline"
+          // console.log(action)
+        } else if (bool == false) {
+          document.getElementById('timestamp').innerHTML = ""
+          document.getElementById('breakText').innerHTML = ""
+        }
+      }
+      const pausedVisibility = (action) => {
+
+
+        if (action == true) {
+          document.getElementById('playTimer').style.display = "none"
+          document.getElementById('pauseTimer').style.display = "inline"
+          // console.log(action)
+        } else if (action == false) {
+          document.getElementById('pauseTimer').style.display = "none"
+          document.getElementById('playTimer').style.display = "inline"
+        }
+      }
+      const expiredVisibility = (expired) => {
+        if (expired === true) document.title = '00:00';
+
+        if (expired === true) {
+          document.getElementById("timestamp").innerHTML = '00:00:00'
+          document.getElementById('pauseTimer').style.display = "none"
+        };
+      }
+
+      const breakVisibility = (isBreak) => {
+        if (isBreak === true) {
+          document.body.style.backgroundColor = "#56A0DF";
+          document.getElementById("breakText").innerHTML = "Break time!"
+        } else if (isBreak === false) {
+          document.body.style.backgroundColor = `#4e50bf`;
+          document.getElementById("breakText").innerHTML = "Work time!"
+        }
+
+      }
       var secondsToHMS = (secs) => {
+
         if (secs == 0) return 0
 
         // your input string
@@ -150,10 +178,12 @@
         // console.log("changetimer ", msg);
 
         toggleTimerVisibility(msg.isUpdateTimer)
+
+        pausedVisibility(true)
         // changeTimer()
       })
 
-      // if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }
+
       if (isUpdateTimer == undefined) { isUpdateTimer = true }
 
       // parse url to get id and put in var
@@ -165,6 +195,8 @@
       };
       const addmin = (min, status) => {
         socket.emit("addmin", { min, userId, requestOrigin, status });
+        playTimer()
+        toggleTimerVisibility(true)
         // console.log("this is paused")
       };
 
@@ -178,11 +210,12 @@
         let timerControl = document.querySelectorAll('.timerControl')
         if (bool == true) {
           // update timer view
-
           updateTimerElements.forEach((x) => x.style.display = 'inline')
           timerControl.forEach((x) => x.style.display = 'none')
-          document.getElementById("timestamp").style.display = 'none'
-          document.getElementById("breakText").style.display = 'none'
+          pausedVisibility()
+          document.getElementById("timestamp").innerHTML = '';
+          document.getElementById("breakText").innerHTML = '';
+
 
 
         } else {
