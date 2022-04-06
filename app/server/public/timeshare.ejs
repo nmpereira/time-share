@@ -43,9 +43,36 @@
         <h2 id="breakText" class="d-flex justify-content-center"></h2>
         <h1 id="timestamp" class="d-flex justify-content-center"></h1>
         <div class="d-flex justify-content-center">
-          <button id="min_25" class="btn btn-primary btnSpace updateTimer" onclick="addmin(25,'work')">25
+          <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer " onclick="addmin(5,'work')">5
             minutes</button>
-          <button id="min_5" class="btn btn-primary btnSpace updateTimer" onclick="addmin(5,'break')">5 minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer" onclick="addmin(10,'work')">10
+            minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer" onclick="addmin(15,'work')">15
+            minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace btnPadding  updateTimer" onclick="addmin(20,'work')">20
+            minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace  btnPadding updateTimer" onclick="addmin(25,'work')">25
+            minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace  btnPadding updateTimer" onclick="addmin(30,'work')">30
+            minutes</button>
+        </div>
+        <div class="d-flex justify-content-center">
+
+          <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(2,'break')">2
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(5,'break')">5
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(10,'break')">10
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(15,'break')">15
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(20,'break')">20
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(25,'break')">25
+            minutes</button>
+        </div>
+        <div class="d-flex justify-content-center">
+
 
           <button id="pauseTimer" class="btn btn-primary btnSpace timerControl" onclick="pauseTimer()">Pause</button>
           <button id="playTimer" class="btn btn-danger btnSpace timerControl" onclick="playTimer()">Resume</button>
@@ -67,6 +94,7 @@
     </script>
 
     <script>
+      isTimerPage = true
 
       let isUpdateTimer = true
       document.getElementById('pauseTimer').style.display = "none"
@@ -93,7 +121,7 @@
             audio.play();
           }
           document.title = msg.timestamp
-          timerVisibility(true)
+          toggleTimerVisibility(msg.isUpdateTimer)
           if (msg.action == 'run') { pausedVisibility(true) }
           if (msg.action == 'paused') { pausedVisibility(false) }
           pausedVisibility(msg.action)
@@ -178,8 +206,8 @@
         // console.log("changetimer ", msg);
 
         toggleTimerVisibility(msg.isUpdateTimer)
-
         pausedVisibility(true)
+
         // changeTimer()
       })
 
@@ -197,6 +225,7 @@
         socket.emit("addmin", { min, userId, requestOrigin, status });
         playTimer()
         toggleTimerVisibility(true)
+        changeTimer()
         // console.log("this is paused")
       };
 
@@ -210,18 +239,22 @@
         let timerControl = document.querySelectorAll('.timerControl')
         if (bool == true) {
           // update timer view
-          updateTimerElements.forEach((x) => x.style.display = 'inline')
           timerControl.forEach((x) => x.style.display = 'none')
+          document.getElementById("changeTimer").innerHTML = 'Back'
+          updateTimerElements.forEach((x) => x.style.display = 'inline')
           pausedVisibility()
           document.getElementById("timestamp").innerHTML = '';
           document.getElementById("breakText").innerHTML = '';
+          document.body.style.backgroundColor = "#808080";
 
 
 
         } else {
           // timer view
+          document.getElementById("changeTimer").innerHTML = 'Change timer'
           updateTimerElements.forEach((x) => x.style.display = 'none')
           timerControl.forEach((x) => x.style.display = 'inline')
+          document.getElementById("changeTimer").style.display = 'inline'
           document.getElementById("timestamp").style.display = 'inline'
           document.getElementById("breakText").style.display = 'inline'
         }

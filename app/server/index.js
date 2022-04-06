@@ -371,13 +371,13 @@ const runTimer = async (socket, input, req) => {
   });
 
   const param = await input;
-  // console.log("timestamp socket emit1");
+  console.log("timestamp socket emit1", secondsToHMS(param));
   socket.emit(
     "timestamp",
     formatter(
       "Loading",
       "...",
-      secondsToHMS(param),
+      secondsToHMS(param) <= 0,
       timer_data[roomID].isBreak,
       timer_data[roomID].isUpdateTimer
     )

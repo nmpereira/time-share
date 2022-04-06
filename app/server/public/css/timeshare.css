@@ -27,3 +27,7 @@ body {
   display: flex;
   justify-content: center;
 }
+
+.btnPadding {
+  margin: 10px;
+}
