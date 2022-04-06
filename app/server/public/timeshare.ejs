@@ -122,7 +122,7 @@
 
 
           document.getElementById("timestamp").innerHTML = msg.timestamp;
-          if (msg.timestamp != 0 && msg.timestamp != "..." && secondsToHMS(msg.timestamp) <= 1) {
+          if (msg.timestamp != 0 && msg.timestamp != "..." && hmsToSeconds(msg.timestamp) <= 1) {
             audio.play();
 
           }
@@ -182,8 +182,8 @@
         }
 
       }
-      var secondsToHMS = (secs) => {
-
+      var hmsToSeconds = (secs) => {
+        // console.log(secs)
         if (secs == 0) return 0
 
         // your input string
@@ -195,10 +195,22 @@
         if (a.length == 2) {
           result = ((+a[0]) * 60) + (+a[1])
         }
-
+        // console.log(result)
         return result
 
       }
+      var secondsToHMS = (secs) => {
+        var sec_num = parseInt(secs, 10);
+        var hours = Math.floor(sec_num / 3600);
+        var minutes = Math.floor(sec_num / 60) % 60;
+        var seconds = sec_num % 60;
+        if (secs > 0) {
+          return [hours, minutes, seconds]
+            .map((v) => (v < 10 ? "0" + v : v))
+            .filter((v, i) => v !== "00" || i > 0)
+            .join(":");
+        } else return 0;
+      };
 
       socket.on("userActivity", (msg) => {
         // console.log("User Activity", msg);
@@ -235,7 +247,8 @@
         playTimer()
         toggleTimerVisibility(true)
         changeTimer()
-        // console.log("this is paused")
+
+        document.getElementById("timestamp").innerHTML = secondsToHMS(min * 60)
       };
 
       const changeTimer = () => {
