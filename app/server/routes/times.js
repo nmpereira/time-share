@@ -78,9 +78,9 @@ router.route("/").post(async (req, res, next) => {
   if (req.headers["content-type"] !== "application/x-www-form-urlencoded") {
     return res.status(404).end;
   }
-  if (!Time.user || !Time.end_time) {
+  if (!Time.user) {
     return res.status(400).json({
-      msg: "Please include a user, num_work,time_work, num_break,time_break, sets, end_time",
+      msg: "Please include a unique id",
     });
   }
 

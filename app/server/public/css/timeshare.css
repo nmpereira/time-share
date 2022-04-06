@@ -5,6 +5,14 @@
   margin-left: 10px;
 }
 
+.container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
 .center {
   padding: 40% 0;
 }
@@ -17,6 +25,29 @@
     padding: 30% 0;
   }
 }
+@media screen and (max-width: 950px) {
+  .timebuttons {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-height: 480px) {
+  #timestamp {
+    font-size: 10vh;
+  }
+  #breakText {
+    font-size: 5vh;
+  }
+  .btn {
+    font-size: 3vh;
+    /* margin: 0.125vh; */
+  }
+  /* .updateTimer {
+    margin: 5%;
+  } */
+}
+
 body {
   /* background: #4e50bf; */
   background: #808080;
@@ -26,4 +57,8 @@ body {
 #userCountGlobal {
   display: flex;
   justify-content: center;
+}
+
+.btnPadding {
+  margin: 10px;
 }

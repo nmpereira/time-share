@@ -68,37 +68,37 @@ server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 console.log("Env:", NODE_ENV);
 //Get single Time by id
 app.get("/:id", async (req, res) => {
-  let userID = req.params.id;
+  let roomID = req.params.id;
 
-  let reqHost = req.headers.host;
-  helpers.endTime(reqHost, userID).then((e) => {
-    if (!e) {
-      res.render("../public/error", {
-        err_msg: "Timer not found! Please check the url!",
-      });
-    } else {
-      try {
-        res.render("../public/timeshare", { title: userID });
-      } catch (err) {
-        res.status(500).json({ msg: err.message });
-      }
+  let host = req.headers.host;
+  // helpers.endTime(host, roomID).then((e) => {
+  //   if (!e) {
+  //     res.render("../public/error", {
+  //       err_msg: "Timer not found! Please check the url!",
+  //     });
+  //   } else {
+  try {
+    res.render("../public/timeshare", { title: roomID });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 
-      setTimeout(() => {
-        runATimer.runTheTimer(
-          helpers.endTime(reqHost, userID).then((e) => {
-            return e;
-          }),
-          userID,
-          req
-        );
-      }, 500);
-      // console.log("reqHost", reqHost);
-    }
-  });
+  setTimeout(() => {
+    runATimer.runTheTimer(
+      helpers.endTime(host, roomID).then((e) => {
+        return e;
+      }),
+      roomID,
+      req
+    );
+  }, 500);
+  // console.log("host", host);
+  // }
+  // });
 });
 app.get("/reset/:id", async (req, res) => {
-  const userID = req.params.id;
-  // runningTimerTrak[userID].isBreak;
+  const roomID = req.params.id;
+  // timer_data[roomID].isBreak;
   var id = req.params.id;
   try {
     res.render("../public/resettimer", { userid: id, title: id });
@@ -109,8 +109,8 @@ app.get("/reset/:id", async (req, res) => {
 
 //Update single Time by id
 app.post("/reset/:id", async (req, res) => {
-  const userID = req.params.id;
-  let reqHost = req.headers.host;
+  const roomID = req.params.id;
+  let host = req.headers.host;
   const query = { user: req.params.id };
   const updated_at = Date.now();
   const update = {
@@ -128,16 +128,16 @@ app.post("/reset/:id", async (req, res) => {
   };
 
   // here
-  if (runningTimerTrak[userID].isBreak == undefined) {
-    runningTimerTrak[userID].isBreak = false;
+  if (timer_data[roomID].isBreak == undefined) {
+    timer_data[roomID].isBreak = false;
   }
   if (req.body.isBreak !== undefined && req.body.isBreak == "1") {
     // console.log("break params 1", req.body.isBreak);
-    runningTimerTrak[userID].isBreak = true;
+    timer_data[roomID].isBreak = true;
   } else {
     // console.log("Work Time");
     // console.log("break params 2", req.body.isBreak || "not found");
-    runningTimerTrak[userID].isBreak = false;
+    timer_data[roomID].isBreak = false;
   }
 
   try {
@@ -146,29 +146,29 @@ app.post("/reset/:id", async (req, res) => {
       new: true,
     });
 
-    res.redirect(`/${userID}`);
+    res.redirect(`/${roomID}`);
 
-    clearInterval(runningTimerTrak[userID].interval);
-    runningTimerTrak[userID].interval = null;
-    // console.log("reqHost", reqHost);
+    clearInterval(timer_data[roomID].interval);
+    timer_data[roomID].interval = null;
+    // console.log("host", host);
     setTimeout(() => {
       runATimer.runTheTimer(
-        helpers.endTime(reqHost, userID).then((e) => {
+        helpers.endTime(host, roomID).then((e) => {
           return e;
         }),
-        userID,
+        roomID,
         req
       );
     }, 500);
   } catch (err) {
-    res.status(500).json({ msg1: err.message });
+    res.status(500).json({ msg: err.message });
     console.log(err);
   }
 });
 
 //Websocket
 let clientsConnected_Global = 0;
-const runningTimerTrak = {};
+const timer_data = {};
 io.on("connection", (socket) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
   const host = socket.handshake.headers.host;
@@ -176,28 +176,29 @@ io.on("connection", (socket) => {
 
   socket.join(roomID);
 
-  if (runningTimerTrak[roomID] == undefined) {
-    runningTimerTrak[roomID] = {
+  if (timer_data[roomID] == undefined) {
+    timer_data[roomID] = {
       clients: [],
       connections: 1,
       isBreak: false,
       stoppedCounter: 0,
       running: true,
+      isUpdateTimer: true,
     };
   }
 
   setTimeout(() => {
-    runningTimerTrak[roomID].connections = liveClientCount(roomID);
+    timer_data[roomID].connections = liveClientCount(roomID);
 
     io.to(roomID).emit("localUserActivity", {
-      clientsConnected_Socket: runningTimerTrak[roomID].connections,
+      clientsConnected_Socket: timer_data[roomID].connections,
       Activity: "Socket Client Joined_1",
       roomID,
     });
   }, 200);
-  if (runningTimerTrak[roomID].connections == 0) {
+  if (timer_data[roomID].connections == 0) {
     // Adding First Client
-    runningTimerTrak[roomID].connections += 1;
+    timer_data[roomID].connections += 1;
   }
   clientsConnected_Global += 1;
   io.emit("userActivity", {
@@ -207,7 +208,7 @@ io.on("connection", (socket) => {
 
   roomID != ""
     ? console.log(
-        `New client Connected! Room ID: ${roomID} Clients connected: ${runningTimerTrak[roomID].connections}`
+        `New client Connected! Room ID: ${roomID} Clients connected: ${timer_data[roomID].connections}`
       )
     : console.log("New client Connected!");
 
@@ -221,14 +222,14 @@ io.on("connection", (socket) => {
 
     console.log(
       reason
-        ? `Client has Disconnected from:  ${roomID} due to ${reason}! Clients left: ${runningTimerTrak[roomID].connections}`
+        ? `Client has Disconnected from:  ${roomID} due to ${reason}! Clients left: ${timer_data[roomID].connections}`
         : "Client has Disconnected"
     );
     setTimeout(() => {
-      runningTimerTrak[roomID].connections = liveClientCount(roomID);
+      timer_data[roomID].connections = liveClientCount(roomID);
 
       io.to(roomID).emit("localUserActivity", {
-        clientsConnected_Socket: runningTimerTrak[roomID].connections,
+        clientsConnected_Socket: timer_data[roomID].connections,
         Activity: "Socket Client Left_2",
         roomID,
       });
@@ -241,30 +242,57 @@ io.on("connection", (socket) => {
   });
 
   socket.on("pausetimer", function (msg) {
-    const currentRoom = runningTimerTrak[msg.userId];
+    const currentRoom = timer_data[msg.userId];
     if (currentRoom) {
-      io.to(msg.userId).emit("message", [
+      io.to(msg.userId).emit("timerActivity", [
         msg.userId,
-        `paused: ${(runningTimerTrak[msg.userId].running = false)}`,
+        `paused: ${(timer_data[msg.userId].running = false)}`,
       ]);
     }
   });
   socket.on("playtimer", function (msg) {
-    const currentRoom = runningTimerTrak[msg.userId];
+    const currentRoom = timer_data[msg.userId];
     if (currentRoom) {
-      io.to(msg.userId).emit("message", [
+      io.to(msg.userId).emit("timerActivity", [
         msg.userId,
-        `paused: ${(runningTimerTrak[msg.userId].running = true)}`,
+        `paused: ${(timer_data[msg.userId].running = true)}`,
       ]);
     }
   });
   socket.on("resettimer", function (msg) {});
+  socket.on("changetimer", function (msg) {
+    // timer_data[roomID].isUpdateTimer = true;
+    if (timer_data[roomID].isUpdateTimer == true) {
+      timer_data[roomID].isUpdateTimer = false;
+    } else {
+      timer_data[roomID].isUpdateTimer = true;
+    }
+    // console.log("updated isUpdateTimer to ", timer_data[roomID].isUpdateTimer);
+    io.to(roomID).emit("changetimer", {
+      isUpdateTimer: timer_data[roomID].isUpdateTimer,
+    });
+  });
+  socket.on("addmin", function (msg) {
+    clearInterval(timer_data[msg.userId].interval);
+
+    if (msg.status == "work") {
+      timer_data[roomID].isBreak = false;
+    } else if (msg.status == "break") {
+      timer_data[roomID].isBreak = true;
+    } else {
+      timer_data[roomID].isBreak = false;
+    }
+    longForLoop(minToSeconds(msg.min), msg.userId);
+    minToSeconds(msg.min);
+
+    // console.log(msg);
+  });
 
   function sendAMessage(msg) {
     console.log("send a message:" + msg);
     socket.emit("message", `send a message ${msg}`);
   }
-  function runTheTimer(msg, userID, req) {
+  function runTheTimer(msg, roomID, req) {
     msg = msg.then((msg) => {
       return timeFromNow(msg);
     });
@@ -309,7 +337,7 @@ const runTimer = async (socket, input, req) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
 
   socket.on("disconnect", function () {
-    const currentRoom = runningTimerTrak[roomID];
+    const currentRoom = timer_data[roomID];
 
     if (!currentRoom) return;
     // NOTE: find index of room and return if not found
@@ -322,19 +350,19 @@ const runTimer = async (socket, input, req) => {
     // currentRoom.clients.splice(socket_index, 1);
 
     setTimeout(() => {
-      runningTimerTrak[roomID].connections = liveClientCount(roomID);
+      timer_data[roomID].connections = liveClientCount(roomID);
       io.to(roomID).emit("localUserActivity", {
-        clientsConnected_Socket: runningTimerTrak[roomID].connections,
+        clientsConnected_Socket: timer_data[roomID].connections,
         Activity: "Socket Client Left_1",
         roomID,
       });
     }, 200);
 
     setTimeout(() => {
-      if (!runningTimerTrak[roomID].connections > 0) {
-        clearInterval(runningTimerTrak[roomID].interval);
-        runningTimerTrak[roomID].interval = null;
-        runningTimerTrak[roomID].stoppedCounter = 0;
+      if (!timer_data[roomID].connections > 0) {
+        clearInterval(timer_data[roomID].interval);
+        timer_data[roomID].interval = null;
+        timer_data[roomID].stoppedCounter = 0;
         console.log(
           `#################### Clearing# ${roomID} #########################`
         );
@@ -343,18 +371,24 @@ const runTimer = async (socket, input, req) => {
   });
 
   const param = await input;
-  // console.log("timestamp socket emit1");
-  socket.emit("timestamp", formatter("Loading", "...", param <= 0));
+  // console.log("timestamp socket emit1", param);
+  // socket.emit(
+  //   "timestamp",
+  //   formatter(
+  //     "Loading",
+  //     "...",
+  //     param <= 0,
+  //     timer_data[roomID].isBreak,
+  //     timer_data[roomID].isUpdateTimer
+  //   )
+  // );
   // NOTE: if exists or if interval is running
-  if (
-    runningTimerTrak[roomID] !== undefined &&
-    runningTimerTrak[roomID].interval != null
-  ) {
-    // runningTimerTrak[roomID].clients.push(socket);
-    runningTimerTrak[roomID].stoppedCounter = 0;
-    // runningTimerTrak[roomID].connections += 1;
+  if (timer_data[roomID] !== undefined && timer_data[roomID].interval != null) {
+    // timer_data[roomID].clients.push(socket);
+    timer_data[roomID].stoppedCounter = 0;
+    // timer_data[roomID].connections += 1;
     io.to(roomID).emit("localUserActivity", {
-      clientsConnected_Socket: runningTimerTrak[roomID].connections,
+      clientsConnected_Socket: timer_data[roomID].connections,
       Activity: "Socket Client Joined_2",
       roomID,
     });
@@ -363,99 +397,108 @@ const runTimer = async (socket, input, req) => {
   }
 
   if (
-    runningTimerTrak[roomID] == undefined
+    timer_data[roomID] == undefined
     // ||io.of(roomID).connected.size == 0
-    // runningTimerTrak[roomID].clients.length == 0
+    // timer_data[roomID].clients.length == 0
   ) {
-    runningTimerTrak[roomID] = {
+    timer_data[roomID] = {
       running: true,
       clients: [],
       connections: 1,
       interval: null,
       stoppedCounter: 0,
+      isUpdateTimer: true,
       // isBreak: false,
     };
     if (
-      runningTimerTrak[roomID].isBreak == undefined &&
+      timer_data[roomID].isBreak == undefined &&
       req.body.isBreak !== undefined &&
       req.body.isBreak == "1"
     ) {
       // console.log("break params 3", req.body.isBreak || "not found");
-      runningTimerTrak[roomID].isBreak = true;
+      timer_data[roomID].isBreak = true;
     } else {
       // console.log("break params 4", req.body.isBreak || "not found");
-      runningTimerTrak[roomID].isBreak = false;
+      timer_data[roomID].isBreak = false;
     }
   }
 
   io.to(roomID).emit("localUserActivity", {
-    clientsConnected_Socket: runningTimerTrak[roomID].connections,
+    clientsConnected_Socket: timer_data[roomID].connections,
     Activity: "User Joined new room",
     roomID,
   });
   // console.log("timestamp socket emit2");
-  function longForLoop(param) {
-    // let delay;
-    var i = param;
-    // console.log("param3", param);
-    if (param > 0) {
-      runningTimerTrak[roomID].interval = setInterval(() => {
-        if (runningTimerTrak[roomID].connections < 1) {
-          runningTimerTrak[roomID].stoppedCounter++;
 
-          // console.log(
-          //   `Timer ${roomID} ha4 ${runningTimerTrak[roomID].connections} connections. Ran ${runningTimerTrak[roomID].stoppedCounter} times, Trying to stop...`
-          // );
-          if (runningTimerTrak[roomID].stoppedCounter > 50) {
-            clearInterval(runningTimerTrak[roomID].interval);
-            runningTimerTrak[roomID].interval = null;
-            runningTimerTrak[roomID].stoppedCounter = 0;
-            console.log(
-              `#################### Cleared # ${roomID} ######################### Timer ${roomID} ha4 ${runningTimerTrak[roomID].connections} connections. Ran ${runningTimerTrak[roomID].stoppedCounter} times, Trying to stop...`
-            );
-          }
-        }
-
-        if (runningTimerTrak[roomID].running === true) {
-          i--;
-          io.to(roomID).emit(
-            "timestamp",
-            formatter(
-              "run",
-              secondsToHMS(i),
-              false,
-              runningTimerTrak[roomID].isBreak
-            )
-          );
-          // runningTimerTrak[roomID].clients.forEach((s) => {
-          // s.emit(
-
-          // );
-          // });
-        } else {
-          io.to(roomID).emit(
-            "timestamp",
-            formatter(
-              "paused",
-              secondsToHMS(i),
-              false,
-              runningTimerTrak[roomID].isBreak
-            )
-          );
-          // runningTimerTrak[roomID].clients.forEach((s) => {
-          // s.emit(
-          // });
-        }
-
-        if (i <= 0) clearInterval(runningTimerTrak[roomID].interval);
-      }, 1000);
-    }
-  }
   // console.log("before long for loop input");
   input.then((result) => {
     longForLoop(result);
   });
 };
+
+function longForLoop(param, _roomID) {
+  // let delay;
+  var i = param;
+  // console.log("param3", param);
+  if (param > 0) {
+    timer_data[_roomID].interval = setInterval(() => {
+      if (timer_data[_roomID].connections < 1) {
+        timer_data[_roomID].stoppedCounter++;
+
+        // console.log(
+        //   `Timer ${roomID} ha4 ${timer_data[roomID].connections} connections. Ran ${timer_data[roomID].stoppedCounter} times, Trying to stop...`
+        // );
+        if (timer_data[_roomID].stoppedCounter > 50) {
+          clearInterval(timer_data[_roomID].interval);
+          timer_data[_roomID].interval = null;
+          timer_data[_roomID].stoppedCounter = 0;
+          console.log(
+            `#################### Cleared # ${_roomID} ######################### Timer ${_roomID} ha4 ${timer_data[_roomID].connections} connections. Ran ${timer_data[_roomID].stoppedCounter} times, Trying to stop...`
+          );
+        }
+      }
+
+      if (timer_data[_roomID].running === true) {
+        i--;
+        if (secondsToHMS(i) <= 0) {
+          timer_data[_roomID].isUpdateTimer = true;
+        }
+        io.to(_roomID).emit(
+          "timestamp",
+          formatter(
+            "run",
+            secondsToHMS(i),
+            i <= 0,
+            timer_data[_roomID].isBreak,
+            timer_data[_roomID].isUpdateTimer
+          )
+        );
+        // console.log(secondsToHMS(i), i);
+        // timer_data[roomID].clients.forEach((s) => {
+        // s.emit(
+
+        // );
+        // });
+      } else {
+        io.to(_roomID).emit(
+          "timestamp",
+          formatter(
+            "paused",
+            secondsToHMS(i),
+            false,
+            timer_data[_roomID].isBreak,
+            timer_data[_roomID].isUpdateTimer
+          )
+        );
+        // timer_data[_roomID].clients.forEach((s) => {
+        // s.emit(
+        // });
+      }
+
+      if (i <= 0) clearInterval(timer_data[_roomID].interval);
+    }, 1000);
+  }
+}
 
 const timeFromNow = async (timestamp) => {
   let secs;
@@ -483,4 +526,9 @@ var secondsToHMS = (secs) => {
       .filter((v, i) => v !== "00" || i > 0)
       .join(":");
   } else return 0;
+};
+const minToSeconds = (min) => {
+  if (parseInt(min) != min) return 1;
+  if (min < 0 || min == "") return 2;
+  return min * 60;
 };

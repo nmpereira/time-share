@@ -41,13 +41,45 @@
     <div class="container">
       <div class="center">
         <h2 id="breakText" class="d-flex justify-content-center"></h2>
-        <h1 id="timestamp" class="d-flex justify-content-center">Loading...
-        </h1>
+        <h1 id="timestamp" class="d-flex justify-content-center"></h1>
+
+        <div class="d-flex justify-content-center timebuttons">
+          <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer " onclick="addmin(5,'work')">5
+            minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer" onclick="addmin(10,'work')">10
+            minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer" onclick="addmin(15,'work')">15
+            minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace btnPadding  updateTimer" onclick="addmin(20,'work')">20
+            minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace  btnPadding updateTimer" onclick="addmin(25,'work')">25
+            minutes</button>
+          <button id="min_25" class="btn btn-success btnSpace  btnPadding updateTimer" onclick="addmin(30,'work')">30
+            minutes</button>
+        </div>
+
+        <div class="d-flex justify-content-center timebuttons">
+          <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(1,'break')">1
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(2,'break')">2
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(5,'break')">5
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(10,'break')">10
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(15,'break')">15
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(20,'break')">20
+            minutes</button>
+          <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(25,'break')">25
+            minutes</button>
+        </div>
         <div class="d-flex justify-content-center">
 
-          <button id="pauseTimer" class="btn btn-primary btnSpace" onclick="pauseTimer()">Pause</button>
-          <button id="playTimer" class="btn btn-danger btnSpace" onclick="playTimer()">Resume</button>
-          <button id="resetTimer" class="btn btn-secondary btnSpace" onclick="resetTimer()">Reset</button>
+          <button id="pauseTimer" class="btn btn-primary btnSpace timerControl" onclick="pauseTimer()">Pause</button>
+          <button id="playTimer" class="btn btn-danger btnSpace timerControl" onclick="playTimer()">Resume</button>
+          <!-- <button id="resetTimer" class="btn btn-secondary btnSpace" onclick="resetTimer()">Reset</button> -->
+          <button id="changeTimer" class="btn btn-secondary btnSpace" onclick="changeTimer()">Change Timer</button>
           <button id="shareTimer" class="btn btn-success btnSpace" onclick="shareTimer()">Share Timer
             (Clipboard)</button>
         </div>
@@ -65,6 +97,8 @@
 
     <script>
       isTimerPage = true
+
+      let isUpdateTimer = true
       document.getElementById('pauseTimer').style.display = "none"
       document.getElementById('playTimer').style.display = "none"
       // Listen for messages from server
@@ -73,42 +107,83 @@
       socket.on("message", (msg) => {
         console.log("Message from server ", msg);
       });
+      socket.on("timerActivity", (msg) => {
+        // console.log("timerActivity", msg);
+      });
       // Listen for timestamps from server
       var audio = new Audio('./assets/Chime.wav');
       socket.on("timestamp", (msg) => {
         clearTimeout(timeout);
-        document.getElementById("timestamp").innerHTML = msg.timestamp;
-        // console.log(secondsToHMS(msg.timestamp))
-        if (msg.timestamp != 0 && msg.timestamp != "..." && secondsToHMS(msg.timestamp) <= 1) {
-          audio.play();
+        // console.log("TimeStamp:", msg)
+        if (msg.isUpdateTimer == true) {
+          toggleTimerVisibility(msg.isUpdateTimer)
+
+        } else {
+
+
+          document.getElementById("timestamp").innerHTML = msg.timestamp;
+          if (msg.timestamp != 0 && msg.timestamp != "..." && hmsToSeconds(msg.timestamp) <= 1) {
+            audio.play();
+
+          }
+          document.title = msg.timestamp
+          toggleTimerVisibility(msg.isUpdateTimer)
+          if (msg.action == 'run') { pausedVisibility(true) }
+          if (msg.action == 'paused') { pausedVisibility(false) }
+          pausedVisibility(msg.action)
+          expiredVisibility(msg.expired)
+          breakVisibility(msg.isBreak)
         }
-        document.title = msg.timestamp
-        console.log("TimeStamp:", msg)
+      });
 
-        if (msg.expired === true) document.title = '00:00';
 
-        if (msg.action == 'run') {
+      const timerVisibility = (bool) => {
+        if (bool == true) {
+          return
+          // document.getElementById('timestamp').innerHTML = "none"
+          // document.getElementById('breakText').style.display = "inline"
+          // console.log(action)
+        } else if (bool == false) {
+          document.getElementById('timestamp').innerHTML = ""
+          document.getElementById('breakText').innerHTML = ""
+        }
+      }
+      const pausedVisibility = (action) => {
+
+
+        if (action == true) {
           document.getElementById('playTimer').style.display = "none"
           document.getElementById('pauseTimer').style.display = "inline"
-          // console.log(msg.action)
-        } else if (msg.action == 'paused') {
+          // console.log(action)
+        } else if (action == false) {
           document.getElementById('pauseTimer').style.display = "none"
           document.getElementById('playTimer').style.display = "inline"
-          // console.log(msg.action)
         }
-        if (msg.expired === true) {
+      }
+      const expiredVisibility = (expired) => {
+
+
+        if (expired === true) {
+          document.title = '00:00';
           document.getElementById("timestamp").innerHTML = '00:00:00'
           document.getElementById('pauseTimer').style.display = "none"
-        };
-        if (msg.isBreak === true) {
+          document.getElementById('playTimer').style.display = "none"
+        }
+      };
+
+
+      const breakVisibility = (isBreak) => {
+        if (isBreak === true) {
           document.body.style.backgroundColor = "#56A0DF";
           document.getElementById("breakText").innerHTML = "Break time!"
-        } else if (msg.isBreak === false) {
+        } else if (isBreak === false) {
           document.body.style.backgroundColor = `#4e50bf`;
           document.getElementById("breakText").innerHTML = "Work time!"
         }
-      });
-      var secondsToHMS = (secs) => {
+
+      }
+      var hmsToSeconds = (secs) => {
+        // console.log(secs)
         if (secs == 0) return 0
 
         // your input string
@@ -120,23 +195,45 @@
         if (a.length == 2) {
           result = ((+a[0]) * 60) + (+a[1])
         }
-
+        // console.log(result)
         return result
 
       }
+      var secondsToHMS = (secs) => {
+        var sec_num = parseInt(secs, 10);
+        var hours = Math.floor(sec_num / 3600);
+        var minutes = Math.floor(sec_num / 60) % 60;
+        var seconds = sec_num % 60;
+        if (secs > 0) {
+          return [hours, minutes, seconds]
+            .map((v) => (v < 10 ? "0" + v : v))
+            .filter((v, i) => v !== "00" || i > 0)
+            .join(":");
+        } else return 0;
+      };
 
       socket.on("userActivity", (msg) => {
-        console.log("User Activity", msg);
+        // console.log("User Activity", msg);
 
         // document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
       });
       socket.on("localUserActivity", (msg) => {
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
-        console.log("localUserActivity ", msg);
+        // console.log("localUserActivity ", msg);
+      })
+      socket.on("changetimer", (msg) => {
+        if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }
+        // console.log("changetimer ", msg);
+
+        toggleTimerVisibility(msg.isUpdateTimer)
+        pausedVisibility(true)
+
+        // changeTimer()
       })
 
 
+      if (isUpdateTimer == undefined) { isUpdateTimer = true }
 
       // parse url to get id and put in var
       const userId = document.location.pathname.split("/").pop()
@@ -145,13 +242,56 @@
         socket.emit("pausetimer", { userId, requestOrigin });
         // console.log("this is paused")
       };
+      const addmin = (min, status) => {
+        socket.emit("addmin", { min, userId, requestOrigin, status });
+        playTimer()
+        toggleTimerVisibility(true)
+        changeTimer()
+
+        document.getElementById("timestamp").innerHTML = secondsToHMS(min * 60)
+      };
+
+      const changeTimer = () => {
+        socket.emit("changetimer");
+      }
+      const toggleTimerVisibility = (bool) => {
+
+        // console.log("toggleTimerVisibility", bool)
+        let updateTimerElements = document.querySelectorAll('.updateTimer')
+        let timerControl = document.querySelectorAll('.timerControl')
+        if (bool == true) {
+          // update timer view
+          timerControl.forEach((x) => x.style.display = 'none')
+          document.getElementById("changeTimer").innerHTML = 'Back'
+          updateTimerElements.forEach((x) => x.style.display = 'inline')
+          pausedVisibility()
+          document.getElementById("timestamp").innerHTML = '';
+          document.getElementById("breakText").innerHTML = '';
+          document.body.style.backgroundColor = "#808080";
+
+
+
+        } else {
+          // timer view
+          document.getElementById("changeTimer").innerHTML = 'Change timer'
+          updateTimerElements.forEach((x) => x.style.display = 'none')
+          timerControl.forEach((x) => x.style.display = 'inline')
+          document.getElementById("changeTimer").style.display = 'inline'
+          document.getElementById("timestamp").style.display = 'inline'
+          document.getElementById("breakText").style.display = 'inline'
+        }
+      }
+
+      toggleTimerVisibility(true)
+
+
       const playTimer = () => {
         socket.emit("playtimer", { userId, requestOrigin });
       };
       const resetTimer = () => {
         const id = window.location.pathname
         const host = window.location.origin
-        console.log(host, id)
+        // console.log(host, id)
         socket.emit("resettimer", { userId, requestOrigin });
         window.location.href = `${host}/reset${id}`;
       };
