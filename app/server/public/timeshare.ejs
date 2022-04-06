@@ -42,6 +42,7 @@
       <div class="center">
         <h2 id="breakText" class="d-flex justify-content-center"></h2>
         <h1 id="timestamp" class="d-flex justify-content-center"></h1>
+
         <div class="d-flex justify-content-center">
           <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer " onclick="addmin(5,'work')">5
             minutes</button>
@@ -56,8 +57,10 @@
           <button id="min_25" class="btn btn-success btnSpace  btnPadding updateTimer" onclick="addmin(30,'work')">30
             minutes</button>
         </div>
-        <div class="d-flex justify-content-center">
 
+        <div class="d-flex justify-content-center">
+          <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(1,'break')">1
+            minutes</button>
           <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(2,'break')">2
             minutes</button>
           <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(5,'break')">5
@@ -72,7 +75,6 @@
             minutes</button>
         </div>
         <div class="d-flex justify-content-center">
-
 
           <button id="pauseTimer" class="btn btn-primary btnSpace timerControl" onclick="pauseTimer()">Pause</button>
           <button id="playTimer" class="btn btn-danger btnSpace timerControl" onclick="playTimer()">Resume</button>
@@ -105,11 +107,14 @@
       socket.on("message", (msg) => {
         console.log("Message from server ", msg);
       });
+      socket.on("timerActivity", (msg) => {
+        // console.log("timerActivity", msg);
+      });
       // Listen for timestamps from server
       var audio = new Audio('./assets/Chime.wav');
       socket.on("timestamp", (msg) => {
         clearTimeout(timeout);
-        console.log("TimeStamp:", msg)
+        // console.log("TimeStamp:", msg)
         if (msg.isUpdateTimer == true) {
           toggleTimerVisibility(msg.isUpdateTimer)
 
@@ -119,6 +124,7 @@
           document.getElementById("timestamp").innerHTML = msg.timestamp;
           if (msg.timestamp != 0 && msg.timestamp != "..." && secondsToHMS(msg.timestamp) <= 1) {
             audio.play();
+
           }
           document.title = msg.timestamp
           toggleTimerVisibility(msg.isUpdateTimer)
@@ -155,13 +161,16 @@
         }
       }
       const expiredVisibility = (expired) => {
-        if (expired === true) document.title = '00:00';
+
 
         if (expired === true) {
+          document.title = '00:00';
           document.getElementById("timestamp").innerHTML = '00:00:00'
           document.getElementById('pauseTimer').style.display = "none"
-        };
-      }
+          document.getElementById('playTimer').style.display = "none"
+        }
+      };
+
 
       const breakVisibility = (isBreak) => {
         if (isBreak === true) {
@@ -192,14 +201,14 @@
       }
 
       socket.on("userActivity", (msg) => {
-        console.log("User Activity", msg);
+        // console.log("User Activity", msg);
 
         // document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
       });
       socket.on("localUserActivity", (msg) => {
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
-        console.log("localUserActivity ", msg);
+        // console.log("localUserActivity ", msg);
       })
       socket.on("changetimer", (msg) => {
         if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }
@@ -269,7 +278,7 @@
       const resetTimer = () => {
         const id = window.location.pathname
         const host = window.location.origin
-        console.log(host, id)
+        // console.log(host, id)
         socket.emit("resettimer", { userId, requestOrigin });
         window.location.href = `${host}/reset${id}`;
       };

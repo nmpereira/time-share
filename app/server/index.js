@@ -161,7 +161,7 @@ app.post("/reset/:id", async (req, res) => {
       );
     }, 500);
   } catch (err) {
-    res.status(500).json({ msg1: err.message });
+    res.status(500).json({ msg: err.message });
     console.log(err);
   }
 });
@@ -244,7 +244,7 @@ io.on("connection", (socket) => {
   socket.on("pausetimer", function (msg) {
     const currentRoom = timer_data[msg.userId];
     if (currentRoom) {
-      io.to(msg.userId).emit("message", [
+      io.to(msg.userId).emit("timerActivity", [
         msg.userId,
         `paused: ${(timer_data[msg.userId].running = false)}`,
       ]);
@@ -253,7 +253,7 @@ io.on("connection", (socket) => {
   socket.on("playtimer", function (msg) {
     const currentRoom = timer_data[msg.userId];
     if (currentRoom) {
-      io.to(msg.userId).emit("message", [
+      io.to(msg.userId).emit("timerActivity", [
         msg.userId,
         `paused: ${(timer_data[msg.userId].running = true)}`,
       ]);
@@ -285,7 +285,7 @@ io.on("connection", (socket) => {
     longForLoop(minToSeconds(msg.min), msg.userId);
     minToSeconds(msg.min);
 
-    console.log(msg);
+    // console.log(msg);
   });
 
   function sendAMessage(msg) {
@@ -371,17 +371,17 @@ const runTimer = async (socket, input, req) => {
   });
 
   const param = await input;
-  console.log("timestamp socket emit1", secondsToHMS(param));
-  socket.emit(
-    "timestamp",
-    formatter(
-      "Loading",
-      "...",
-      secondsToHMS(param) <= 0,
-      timer_data[roomID].isBreak,
-      timer_data[roomID].isUpdateTimer
-    )
-  );
+  // console.log("timestamp socket emit1", param);
+  // socket.emit(
+  //   "timestamp",
+  //   formatter(
+  //     "Loading",
+  //     "...",
+  //     param <= 0,
+  //     timer_data[roomID].isBreak,
+  //     timer_data[roomID].isUpdateTimer
+  //   )
+  // );
   // NOTE: if exists or if interval is running
   if (timer_data[roomID] !== undefined && timer_data[roomID].interval != null) {
     // timer_data[roomID].clients.push(socket);
@@ -460,16 +460,20 @@ function longForLoop(param, _roomID) {
 
       if (timer_data[_roomID].running === true) {
         i--;
+        if (secondsToHMS(i) <= 0) {
+          timer_data[_roomID].isUpdateTimer = true;
+        }
         io.to(_roomID).emit(
           "timestamp",
           formatter(
             "run",
             secondsToHMS(i),
-            false,
+            i <= 0,
             timer_data[_roomID].isBreak,
             timer_data[_roomID].isUpdateTimer
           )
         );
+        // console.log(secondsToHMS(i), i);
         // timer_data[roomID].clients.forEach((s) => {
         // s.emit(
 
