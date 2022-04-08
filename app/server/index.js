@@ -80,8 +80,8 @@ app.get("/:id", async (req, res) => {
   try {
     res.render("../public/timeshare", {
       title: roomID,
-      workCounter: workCounter,
-      breakCounter: breakCounter,
+      workCounter: 2,
+      breakCounter: 5,
     });
   } catch (err) {
     res.status(500).json({ msg: err.message });
