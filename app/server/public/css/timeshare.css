@@ -47,6 +47,9 @@
     margin: 5%;
   } */
 }
+body {
+  background: #4e50bf;
+}
 
 .backgroundPage {
   /* border: 1px solid blue; */

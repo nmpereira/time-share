@@ -42,10 +42,20 @@
       <div class="progressPage">
         <div class="container">
           <div class="center">
+            <h2 id="pomos" class="d-flex justify-content-center"></h2>
+            <h2 id="pomo_breaks" class="d-flex justify-content-center"></h2>
             <h2 id="breakText" class="d-flex justify-content-center"></h2>
             <h1 id="timestamp" class="d-flex justify-content-center"></h1>
 
             <div class="d-flex justify-content-center timebuttons">
+              <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer "
+                onclick="addmin(0.1,'work')">0.1
+                minute</button>
+              <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer "
+                onclick="addmin(0.25,'work')">0.25
+                minute</button>
+              <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer " onclick="addmin(1,'work')">1
+                minute</button>
               <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer " onclick="addmin(5,'work')">5
                 minutes</button>
               <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer" onclick="addmin(10,'work')">10
@@ -64,8 +74,13 @@
             </div>
 
             <div class="d-flex justify-content-center timebuttons">
-              <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(1,'break')">1
+              <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(0.1,'break')">0.1
                 minutes</button>
+              <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer"
+                onclick="addmin(0.25,'break')">0.25
+                minutes</button>
+              <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(1,'break')">1
+                minute</button>
               <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(2,'break')">2
                 minutes</button>
               <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(5,'break')">5
@@ -120,9 +135,19 @@
       });
       // Listen for timestamps from server
       var audio = new Audio('./assets/Chime.wav');
+
+
+      const addEmojis = (msg) => {
+        document.querySelector('#pomos').innerHTML = '🍅'.repeat(msg.workCounter);
+        document.querySelector('#pomo_breaks').innerHTML = '🍪'.repeat(msg.breakCounter);
+      }
+
+
+
       socket.on("timestamp", (msg) => {
         // clearTimeout(timeout);
-        // console.log("TimeStamp:", msg)
+        console.log("TimeStamp:", msg)
+        addEmojis(msg)
         if (msg.isUpdateTimer == true) {
           toggleTimerVisibility(msg.isUpdateTimer)
 
@@ -230,9 +255,10 @@
         // document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
       });
       socket.on("localUserActivity", (msg) => {
+        addEmojis(msg)
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
-        // console.log("localUserActivity ", msg);
+        console.log("localUserActivity ", msg);
       })
       socket.on("changetimer", (msg) => {
         if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }

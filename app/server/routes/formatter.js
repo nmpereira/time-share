@@ -8,7 +8,9 @@ const formatter = (
   isBreak,
   isUpdateTimer,
   originalTime,
-  completedPercentage
+  completedPercentage,
+  breakCounter,
+  workCounter
 ) => {
   return {
     action,
@@ -18,6 +20,8 @@ const formatter = (
     isUpdateTimer,
     originalTime,
     completedPercentage,
+    breakCounter,
+    workCounter,
     time: moment().tz("America/New_York").format(),
   };
 };
