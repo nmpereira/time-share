@@ -78,7 +78,11 @@ app.get("/:id", async (req, res) => {
   //     });
   //   } else {
   try {
-    res.render("../public/timeshare", { title: roomID });
+    res.render("../public/timeshare", {
+      title: roomID,
+      workCounter: workCounter,
+      breakCounter: breakCounter,
+    });
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
