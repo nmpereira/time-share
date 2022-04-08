@@ -184,6 +184,8 @@ io.on("connection", (socket) => {
       stoppedCounter: 0,
       running: true,
       isUpdateTimer: true,
+      originalTime: 0,
+      completedPercentage: 0,
     };
   }
 
@@ -395,7 +397,14 @@ const runTimer = async (socket, input, req) => {
 
     return;
   }
-
+  if (
+    timer_data[roomID] !== undefined &&
+    timer_data[roomID].originalTime == undefined &&
+    timer_data[roomID].completedPercentage == undefined
+  ) {
+    timer_data[roomID].originalTime = 0;
+    timer_data[roomID].completedPercentage = 0;
+  }
   if (
     timer_data[roomID] == undefined
     // ||io.of(roomID).connected.size == 0
@@ -408,6 +417,8 @@ const runTimer = async (socket, input, req) => {
       interval: null,
       stoppedCounter: 0,
       isUpdateTimer: true,
+      originalTime: 0,
+      completedPercentage: 0,
       // isBreak: false,
     };
     if (
@@ -432,16 +443,23 @@ const runTimer = async (socket, input, req) => {
 
   // console.log("before long for loop input");
   input.then((result) => {
-    longForLoop(result);
+    longForLoop(result, roomID);
   });
 };
 
 function longForLoop(param, _roomID) {
   // let delay;
   var i = param;
-  // console.log("param3", param);
+  // console.log("this shit", timer_data[_roomID].originalTime);
+  timer_data[_roomID].originalTime = param;
+
+  // console.log("this shit2", timer_data[_roomID].originalTime);
   if (param > 0) {
     timer_data[_roomID].interval = setInterval(() => {
+      timer_data[_roomID].completedPercentage = computeCompleted(
+        i,
+        timer_data[_roomID].originalTime
+      );
       if (timer_data[_roomID].connections < 1) {
         timer_data[_roomID].stoppedCounter++;
 
@@ -470,7 +488,9 @@ function longForLoop(param, _roomID) {
             secondsToHMS(i),
             i <= 0,
             timer_data[_roomID].isBreak,
-            timer_data[_roomID].isUpdateTimer
+            timer_data[_roomID].isUpdateTimer,
+            timer_data[_roomID].originalTime,
+            timer_data[_roomID].completedPercentage
           )
         );
         // console.log(secondsToHMS(i), i);
@@ -487,7 +507,9 @@ function longForLoop(param, _roomID) {
             secondsToHMS(i),
             false,
             timer_data[_roomID].isBreak,
-            timer_data[_roomID].isUpdateTimer
+            timer_data[_roomID].isUpdateTimer,
+            timer_data[_roomID].originalTime,
+            timer_data[_roomID].completedPercentage
           )
         );
         // timer_data[_roomID].clients.forEach((s) => {
@@ -531,4 +553,13 @@ const minToSeconds = (min) => {
   if (parseInt(min) != min) return 1;
   if (min < 0 || min == "") return 2;
   return min * 60;
+};
+
+const computeCompleted = (numerator, denominator) => {
+  let result = numerator / denominator;
+  // console.log("####################", numerator);
+  // console.log(result);
+  if (result < 0.02) result = 0;
+  // console.log("##############", result);
+  return (100 - result * 100).toFixed(4);
 };
