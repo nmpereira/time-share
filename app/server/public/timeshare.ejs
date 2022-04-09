@@ -25,14 +25,14 @@
     <title> Join /<%= title %>'s shared timer</title>
     <meta name="description" content="Create a sharable timer for your team or friends!
     <%=`You missed out on:
-      ${'🍅' .repeat(workCounter)}` %>
+      ${'🍅' .repeat(Number(workCounter))}` %>
 
 
     <meta name=" image"
       content="https://raw.githubusercontent.com/nmpereira/time-share/main/app/server/public/images/wall-clock.png">
     <meta property="og:title" content="Join /<%= title %>'s shared timer" />
     <meta property="og:description" content="Create a sharable timer for your team or friends!" <%=`You missed out on:
-      ${'🍅' .repeat(workCounter)}` %>/>
+      ${'🍅' .repeat(Number(workCounter))}` %>/>
     <meta property="og:image"
       content="https://raw.githubusercontent.com/nmpereira/time-share/main/app/server/public/images/wall-clock.png" />
 
