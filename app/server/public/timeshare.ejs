@@ -148,7 +148,7 @@
 
       socket.on("timestamp", (msg) => {
         // clearTimeout(timeout);
-        console.log("TimeStamp:", msg)
+        // console.log("TimeStamp:", msg)
         addEmojis(msg)
         if (msg.isUpdateTimer == true) {
           toggleTimerVisibility(msg.isUpdateTimer)
@@ -260,7 +260,7 @@
         addEmojis(msg)
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
-        console.log("localUserActivity ", msg);
+        // console.log("localUserActivity ", msg);
       })
       socket.on("changetimer", (msg) => {
         if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }

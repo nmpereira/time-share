@@ -71,14 +71,36 @@ app.get("/:id", async (req, res) => {
   let roomID = req.params.id;
 
   let host = req.headers.host;
+  // console.log("timer_data[roomID].workCounter", timer_data[roomID]);
   // helpers.endTime(host, roomID).then((e) => {
   //   if (!e) {
   //     res.render("../public/error", {
   //       err_msg: "Timer not found! Please check the url!",
   //     });
   //   } else {
+  if (
+    timer_data[roomID] == undefined ||
+    timer_data[roomID].workCounter == undefined
+  ) {
+    timer_data[roomID] = {
+      workCounter,
+    };
+  }
+  console.log("timer_data[roomID].workCounter", timer_data[roomID]);
   try {
-    res.render("../public/timeshare", { title: roomID, workCounter: 2 });
+    if (
+      timer_data[roomID].workCounter != undefined ||
+      timer_data[roomID].workCounter == 0
+    ) {
+      res.render("../public/timeshare", {
+        title: roomID,
+        workCounter: timer_data[roomID].workCounter,
+      });
+    } else {
+      res.render("../public/timeshare", {
+        title: roomID,
+      });
+    }
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
