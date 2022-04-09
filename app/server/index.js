@@ -83,7 +83,7 @@ app.get("/:id", async (req, res) => {
     timer_data[roomID].workCounter == undefined
   ) {
     timer_data[roomID] = {
-      workCounter,
+      workCounter: 0,
     };
   }
   console.log("timer_data[roomID].workCounter", timer_data[roomID]);
