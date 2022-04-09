@@ -80,7 +80,7 @@ app.get("/:id", async (req, res) => {
   try {
     res.render("../public/timeshare", {
       title: roomID,
-      workCounter: "2",
+      workCounter: 2,
       breakCounter: "5",
     });
   } catch (err) {
