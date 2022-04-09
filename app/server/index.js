@@ -87,7 +87,7 @@ app.get("/:id", async (req, res) => {
       breakCounter: 0,
     };
   }
-  console.log("timer_data[roomID].workCounter", timer_data[roomID]);
+  // console.log("timer_data[roomID].workCounter", timer_data[roomID]);
   try {
     if (
       timer_data[roomID].workCounter != undefined ||
@@ -106,15 +106,34 @@ app.get("/:id", async (req, res) => {
     res.status(500).json({ msg: err.message });
   }
 
-  setTimeout(() => {
-    runATimer.runTheTimer(
-      helpers.endTime(host, roomID).then((e) => {
-        return e;
-      }),
-      roomID,
-      req
+  try {
+    setTimeout(() => {
+      runATimer.runTheTimer(
+        helpers.endTime(host, roomID).then((e) => {
+          return e;
+        }),
+        roomID,
+        req
+      );
+    }, 500);
+  } catch (err) {
+    console.log(
+      "###########################################runTimer Failed:",
+      err
     );
-  }, 500);
+    setTimeout(() => {
+      console.log("waiting");
+      setTimeout(() => {
+        runATimer.runTheTimer(
+          helpers.endTime(host, roomID).then((e) => {
+            return e;
+          }),
+          roomID,
+          req
+        );
+      }, 500);
+    }, 1000);
+  }
   // console.log("host", host);
   // }
   // });
