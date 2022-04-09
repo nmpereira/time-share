@@ -1,3 +1,7 @@
 * {
-  font-family: "Covered By Your Grace", cursive;
+  font-family: "Roboto", "Arial", "Courier New";
+}
+
+#timestamp {
+  font-family: "Covered By Your Grace", cursive, "Courier New", "Arial";
 }
