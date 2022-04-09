@@ -84,6 +84,7 @@ app.get("/:id", async (req, res) => {
   ) {
     timer_data[roomID] = {
       workCounter: 0,
+      breakCounter: 0,
     };
   }
   console.log("timer_data[roomID].workCounter", timer_data[roomID]);
