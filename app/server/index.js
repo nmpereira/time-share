@@ -71,27 +71,69 @@ app.get("/:id", async (req, res) => {
   let roomID = req.params.id;
 
   let host = req.headers.host;
+  // console.log("timer_data[roomID].workCounter", timer_data[roomID]);
   // helpers.endTime(host, roomID).then((e) => {
   //   if (!e) {
   //     res.render("../public/error", {
   //       err_msg: "Timer not found! Please check the url!",
   //     });
   //   } else {
+  if (
+    timer_data[roomID] == undefined ||
+    timer_data[roomID].workCounter == undefined
+  ) {
+    timer_data[roomID] = {
+      workCounter: 0,
+      breakCounter: 0,
+    };
+  }
+  // console.log("timer_data[roomID].workCounter", timer_data[roomID]);
   try {
-    res.render("../public/timeshare", { title: roomID });
+    if (
+      timer_data[roomID].workCounter != undefined ||
+      timer_data[roomID].workCounter == 0
+    ) {
+      res.render("../public/timeshare", {
+        title: roomID,
+        workCounter: timer_data[roomID].workCounter,
+      });
+    } else {
+      res.render("../public/timeshare", {
+        title: roomID,
+      });
+    }
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
 
-  setTimeout(() => {
-    runATimer.runTheTimer(
-      helpers.endTime(host, roomID).then((e) => {
-        return e;
-      }),
-      roomID,
-      req
+  try {
+    setTimeout(() => {
+      runATimer.runTheTimer(
+        helpers.endTime(host, roomID).then((e) => {
+          return e;
+        }),
+        roomID,
+        req
+      );
+    }, 500);
+  } catch (err) {
+    console.log(
+      "###########################################runTimer Failed:",
+      err
     );
-  }, 500);
+    setTimeout(() => {
+      console.log("waiting");
+      setTimeout(() => {
+        runATimer.runTheTimer(
+          helpers.endTime(host, roomID).then((e) => {
+            return e;
+          }),
+          roomID,
+          req
+        );
+      }, 500);
+    }, 1000);
+  }
   // console.log("host", host);
   // }
   // });
@@ -184,6 +226,10 @@ io.on("connection", (socket) => {
       stoppedCounter: 0,
       running: true,
       isUpdateTimer: true,
+      originalTime: 0,
+      completedPercentage: 0,
+      breakCounter: 0,
+      workCounter: 0,
     };
   }
 
@@ -191,6 +237,8 @@ io.on("connection", (socket) => {
     timer_data[roomID].connections = liveClientCount(roomID);
 
     io.to(roomID).emit("localUserActivity", {
+      workCounter: timer_data[roomID].workCounter,
+      breakCounter: timer_data[roomID].breakCounter,
       clientsConnected_Socket: timer_data[roomID].connections,
       Activity: "Socket Client Joined_1",
       roomID,
@@ -229,6 +277,8 @@ io.on("connection", (socket) => {
       timer_data[roomID].connections = liveClientCount(roomID);
 
       io.to(roomID).emit("localUserActivity", {
+        workCounter: timer_data[roomID].workCounter,
+        breakCounter: timer_data[roomID].breakCounter,
         clientsConnected_Socket: timer_data[roomID].connections,
         Activity: "Socket Client Left_2",
         roomID,
@@ -352,6 +402,8 @@ const runTimer = async (socket, input, req) => {
     setTimeout(() => {
       timer_data[roomID].connections = liveClientCount(roomID);
       io.to(roomID).emit("localUserActivity", {
+        workCounter: timer_data[roomID].workCounter,
+        breakCounter: timer_data[roomID].breakCounter,
         clientsConnected_Socket: timer_data[roomID].connections,
         Activity: "Socket Client Left_1",
         roomID,
@@ -388,6 +440,8 @@ const runTimer = async (socket, input, req) => {
     timer_data[roomID].stoppedCounter = 0;
     // timer_data[roomID].connections += 1;
     io.to(roomID).emit("localUserActivity", {
+      workCounter: timer_data[roomID].workCounter,
+      breakCounter: timer_data[roomID].breakCounter,
       clientsConnected_Socket: timer_data[roomID].connections,
       Activity: "Socket Client Joined_2",
       roomID,
@@ -395,7 +449,22 @@ const runTimer = async (socket, input, req) => {
 
     return;
   }
-
+  if (
+    timer_data[roomID] !== undefined &&
+    timer_data[roomID].originalTime == undefined &&
+    timer_data[roomID].completedPercentage == undefined
+  ) {
+    timer_data[roomID].originalTime = 0;
+    timer_data[roomID].completedPercentage = 0;
+  }
+  if (
+    timer_data[roomID] !== undefined &&
+    timer_data[roomID].breakCounter == undefined &&
+    timer_data[roomID].workCounter == undefined
+  ) {
+    timer_data[roomID].breakCounter = 0;
+    timer_data[roomID].workCounter = 0;
+  }
   if (
     timer_data[roomID] == undefined
     // ||io.of(roomID).connected.size == 0
@@ -408,6 +477,10 @@ const runTimer = async (socket, input, req) => {
       interval: null,
       stoppedCounter: 0,
       isUpdateTimer: true,
+      originalTime: 0,
+      completedPercentage: 0,
+      breakCounter: 0,
+      workCounter: 0,
       // isBreak: false,
     };
     if (
@@ -424,6 +497,8 @@ const runTimer = async (socket, input, req) => {
   }
 
   io.to(roomID).emit("localUserActivity", {
+    workCounter: timer_data[roomID].workCounter,
+    breakCounter: timer_data[roomID].breakCounter,
     clientsConnected_Socket: timer_data[roomID].connections,
     Activity: "User Joined new room",
     roomID,
@@ -432,16 +507,23 @@ const runTimer = async (socket, input, req) => {
 
   // console.log("before long for loop input");
   input.then((result) => {
-    longForLoop(result);
+    longForLoop(result, roomID);
   });
 };
 
 function longForLoop(param, _roomID) {
   // let delay;
   var i = param;
-  // console.log("param3", param);
+  // console.log("this shit", timer_data[_roomID].originalTime);
+  timer_data[_roomID].originalTime = param;
+
+  // console.log("this shit2", timer_data[_roomID].originalTime);
   if (param > 0) {
     timer_data[_roomID].interval = setInterval(() => {
+      timer_data[_roomID].completedPercentage = computeCompleted(
+        i,
+        timer_data[_roomID].originalTime
+      );
       if (timer_data[_roomID].connections < 1) {
         timer_data[_roomID].stoppedCounter++;
 
@@ -462,6 +544,9 @@ function longForLoop(param, _roomID) {
         i--;
         if (secondsToHMS(i) <= 0) {
           timer_data[_roomID].isUpdateTimer = true;
+          timer_data[_roomID].isBreak
+            ? timer_data[_roomID].breakCounter++
+            : timer_data[_roomID].workCounter++;
         }
         io.to(_roomID).emit(
           "timestamp",
@@ -470,7 +555,11 @@ function longForLoop(param, _roomID) {
             secondsToHMS(i),
             i <= 0,
             timer_data[_roomID].isBreak,
-            timer_data[_roomID].isUpdateTimer
+            timer_data[_roomID].isUpdateTimer,
+            timer_data[_roomID].originalTime,
+            timer_data[_roomID].completedPercentage,
+            timer_data[_roomID].breakCounter,
+            timer_data[_roomID].workCounter
           )
         );
         // console.log(secondsToHMS(i), i);
@@ -487,7 +576,11 @@ function longForLoop(param, _roomID) {
             secondsToHMS(i),
             false,
             timer_data[_roomID].isBreak,
-            timer_data[_roomID].isUpdateTimer
+            timer_data[_roomID].isUpdateTimer,
+            timer_data[_roomID].originalTime,
+            timer_data[_roomID].completedPercentage,
+            timer_data[_roomID].breakCounter,
+            timer_data[_roomID].workCounter
           )
         );
         // timer_data[_roomID].clients.forEach((s) => {
@@ -528,7 +621,16 @@ var secondsToHMS = (secs) => {
   } else return 0;
 };
 const minToSeconds = (min) => {
-  if (parseInt(min) != min) return 1;
-  if (min < 0 || min == "") return 2;
+  if (Number(min) != min) return 0;
+  if (min < 0 || min == "") return 0;
   return min * 60;
+};
+
+const computeCompleted = (numerator, denominator) => {
+  let result = numerator / denominator;
+  // console.log("####################", numerator);
+  // console.log(result);
+  if (result < 0.02) result = 0;
+  // console.log("##############", result);
+  return (100 - result * 100).toFixed(4);
 };

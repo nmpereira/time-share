@@ -14,7 +14,7 @@
 }
 
 .center {
-  padding: 40% 0;
+  /* padding: 40% 0; */
 }
 
 @media screen and (min-width: 1200px) {
@@ -22,7 +22,7 @@
     font-size: 120px;
   }
   .center {
-    padding: 30% 0;
+    /* padding: 30% 0; */
   }
 }
 @media screen and (max-width: 950px) {
@@ -47,10 +47,24 @@
     margin: 5%;
   } */
 }
-
 body {
+  background: #4e50bf;
+}
+
+.backgroundPage {
+  /* border: 1px solid blue; */
+  /* height: 90vh; */
+  /* background-color: #808080; */
+  /* height: 100vh; */
+  margin: 56px 0 0 0;
+  height: calc(100vh - 136px);
+  /* max-height: 100vh; */
+}
+.progressPage {
+  /* border: 1px solid red; */
+  height: 100%;
   /* background: #4e50bf; */
-  background: #808080;
+  /* background-color: red; */
 }
 
 #userCountGlobalContainer,
@@ -62,3 +76,7 @@ body {
 .btnPadding {
   margin: 10px;
 }
+
+/* 
+ nav_height='56px;'
+ footer_height='80px'; */
