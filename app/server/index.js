@@ -78,11 +78,7 @@ app.get("/:id", async (req, res) => {
   //     });
   //   } else {
   try {
-    res.render("../public/timeshare", {
-      title: roomID,
-      workCounter: 2,
-      breakCounter: "5",
-    });
+    res.render("../public/timeshare", { title: roomID, workCounter: 2 });
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
