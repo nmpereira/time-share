@@ -9,6 +9,8 @@ const timeSchema = new mongoose.Schema({
   sets: { type: Number },
   paused: { type: Boolean },
   end_time: { type: Date },
+  pomo_count: { type: Number },
+  break_count: { type: Number },
   created_at: { type: Date, required: true, default: Date.now },
   updated_at: { type: Date, required: true },
 });
