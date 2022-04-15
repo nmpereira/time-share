@@ -151,13 +151,15 @@ app.get("/:id", async (req, res) => {
 
   try {
     setTimeout(() => {
-      runATimer.runTheTimer(
-        helpers.endTime(host, roomID).then((e) => {
-          return e;
-        }),
-        roomID,
-        req
-      );
+      if (runATimer.runTheTimer) {
+        runATimer.runTheTimer(
+          helpers.endTime(host, roomID).then((e) => {
+            return e;
+          }),
+          roomID,
+          req
+        );
+      }
     }, 500);
   } catch (err) {
     console.log(
@@ -167,13 +169,15 @@ app.get("/:id", async (req, res) => {
     setTimeout(() => {
       console.log("waiting");
       setTimeout(() => {
-        runATimer.runTheTimer(
-          helpers.endTime(host, roomID).then((e) => {
-            return e;
-          }),
-          roomID,
-          req
-        );
+        if (runATimer.runTheTimer) {
+          runATimer.runTheTimer(
+            helpers.endTime(host, roomID).then((e) => {
+              return e;
+            }),
+            roomID,
+            req
+          );
+        }
       }, 500);
     }, 1000);
   }
@@ -239,13 +243,15 @@ app.post("/reset/:id", async (req, res) => {
     timer_data[roomID].interval = null;
     // console.log("host", host);
     setTimeout(() => {
-      runATimer.runTheTimer(
-        helpers.endTime(host, roomID).then((e) => {
-          return e;
-        }),
-        roomID,
-        req
-      );
+      if (runATimer.runTheTimer) {
+        runATimer.runTheTimer(
+          helpers.endTime(host, roomID).then((e) => {
+            return e;
+          }),
+          roomID,
+          req
+        );
+      }
     }, 500);
   } catch (err) {
     res.status(500).json({ msg: err.message });
