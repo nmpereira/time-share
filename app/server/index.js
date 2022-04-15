@@ -111,11 +111,11 @@ app.get("/:id", async (req, res) => {
       workCounter: 0,
       breakCounter: 0,
     };
-    writeToDb(
-      roomID,
-      timer_data[roomID].workCounter,
-      timer_data[roomID].breakCounter
-    );
+    // writeToDb(
+    //   roomID,
+    //   timer_data[roomID].workCounter,
+    //   timer_data[roomID].breakCounter
+    // );
   }
 
   // console.log("timer_data[roomID].workCounter", timer_data[roomID]);
@@ -561,11 +561,11 @@ const runTimer = async (socket, input, req) => {
   ) {
     timer_data[roomID].breakCounter = 0;
     timer_data[roomID].workCounter = 0;
-    writeToDb(
-      roomID,
-      timer_data[roomID].workCounter,
-      timer_data[roomID].breakCounter
-    );
+    // writeToDb(
+    //   roomID,
+    //   timer_data[roomID].workCounter,
+    //   timer_data[roomID].breakCounter
+    // );
   }
   if (
     timer_data[roomID] == undefined
@@ -596,11 +596,11 @@ const runTimer = async (socket, input, req) => {
       // console.log("break params 4", req.body.isBreak || "not found");
       timer_data[roomID].isBreak = false;
     }
-    writeToDb(
-      roomID,
-      timer_data[roomID].workCounter,
-      timer_data[roomID].breakCounter
-    );
+    // writeToDb(
+    //   roomID,
+    //   timer_data[roomID].workCounter,
+    //   timer_data[roomID].breakCounter
+    // );
   }
 
   io.to(roomID).emit("localUserActivity", {
