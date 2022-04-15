@@ -80,8 +80,8 @@ app.get("/:id", async (req, res) => {
   //   } else {
 
   readFromDb(roomID).then((x) => {
-    (timer_data[roomID].breakCounter = x.break_count),
-      (timer_data[roomID].workCounter = x.pomo_count);
+    (timer_data[roomID].breakCounter = x?.break_count),
+      (timer_data[roomID].workCounter = x?.pomo_count);
     // console.log(
     //   "readFromDb 1",
     //   "work",
@@ -624,8 +624,8 @@ function longForLoop(param, _roomID) {
   // console.log("this shit", timer_data[_roomID].originalTime);
   timer_data[_roomID].originalTime = param;
   readFromDb(_roomID).then((x) => {
-    (timer_data[_roomID].breakCounter = x.break_count || 0),
-      (timer_data[_roomID].workCounter = x.pomo_count || 0);
+    (timer_data[_roomID].breakCounter = x?.break_count || 0),
+      (timer_data[_roomID].workCounter = x?.pomo_count || 0);
     // console.log(
     //   "readFromDb 2",
     //   "work",
