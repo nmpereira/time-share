@@ -80,3 +80,93 @@ body {
 /* 
  nav_height='56px;'
  footer_height='80px'; */
+
+.modal-backdrop {
+  /* bug fix - no overlay */
+  display: none;
+}
+
+/* update log css */
+#updateMainContainer {
+  width: 400px;
+  position: absolute;
+  bottom: 75px;
+}
+
+.wrapper * {
+  /* don't allow the children of the scrollable element to be selected as an anchor node */
+  overflow-anchor: none;
+}
+.anchor {
+  overflow-anchor: auto;
+}
+
+body,
+html {
+  font-family: Arial, sans-serif;
+}
+.wrapper {
+  max-width: 600px;
+  max-height: 300px;
+  overflow: auto;
+  border: 1px solid silver;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  margin: 2em;
+}
+.message-wrapper {
+  overflow: hidden;
+}
+.message {
+  display: block;
+  border-radius: 4px;
+  /* background-color: #6164ed; */
+  border: 1px solid black;
+  /*   background-image: linear-gradient(
+    141deg,
+    #9fb8ad 0%,
+    #1fc8db 51%,
+    #2cb5e8 75%
+  ); */
+  padding: 10px;
+  color: white;
+  margin: 1em;
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: translate3d(10%, 0, 0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+/* scrollbar */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #a1a2b3;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  background-color: #a1a2b3;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #6f71de;
+}
+
+/* end of update log css */

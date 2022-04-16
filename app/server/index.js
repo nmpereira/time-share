@@ -388,7 +388,10 @@ io.on("connection", (socket) => {
       });
     }, 200);
   });
-
+  socket.on("userJoined", function (msg) {
+    console.log("userJoined", msg);
+    io.to(roomID).emit("userJoined", msg.VultureUsername);
+  });
   //send a timestamp to the socket
   socket.on("timestamp", function (msg) {
     console.log("on timestamp", msg);
