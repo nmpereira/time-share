@@ -53,7 +53,8 @@
 
 
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                  id="usernameButton">
                   <span id="usernameSpan"></span> &thinsp;
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                     class="bi bi-pencil" viewBox="0 0 16 16">
@@ -407,12 +408,22 @@
     <script>
 
       const VultureUsername = localStorage.getItem('VultureUser');
-      console.log('User Joined:', VultureUsername)
-      socket.emit("userJoined", { userId, requestOrigin, VultureUsername })
       // if (VultureUsername != null) {
 
-      document.querySelector("#usernameSpan").innerHTML = VultureUsername ? `Hey ${VultureUsername}!` : ` Hey User!`;
-      // }
+
+      if (VultureUsername != null) {
+
+        console.log('User Joined:', VultureUsername)
+        socket.emit("userJoined", { userId, requestOrigin, VultureUsername })
+        document.querySelector("#usernameSpan").innerHTML = `Hey ${VultureUsername}!`
+      } else {
+        console.log('Unknown User Joined:', VultureUsername)
+        socket.emit("userJoinedNull", { userId, requestOrigin, VultureUsername })
+        document.querySelector("#usernameButton").click()
+        document.querySelector("#usernameSpan").innerHTML = `Hey User!`
+      }
+
+
       const saveUsername = (event) => {
         event.preventDefault();
         let oldUsername = localStorage.getItem('VultureUser');
