@@ -407,7 +407,8 @@
         socket.emit('send-nickname', VultureUsername);
       } else {
         console.log('Unknown User Joined:', VultureUsername)
-        socket.emit("userJoinedNull", { userId, requestOrigin, VultureUsername })
+        // socket.emit("userJoinedNull", { userId, requestOrigin, VultureUsername })
+        socket.emit('send-nickname', 'User');
         document.querySelector("#usernameButton").click()
         document.querySelector("#usernameSpan").innerHTML = `Hey User!`
       }
