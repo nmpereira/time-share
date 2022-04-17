@@ -290,7 +290,11 @@ io.on("connection", (socket) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
   const host = socket.handshake.headers.host;
   // console.log("host", host);
-
+  socket.on("send-nickname", function (nickname) {
+    socket.nickname = nickname;
+    // users.push(socket.nickname);
+    // console.log(socket);
+  });
   readFromDb(roomID).then((x) => {
     (timer_data[roomID].breakCounter = x?.break_count || 0),
       (timer_data[roomID].workCounter = x?.pomo_count || 0);
@@ -387,11 +391,38 @@ io.on("connection", (socket) => {
         roomID,
       });
     }, 200);
+    io.to(roomID).emit("updateMessage", `${socket.nickname} left the session`);
   });
   socket.on("userJoined", function (msg) {
-    console.log("userJoined", msg);
-    io.to(roomID).emit("userJoined", msg.VultureUsername);
+    // console.log("userJoined", msg);
+    io.to(roomID).emit(
+      "updateMessage",
+      `${msg.VultureUsername} joined the session`
+    );
   });
+  socket.on("usernameChange", function (msg) {
+    // console.log("usernameChange", msg);
+    io.to(roomID).emit(
+      "updateMessage",
+      `${msg.oldUsername} changed thier name to ${msg.usernameInput}`
+    );
+  });
+  socket.on("sharedTimer", function (msg) {
+    // console.log("usernameChange", msg);
+    io.to(roomID).emit("updateMessage", `${msg} shared the timer`);
+  });
+  socket.on("startedTimer", function (msg) {
+    console.log("startedTimer", msg);
+    io.to(roomID).emit(
+      "updateMessage",
+      `${msg.VultureUsername} started a ${msg.min} minute ${msg.status} timer`
+    );
+  });
+
+  // socket.on("userDisconnect", function (msg) {
+  //   console.log("userDisconnect", msg);
+  //   io.to(roomID).emit("userDisconnect", msg);
+  // });
   //send a timestamp to the socket
   socket.on("timestamp", function (msg) {
     console.log("on timestamp", msg);
@@ -405,6 +436,10 @@ io.on("connection", (socket) => {
         `paused: ${(timer_data[msg.userId].running = false)}`,
       ]);
     }
+    io.to(roomID).emit(
+      "updateMessage",
+      `${msg.VultureUsername} paused the timer`
+    );
   });
   socket.on("playtimer", function (msg) {
     const currentRoom = timer_data[msg.userId];
@@ -414,6 +449,10 @@ io.on("connection", (socket) => {
         `paused: ${(timer_data[msg.userId].running = true)}`,
       ]);
     }
+    io.to(roomID).emit(
+      "updateMessage",
+      `${msg.VultureUsername} resumed the timer`
+    );
   });
   socket.on("resettimer", function (msg) {});
   socket.on("changetimer", function (msg) {
@@ -430,6 +469,7 @@ io.on("connection", (socket) => {
   });
   socket.on("addmin", function (msg) {
     clearInterval(timer_data[msg.userId].interval);
+    timer_data[msg.userId].running = true;
 
     if (msg.status == "work") {
       timer_data[roomID].isBreak = false;

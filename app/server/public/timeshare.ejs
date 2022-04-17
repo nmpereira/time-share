@@ -148,8 +148,7 @@
 
             <div class="wrapper">
               <div class="message-wrapper">
-                <div class="message">Message
-                </div>
+
 
 
               </div>
@@ -330,16 +329,17 @@
       const userId = document.location.pathname.split("/").pop()
       const requestOrigin = window.location.host
       const pauseTimer = () => {
-        socket.emit("pausetimer", { userId, requestOrigin });
+        socket.emit("pausetimer", { userId, requestOrigin, VultureUsername });
         // console.log("this is paused")
       };
       const addmin = (min, status) => {
         socket.emit("addmin", { min, userId, requestOrigin, status });
-        playTimer()
+        // playTimer()
         toggleTimerVisibility(true)
         changeTimer()
 
         document.getElementById("timestamp").innerHTML = secondsToHMS(min * 60)
+        socket.emit("startedTimer", { min, userId, requestOrigin, status, VultureUsername })
       };
 
       const changeTimer = () => {
@@ -378,7 +378,7 @@
 
 
       const playTimer = () => {
-        socket.emit("playtimer", { userId, requestOrigin });
+        socket.emit("playtimer", { userId, requestOrigin, VultureUsername });
       };
       const resetTimer = () => {
         const id = window.location.pathname
@@ -391,19 +391,7 @@
 
     </script>
 
-    <script>
-      const shareTimer = () => {
-        const ShareUrl = window.location.href
-        navigator.clipboard.writeText(ShareUrl)
-        console.log("Copied to Clipboard", ShareUrl)
-        // Get the snackbar DIV
-        var x = document.getElementById("snackbar");
-        // Add the "show" class to DIV
-        x.className = "show";
-        // After 3 seconds, remove the show class from DIV
-        setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
-      };
-    </script>
+
 
     <script>
 
@@ -416,11 +404,23 @@
         console.log('User Joined:', VultureUsername)
         socket.emit("userJoined", { userId, requestOrigin, VultureUsername })
         document.querySelector("#usernameSpan").innerHTML = `Hey ${VultureUsername}!`
+        socket.emit('send-nickname', VultureUsername);
       } else {
         console.log('Unknown User Joined:', VultureUsername)
         socket.emit("userJoinedNull", { userId, requestOrigin, VultureUsername })
         document.querySelector("#usernameButton").click()
         document.querySelector("#usernameSpan").innerHTML = `Hey User!`
+      }
+
+      const addMessage = (text) => {
+        const newMessage = document.createElement("div");
+        newMessage.innerHTML = text;
+        newMessage.setAttribute("class", "message");
+        const messageDiv = document.querySelector(".message-wrapper");
+        // and give it some content
+        // add the text node to the newly created div
+        messageDiv.appendChild(newMessage);
+        messageDiv.lastChild.scrollIntoView()
       }
 
 
@@ -431,21 +431,38 @@
         document.querySelector("#usernameSpan").innerHTML = `Hey ${usernameInput}!`;
 
         localStorage.setItem('VultureUser', usernameInput);
-        console.log(`User ${oldUsername} changed thier name to ${usernameInput}`)
-        socket.emit("usernameChange", { userId, requestOrigin, usernameInput })
+        // console.log(`User ${oldUsername} changed thier name to ${usernameInput}`)
+
+
+        socket.emit("usernameChange", { userId, requestOrigin, usernameInput, oldUsername })
       }
-      socket.on('userJoined', (msg) => {
 
 
-        console.log("User popped in", msg)
+      //
+      socket.on('updateMessage', (msg) => {
+        addMessage(msg)
       })
 
 
 
 
 
-    </script>
 
+    </script>
+    <script>
+      const shareTimer = () => {
+        const ShareUrl = window.location.href
+        navigator.clipboard.writeText(ShareUrl)
+        console.log("Copied to Clipboard", ShareUrl)
+        // Get the snackbar DIV
+        var x = document.getElementById("snackbar");
+        // Add the "show" class to DIV
+        x.className = "show";
+        // After 3 seconds, remove the show class from DIV
+        setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+        socket.emit("sharedTimer", VultureUsername)
+      };
+    </script>
   </body>
 
   </html>
