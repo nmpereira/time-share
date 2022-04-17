@@ -442,7 +442,9 @@ io.on("connection", (socket) => {
   });
   socket.on("usernameChange", function (msg) {
     // console.log("usernameChange", msg);
-    let userNameChangeMsg = `${msg.oldUsername} changed thier name to ${msg.usernameInput}`;
+    let userNameChangeMsg = `${
+      msg.oldUsername ? msg.oldUsername : "Unknown User"
+    } changed thier name to ${msg.usernameInput}`;
     io.to(roomID).emit("updateMessage", userNameChangeMsg);
     writeUpdateLogToDb(roomID, userNameChangeMsg);
   });
@@ -454,7 +456,7 @@ io.on("connection", (socket) => {
   });
   socket.on("startedTimer", function (msg) {
     // console.log("startedTimer", msg);
-    let userStartedTimerMsg = `${msg.VultureUsername} started a ${msg.min} minute ${msg.status} timer`;
+    let userStartedTimerMsg = `${socket.nickname} started a ${msg.min} minute ${msg.status} timer`;
     io.to(roomID).emit("updateMessage", userStartedTimerMsg);
     writeUpdateLogToDb(roomID, userStartedTimerMsg);
   });
@@ -476,7 +478,7 @@ io.on("connection", (socket) => {
         `paused: ${(timer_data[msg.userId].running = false)}`,
       ]);
     }
-    let userPausedTimerMsg = `${msg.VultureUsername} paused the timer`;
+    let userPausedTimerMsg = `${socket.nickname} paused the timer`;
     io.to(roomID).emit("updateMessage", userPausedTimerMsg);
     writeUpdateLogToDb(roomID, userPausedTimerMsg);
   });
@@ -488,7 +490,7 @@ io.on("connection", (socket) => {
         `paused: ${(timer_data[msg.userId].running = true)}`,
       ]);
     }
-    let userResumedTimerMsg = `${msg.VultureUsername} resumed the timer`;
+    let userResumedTimerMsg = `${socket.nickname} resumed the timer`;
     io.to(roomID).emit("updateMessage", userResumedTimerMsg);
     writeUpdateLogToDb(roomID, userResumedTimerMsg);
   });

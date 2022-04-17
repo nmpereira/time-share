@@ -49,6 +49,8 @@
             <div class="center">
               <h2 id="pomos" class="d-flex justify-content-center"></h2>
               <h2 id="pomo_breaks" class="d-flex justify-content-center"></h2>
+              <h2 id="pomos_mobile" class="d-flex justify-content-center"></h2>
+              <h2 id="pomo_breaks_mobile" class="d-flex justify-content-center"></h2>
               <div id="modalContainer" class="d-flex justify-content-center">
 
 
@@ -434,7 +436,7 @@
         localStorage.setItem('VultureUser', usernameInput);
         // console.log(`User ${oldUsername} changed thier name to ${usernameInput}`)
 
-
+        socket.emit('send-nickname', usernameInput);
         socket.emit("usernameChange", { userId, requestOrigin, usernameInput, oldUsername })
       }
 
