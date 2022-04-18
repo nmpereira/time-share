@@ -450,7 +450,7 @@ io.on("connection", (socket) => {
   });
   socket.on("sharedTimer", function (msg) {
     // console.log("usernameChange", msg);
-    let userSharedTimerMsg = `${msg} shared the timer`;
+    let userSharedTimerMsg = `${socket.nickname} shared the timer`;
     io.to(roomID).emit("updateMessage", userSharedTimerMsg);
     writeUpdateLogToDb(roomID, userSharedTimerMsg);
   });
