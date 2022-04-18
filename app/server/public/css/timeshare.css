@@ -156,10 +156,6 @@ html {
   #pomos {
     display: none !important;
   }
-  /* #pomo_breaks_mobile,
-  #pomos_mobile {
-    display: block !important;
-  } */
 }
 @media screen and (min-width: 1200px) {
   #pomo_breaks_mobile,
@@ -167,6 +163,19 @@ html {
     display: none !important;
   }
 }
+
+/* @media screen and (max-height: 700px) {
+  #pomo_breaks,
+  #pomos {
+    display: none !important;
+  }
+}
+@media screen and (min-height: 700px) {
+  #pomo_breaks_mobile,
+  #pomos_mobile {
+    display: none !important;
+  }
+} */
 @media screen and (max-width: 950px) {
   .timebuttons {
     display: flex;
@@ -265,7 +274,7 @@ html {
   animation-delay: 0.4s;
 }
 .fab-dots-3 {
-  right: 15px;
+  right: 14px;
   animation-delay: 0.8s;
 }
 

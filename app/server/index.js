@@ -327,7 +327,7 @@ io.on("connection", (socket) => {
   socket.on("send-nickname", function (nickname) {
     socket.nickname = nickname;
     // users.push(socket.nickname);
-    console.log("Nickname Updated:", socket.nickname);
+    // console.log("Nickname Updated:", socket.nickname);
   });
   readFromDb(roomID).then((x) => {
     (timer_data[roomID].breakCounter = x?.break_count || 0),
@@ -435,7 +435,7 @@ io.on("connection", (socket) => {
   });
   socket.on("userJoined", function (msg) {
     socket.nickname = msg.VultureUsername;
-    console.log("NickName updated_2", socket.nickname);
+    // console.log("NickName updated_2", socket.nickname);
     let userJoinMsg = `${socket.nickname} joined the session`;
     io.to(roomID).emit("updateMessage", userJoinMsg);
     writeUpdateLogToDb(roomID, userJoinMsg);
