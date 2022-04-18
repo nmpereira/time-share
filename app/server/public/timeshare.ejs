@@ -146,14 +146,27 @@
               </div>
             </div>
           </div>
-          <div id="updateMainContainer">
-
-            <div class="wrapper">
-              <div class="message-wrapper">
 
 
+          <div class="fab-wrapper">
+            <input id="fabCheckbox" type="checkbox" class="fab-checkbox" />
+            <label class="fab" for="fabCheckbox">
+              <span class="fab-dots fab-dots-1"></span>
+              <span class="fab-dots fab-dots-2"></span>
+              <span class="fab-dots fab-dots-3"></span>
+            </label>
+            <div class="fab-wheel">
+              <div id="updateMainContainer">
 
+                <div class="wrapper">
+                  <div class="message-wrapper">
+
+
+
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
           <!-- <button id="resetTimer" onclick="resetTimer()">Reset</button> -->
@@ -190,6 +203,8 @@
       const addEmojis = (msg) => {
         document.querySelector('#pomos').innerHTML = '🍅'.repeat(msg.workCounter);
         document.querySelector('#pomo_breaks').innerHTML = '🍪'.repeat(msg.breakCounter);
+        document.querySelector('#pomos_mobile').innerHTML = msg.workCounter + '🍅';
+        document.querySelector('#pomo_breaks_mobile').innerHTML = msg.breakCounter + '🍪';
       }
 
 

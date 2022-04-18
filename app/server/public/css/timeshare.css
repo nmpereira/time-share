@@ -17,36 +17,6 @@
   /* padding: 40% 0; */
 }
 
-@media screen and (min-width: 1200px) {
-  #timestamp {
-    font-size: 120px;
-  }
-  .center {
-    /* padding: 30% 0; */
-  }
-}
-@media screen and (max-width: 950px) {
-  .timebuttons {
-    display: flex;
-    flex-wrap: wrap;
-  }
-}
-
-@media screen and (max-height: 480px) {
-  #timestamp {
-    font-size: 10vh;
-  }
-  #breakText {
-    font-size: 5vh;
-  }
-  .btn {
-    font-size: 3vh;
-    /* margin: 0.125vh; */
-  }
-  /* .updateTimer {
-    margin: 5%;
-  } */
-}
 body {
   background: #4e50bf;
 }
@@ -91,6 +61,7 @@ body {
   width: 400px;
   position: absolute;
   bottom: 75px;
+  right: 10px;
 }
 
 .wrapper * {
@@ -113,6 +84,7 @@ html {
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   margin: 2em;
+  background: #4b4c79d9;
 }
 .message-wrapper {
   overflow: hidden;
@@ -121,14 +93,14 @@ html {
   display: block;
   border-radius: 4px;
   /* background-color: #6164ed; */
-  border: 1px solid black;
+  border: 1px solid #6164ed;
   /*   background-image: linear-gradient(
     141deg,
     #9fb8ad 0%,
     #1fc8db 51%,
     #2cb5e8 75%
   ); */
-  padding: 10px;
+  padding: 6px;
   color: white;
   margin: 1em;
   -webkit-animation-name: fadeIn;
@@ -170,3 +142,177 @@ html {
 }
 
 /* end of update log css */
+
+@media screen and (min-width: 1200px) {
+  #timestamp {
+    font-size: 120px;
+  }
+  .center {
+    /* padding: 30% 0; */
+  }
+}
+@media screen and (max-width: 1200px) {
+  #pomo_breaks,
+  #pomos {
+    display: none !important;
+  }
+  /* #pomo_breaks_mobile,
+  #pomos_mobile {
+    display: block !important;
+  } */
+}
+@media screen and (min-width: 1200px) {
+  #pomo_breaks_mobile,
+  #pomos_mobile {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 950px) {
+  .timebuttons {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+@media screen and (max-width: 480px) {
+  #updateMainContainer {
+    width: 300px;
+  }
+}
+@media screen and (max-height: 480px) {
+  #timestamp {
+    font-size: 10vh;
+  }
+  #breakText {
+    font-size: 5vh;
+  }
+  .btn {
+    font-size: 3vh;
+    /* margin: 0.125vh; */
+  }
+  /* .updateTimer {
+    margin: 5%;
+  } */
+}
+
+/* action button css */
+.fab-wrapper {
+  position: fixed;
+  bottom: 3rem;
+  right: 3rem;
+}
+.fab-checkbox {
+  display: none;
+}
+.fab {
+  position: absolute;
+  bottom: -1rem;
+  right: -1rem;
+  width: 45px;
+  height: 45px;
+  bottom: 50px;
+  background: blue;
+  border-radius: 50%;
+  background: #126ee2;
+  box-shadow: 0px 5px 20px #81a4f1;
+  transition: all 0.3s ease;
+  z-index: 1;
+  border-bottom-right-radius: 6px;
+  border: 1px solid #0c50a7;
+}
+
+.fab:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.fab-checkbox:checked ~ .fab:before {
+  width: 90%;
+  height: 90%;
+  left: 5%;
+  top: 5%;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.fab:hover {
+  background: #2c87e8;
+  box-shadow: 0px 5px 20px 5px #81a4f1;
+}
+
+.fab-dots {
+  position: absolute;
+  height: 4px;
+  width: 3px;
+  background-color: white;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateX(0%) translateY(-50%) rotate(0deg);
+  opacity: 1;
+  animation: blink 3s ease infinite;
+  transition: all 0.3s ease;
+}
+
+.fab-dots-1 {
+  left: 15px;
+  animation-delay: 0s;
+}
+.fab-dots-2 {
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  animation-delay: 0.4s;
+}
+.fab-dots-3 {
+  right: 15px;
+  animation-delay: 0.8s;
+}
+
+.fab-checkbox:checked ~ .fab .fab-dots {
+  height: 6px;
+}
+
+.fab .fab-dots-2 {
+  transform: translateX(-50%) translateY(-50%) rotate(0deg);
+}
+
+.fab-checkbox:checked ~ .fab .fab-dots-1 {
+  width: 32px;
+  border-radius: 10px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%) rotate(45deg);
+}
+.fab-checkbox:checked ~ .fab .fab-dots-3 {
+  width: 32px;
+  border-radius: 10px;
+  right: 50%;
+  transform: translateX(50%) translateY(-50%) rotate(-45deg);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.fab-checkbox:checked ~ .fab .fab-dots {
+  animation: none;
+}
+
+.fab-wheel {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: 1px solid #;
+  width: 10rem;
+  height: 10rem;
+  transition: all 0.3s ease;
+  transform-origin: bottom right;
+  transform: scale(0);
+}
+
+.fab-checkbox:checked ~ .fab-wheel {
+  transform: scale(1);
+}
+/* end of action button css */
