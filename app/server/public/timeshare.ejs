@@ -204,8 +204,8 @@
 
 
       const addEmojis = (msg) => {
-        document.querySelector('#pomos').innerHTML = '🍅'.repeat(msg.workCounter);
-        document.querySelector('#pomo_breaks').innerHTML = '🍪'.repeat(msg.breakCounter);
+        document.querySelector('#pomos').innerHTML = `${msg.workCounter} ${'🍅'.repeat(msg.workCounter)}`;
+        document.querySelector('#pomo_breaks').innerHTML = `${msg.breakCounter} ${'🍪'.repeat(msg.breakCounter)}`;
         document.querySelector('#pomos_mobile').innerHTML = msg.workCounter + '🍅';
         document.querySelector('#pomo_breaks_mobile').innerHTML = msg.breakCounter + '🍪';
       }
