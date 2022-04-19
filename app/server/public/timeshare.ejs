@@ -25,13 +25,13 @@
 
     <title> Join /<%= title %>'s shared timer</title>
     <meta name="description"
-      content="Create a sharable timer for your team or friends! So far, <%= '🍅'.repeat(workCounter) %> have been completed! Join Now!">
+      content="Create a sharable timer for your team or friends! <% if(workCounter>0) {%> So far, <%= (workCounter) %>'🍅''s have been completed! Join Now!<%}%>">
 
     <meta name=" image"
       content="https://raw.githubusercontent.com/nmpereira/time-share/main/app/server/public/images/wall-clock.png">
     <meta property="og:title" content="Join /<%= title %>'s shared timer" />
     <meta property="og:description"
-      content="Create a sharable timer for your team or friends! <% if(workCounter>0) {%> So far, <%= '🍅' .repeat(workCounter) %> have been completed! Join Now!<%}%>" />
+      content="Create a sharable timer for your team or friends! <% if(workCounter>0) {%> So far, <%= (workCounter) %>'🍅''s have been completed! Join Now!<%}%>" />
     <meta property="og:image"
       content="https://raw.githubusercontent.com/nmpereira/time-share/main/app/server/public/images/wall-clock.png" />
 
