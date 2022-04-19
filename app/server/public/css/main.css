@@ -5,3 +5,11 @@
 #timestamp {
   font-family: "Covered By Your Grace", cursive, "Courier New", "Arial";
 }
+
+#pomo_breaks_mobile,
+#pomos_mobile,
+#pomos,
+#pomo_breaks {
+  font-family: "Courier New", "Arial";
+  font-weight: 900;
+}

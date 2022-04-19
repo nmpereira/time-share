@@ -42,81 +42,145 @@
 
     <div class="backgroundPage">
       <div class="progressPage">
-        <div class="container">
-          <div class="center">
-            <h2 id="pomos" class="d-flex justify-content-center"></h2>
-            <h2 id="pomo_breaks" class="d-flex justify-content-center"></h2>
-            <h2 id="breakText" class="d-flex justify-content-center"></h2>
-            <h1 id="timestamp" class="d-flex justify-content-center"></h1>
 
-            <div class="d-flex justify-content-center timebuttons">
-              <!-- <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer "
+        <%- include('modal') -%>
+          <div class="container">
+
+            <div class="center">
+              <h2 id="pomos" class="d-flex justify-content-center"></h2>
+              <h2 id="pomo_breaks" class="d-flex justify-content-center"></h2>
+              <h2 id="pomos_mobile" class="d-flex justify-content-center"></h2>
+              <h2 id="pomo_breaks_mobile" class="d-flex justify-content-center"></h2>
+              <div id="modalContainer" class="d-flex justify-content-center">
+
+
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary btnRound " data-bs-toggle="modal"
+                  data-bs-target="#exampleModal" id="usernameButton">
+                  <span id="usernameSpan"></span> &thinsp;
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path
+                      d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+                  </svg>
+                </button>
+
+
+
+
+
+              </div>
+              <h2 id="breakText" class="d-flex justify-content-center"></h2>
+              <h1 id="timestamp" class="d-flex justify-content-center"></h1>
+
+              <div class="d-flex justify-content-center timebuttons">
+                <!-- <button id="min_25" class="btn btn-work btnSpace btnRound  btnPadding updateTimer "
                 onclick="addmin(0.1,'work')">0.1
                 minute</button>
-              <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer "
+              <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer "
                 onclick="addmin(0.25,'work')">0.25
                 minute</button>
-              <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer " onclick="addmin(1,'work')">1
+              <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer " onclick="addmin(1,'work')">1
                 minute</button> -->
-              <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer " onclick="addmin(5,'work')">5
-                minutes</button>
-              <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer" onclick="addmin(10,'work')">10
-                minutes</button>
-              <button id="min_25" class="btn btn-success btnSpace btnPadding updateTimer" onclick="addmin(15,'work')">15
-                minutes</button>
-              <button id="min_25" class="btn btn-success btnSpace btnPadding  updateTimer"
-                onclick="addmin(20,'work')">20
-                minutes</button>
-              <button id="min_25" class="btn btn-success btnSpace  btnPadding updateTimer"
-                onclick="addmin(25,'work')">25
-                minutes</button>
-              <button id="min_25" class="btn btn-success btnSpace  btnPadding updateTimer"
-                onclick="addmin(30,'work')">30
-                minutes</button>
-              <button id="min_25" class="btn btn-success btnSpace  btnPadding updateTimer"
-                onclick="addmin(50,'work')">50
-                minutes</button>
-              <button id="min_25" class="btn btn-success btnSpace  btnPadding updateTimer"
-                onclick="addmin(60,'work')">60
-                minutes</button>
-            </div>
+                <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer "
+                  onclick="addmin(5,'work')">5
+                  minutes</button>
+                <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer"
+                  onclick="addmin(10,'work')">10
+                  minutes</button>
+                <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer"
+                  onclick="addmin(15,'work')">15
+                  minutes</button>
+                <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding  updateTimer"
+                  onclick="addmin(20,'work')">20
+                  minutes</button>
+                <button id="min_25" class="btn btn-work btnSpace  btnRound  btnPadding updateTimer"
+                  onclick="addmin(25,'work')">25
+                  minutes</button>
+                <button id="min_25" class="btn btn-work btnSpace btnRound btnPadding updateTimer"
+                  onclick="addmin(30,'work')">30
+                  minutes</button>
+                <button id="min_25" class="btn btn-work btnSpace btnRound btnPadding updateTimer"
+                  onclick="addmin(50,'work')">50
+                  minutes</button>
+                <button id="min_25" class="btn btn-work btnSpace btnRound btnPadding updateTimer"
+                  onclick="addmin(60,'work')">60
+                  minutes</button>
+              </div>
 
-            <div class="d-flex justify-content-center timebuttons">
-              <!-- <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(0.1,'break')">0.1
+              <div class="d-flex justify-content-center timebuttons">
+                <!-- <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding  updateTimer" onclick="addmin(0.1,'break')">0.1
                 minutes</button>
-              <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer"
+              <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding  updateTimer"
                 onclick="addmin(0.25,'break')">0.25
                 minutes</button> -->
-              <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(1,'break')">1
-                minute</button>
-              <button id="min_5" class="btn btn-info btnSpace btnPadding  updateTimer" onclick="addmin(2,'break')">2
-                minutes</button>
-              <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(5,'break')">5
-                minutes</button>
-              <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(10,'break')">10
-                minutes</button>
-              <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(15,'break')">15
-                minutes</button>
-              <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(20,'break')">20
-                minutes</button>
-              <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(25,'break')">25
-                minutes</button>
-              <button id="min_5" class="btn btn-info btnSpace  btnPadding updateTimer" onclick="addmin(60,'break')">60
-                minutes</button>
-            </div>
-            <div class="d-flex justify-content-center">
+                <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding  updateTimer"
+                  onclick="addmin(1,'break')">1
+                  minute</button>
+                <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding  updateTimer"
+                  onclick="addmin(2,'break')">2
+                  minutes</button>
+                <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding updateTimer"
+                  onclick="addmin(5,'break')">5
+                  minutes</button>
+                <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding updateTimer"
+                  onclick="addmin(10,'break')">10
+                  minutes</button>
+                <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding updateTimer"
+                  onclick="addmin(15,'break')">15
+                  minutes</button>
+                <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding updateTimer"
+                  onclick="addmin(20,'break')">20
+                  minutes</button>
+                <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding updateTimer"
+                  onclick="addmin(25,'break')">25
+                  minutes</button>
+                <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding updateTimer"
+                  onclick="addmin(60,'break')">60
+                  minutes</button>
+              </div>
+              <div class="d-flex justify-content-center">
 
-              <button id="pauseTimer" class="btn btn-primary btnSpace timerControl"
-                onclick="pauseTimer()">Pause</button>
-              <button id="playTimer" class="btn btn-danger btnSpace timerControl" onclick="playTimer()">Resume</button>
-              <!-- <button id="resetTimer" class="btn btn-secondary btnSpace" onclick="resetTimer()">Reset</button> -->
-              <button id="changeTimer" class="btn btn-secondary btnSpace" onclick="changeTimer()">Change Timer</button>
-              <button id="shareTimer" class="btn btn-success btnSpace" onclick="shareTimer()">Share Timer
-                (Clipboard)</button>
+                <button id="pauseTimer" class="btn btn-primary btnSpace timerControl btnRound"
+                  onclick="pauseTimer()">Pause</button>
+                <button id="playTimer" class="btn btn-danger btnSpace timerControl btnRound"
+                  onclick="playTimer()">Resume</button>
+                <!-- <button id="resetTimer" class="btn btn-secondary  btnRound  btnSpace" onclick="resetTimer()">Reset</button> -->
+                <button id="changeTimer" class="btn btn-secondary btnSpace btnRound" onclick="changeTimer()">Change
+                  Timer</button>
+                <button id="shareTimer" class="btn btn-success btnSpace btnRound" onclick="shareTimer()">Share Timer
+                  (Clipboard)</button>
+
+                <button id="StartNewTimer" class="btn btn-light btnSpace btnRound" onclick="startNewTimer()">Start a new
+                  timer</button>
+              </div>
+
             </div>
           </div>
-        </div>
-        <!-- <button id="resetTimer" onclick="resetTimer()">Reset</button> -->
+
+
+          <div class="fab-wrapper">
+            <input id="fabCheckbox" type="checkbox" class="fab-checkbox" />
+            <label class="fab" for="fabCheckbox">
+              <span class="fab-dots fab-dots-1"></span>
+              <span class="fab-dots fab-dots-2"></span>
+              <span class="fab-dots fab-dots-3"></span>
+            </label>
+            <div class="fab-wheel">
+              <div id="updateMainContainer">
+
+                <div class="wrapper">
+                  <div class="message-wrapper">
+
+
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <!-- <button id="resetTimer" onclick="resetTimer()">Reset</button> -->
       </div>
     </div>
     <!-- <div id="userCountGlobalContainer">Users Online: &thinsp;<span id="userCountGlobal"> 0</span></div> -->
@@ -148,16 +212,22 @@
 
 
       const addEmojis = (msg) => {
-        document.querySelector('#pomos').innerHTML = '🍅'.repeat(msg.workCounter);
-        document.querySelector('#pomo_breaks').innerHTML = '🍪'.repeat(msg.breakCounter);
+        document.querySelector('#pomos').innerHTML = `${msg.workCounter} ${'🍅'.repeat(msg.workCounter)}`;
+        document.querySelector('#pomo_breaks').innerHTML = `${msg.breakCounter} ${'🍪'.repeat(msg.breakCounter)}`;
+        document.querySelector('#pomos_mobile').innerHTML = msg.workCounter + '🍅';
+        document.querySelector('#pomo_breaks_mobile').innerHTML = msg.breakCounter + '🍪';
       }
 
 
+      socket.on('pomocount', (msg) => {
 
+        addEmojis(msg)
+        // console.log("Pomo count updated", msg)
+      })
       socket.on("timestamp", (msg) => {
         // clearTimeout(timeout);
         // console.log("TimeStamp:", msg)
-        addEmojis(msg)
+        // addEmojis(msg)
         if (msg.isUpdateTimer == true) {
           toggleTimerVisibility(msg.isUpdateTimer)
 
@@ -167,8 +237,10 @@
           document.getElementById("timestamp").innerHTML = msg.timestamp;
           if (msg.timestamp != 0 && msg.timestamp != "..." && hmsToSeconds(msg.timestamp) <= 1) {
             audio.play();
-
+            // console.log(msg.timestamp)
+            document.title = `Join /${userId}'s shared timer`
           }
+
 
           document.querySelector('.progressPage').style.height = `${msg.completedPercentage}%`;
           document.title = msg.timestamp
@@ -178,6 +250,9 @@
           pausedVisibility(msg.action)
           expiredVisibility(msg.expired)
           breakVisibility(msg.isBreak)
+          if (msg.timestamp == 0 || hmsToSeconds(msg.timestamp) <= 1) {
+            document.title = `Join /${userId}'s shared timer`
+          }
         }
       });
 
@@ -265,7 +340,7 @@
         // document.getElementById('userCountGlobal').innerHTML = " " + msg.clientsConnected_Global
       });
       socket.on("localUserActivity", (msg) => {
-        addEmojis(msg)
+        // addEmojis(msg)
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
         // console.log("localUserActivity ", msg);
@@ -287,16 +362,18 @@
       const userId = document.location.pathname.split("/").pop()
       const requestOrigin = window.location.host
       const pauseTimer = () => {
-        socket.emit("pausetimer", { userId, requestOrigin });
+        socket.emit("pausetimer", { userId, requestOrigin, VultureUsername });
         // console.log("this is paused")
       };
       const addmin = (min, status) => {
+        // console.log("addmin", min, status)
         socket.emit("addmin", { min, userId, requestOrigin, status });
-        playTimer()
+        // playTimer()
         toggleTimerVisibility(true)
         changeTimer()
 
         document.getElementById("timestamp").innerHTML = secondsToHMS(min * 60)
+        socket.emit("startedTimer", { min, userId, requestOrigin, status, VultureUsername })
       };
 
       const changeTimer = () => {
@@ -335,7 +412,7 @@
 
 
       const playTimer = () => {
-        socket.emit("playtimer", { userId, requestOrigin });
+        socket.emit("playtimer", { userId, requestOrigin, VultureUsername });
       };
       const resetTimer = () => {
         const id = window.location.pathname
@@ -348,6 +425,65 @@
 
     </script>
 
+
+
+    <script>
+
+      const VultureUsername = localStorage.getItem('VultureUser');
+      // if (VultureUsername != null) {
+
+
+      if (VultureUsername != null) {
+
+        // console.log('User Joined:', VultureUsername)
+        socket.emit("userJoined", { userId, requestOrigin, VultureUsername })
+        document.querySelector("#usernameSpan").innerHTML = `Hey ${VultureUsername}!`
+        socket.emit('send-nickname', VultureUsername);
+      } else {
+        console.log('Unknown User Joined:', VultureUsername)
+        // socket.emit("userJoinedNull", { userId, requestOrigin, VultureUsername })
+        socket.emit('send-nickname', 'User');
+        document.querySelector("#usernameButton").click()
+        document.querySelector("#usernameSpan").innerHTML = `Hey User!`
+      }
+
+      const addMessage = (text) => {
+        const newMessage = document.createElement("div");
+        newMessage.innerHTML = text;
+        newMessage.setAttribute("class", "message");
+        const messageDiv = document.querySelector(".message-wrapper");
+        // and give it some content
+        // add the text node to the newly created div
+        messageDiv.appendChild(newMessage);
+        messageDiv.lastChild.scrollIntoView()
+      }
+
+
+      const saveUsername = (event) => {
+        event.preventDefault();
+        let oldUsername = localStorage.getItem('VultureUser');
+        let usernameInput = document.querySelector("#recipientname").value;
+        document.querySelector("#usernameSpan").innerHTML = `Hey ${usernameInput}!`;
+
+        localStorage.setItem('VultureUser', usernameInput);
+        // console.log(`User ${oldUsername} changed thier name to ${usernameInput}`)
+
+        socket.emit('send-nickname', usernameInput);
+        socket.emit("usernameChange", { userId, requestOrigin, usernameInput, oldUsername })
+      }
+
+
+      //
+      socket.on('updateMessage', (msg) => {
+        addMessage(msg)
+      })
+
+
+
+
+
+
+    </script>
     <script>
       const shareTimer = () => {
         const ShareUrl = window.location.href
@@ -359,21 +495,17 @@
         x.className = "show";
         // After 3 seconds, remove the show class from DIV
         setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+        socket.emit("sharedTimer", VultureUsername)
       };
+
+      const startNewTimer = () => {
+        window.location.href = window.location.origin
+      }
     </script>
 
 
 
-    <!-- <script>
-      // const nav_height='56px;'
-      // const footer_height='80px';
 
-      
-
-
-
-
-    </script> -->
   </body>
 
   </html>

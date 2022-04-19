@@ -78,6 +78,31 @@ app.get("/:id", async (req, res) => {
   //       err_msg: "Timer not found! Please check the url!",
   //     });
   //   } else {
+
+  readFromDb(roomID).then((x) => {
+    (timer_data[roomID].breakCounter = x?.break_count),
+      (timer_data[roomID].workCounter = x?.pomo_count);
+    // console.log(
+    //   "readFromDb 1",
+    //   "work",
+    //   timer_data[roomID].workCounter,
+    //   "break",
+    //   timer_data[roomID].breakCounter
+    // );
+  });
+  if (
+    timer_data[roomID] != undefined ||
+    timer_data[roomID]?.workCounter !== undefined
+  ) {
+    io.to(roomID).emit("pomocount", {
+      workCounter: timer_data[roomID].workCounter,
+      breakCounter: timer_data[roomID].breakCounter,
+
+      Activity: "pomo count updated_4!",
+      roomID,
+    });
+  }
+
   if (
     timer_data[roomID] == undefined ||
     timer_data[roomID].workCounter == undefined
@@ -86,7 +111,13 @@ app.get("/:id", async (req, res) => {
       workCounter: 0,
       breakCounter: 0,
     };
+    // writePomoToDb(
+    //   roomID,
+    //   timer_data[roomID].workCounter,
+    //   timer_data[roomID].breakCounter
+    // );
   }
+
   // console.log("timer_data[roomID].workCounter", timer_data[roomID]);
   try {
     if (
@@ -102,19 +133,33 @@ app.get("/:id", async (req, res) => {
         title: roomID,
       });
     }
+    if (
+      timer_data[roomID] != undefined ||
+      timer_data[roomID]?.workCounter !== undefined
+    ) {
+      io.to(roomID).emit("pomocount", {
+        workCounter: timer_data[roomID].workCounter,
+        breakCounter: timer_data[roomID].breakCounter,
+
+        Activity: "pomo count updated_1!",
+        roomID,
+      });
+    }
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
 
   try {
     setTimeout(() => {
-      runATimer.runTheTimer(
-        helpers.endTime(host, roomID).then((e) => {
-          return e;
-        }),
-        roomID,
-        req
-      );
+      if (runATimer.runTheTimer) {
+        runATimer.runTheTimer(
+          helpers.endTime(host, roomID).then((e) => {
+            return e;
+          }),
+          roomID,
+          req
+        );
+      }
     }, 500);
   } catch (err) {
     console.log(
@@ -124,13 +169,15 @@ app.get("/:id", async (req, res) => {
     setTimeout(() => {
       console.log("waiting");
       setTimeout(() => {
-        runATimer.runTheTimer(
-          helpers.endTime(host, roomID).then((e) => {
-            return e;
-          }),
-          roomID,
-          req
-        );
+        if (runATimer.runTheTimer) {
+          runATimer.runTheTimer(
+            helpers.endTime(host, roomID).then((e) => {
+              return e;
+            }),
+            roomID,
+            req
+          );
+        }
       }, 500);
     }, 1000);
   }
@@ -163,6 +210,8 @@ app.post("/reset/:id", async (req, res) => {
       num_break: req.body.num_break,
       time_break: req.body.time_break,
       sets: req.body.sets,
+      pomo_count: req.body.pomo_count,
+      break_count: req.body.break_count,
       end_time: req.body.end_time,
       paused: req.body.paused,
     },
@@ -194,20 +243,80 @@ app.post("/reset/:id", async (req, res) => {
     timer_data[roomID].interval = null;
     // console.log("host", host);
     setTimeout(() => {
-      runATimer.runTheTimer(
-        helpers.endTime(host, roomID).then((e) => {
-          return e;
-        }),
-        roomID,
-        req
-      );
+      if (runATimer.runTheTimer) {
+        runATimer.runTheTimer(
+          helpers.endTime(host, roomID).then((e) => {
+            return e;
+          }),
+          roomID,
+          req
+        );
+      }
     }, 500);
   } catch (err) {
     res.status(500).json({ msg: err.message });
     console.log(err);
   }
 });
+const readFromDb = async (_roomID) => {
+  return await time.findOne({ user: _roomID });
+};
 
+const writePomoToDb = async (_roomID, pomo_count, break_count) => {
+  const query = { user: _roomID };
+  const updated_at = Date.now();
+  const update = {
+    $set: {
+      user: _roomID,
+      pomo_count,
+      break_count,
+    },
+    updated_at,
+  };
+  try {
+    const times = await time.findOneAndUpdate(query, update, {
+      upsert: true,
+    });
+    // console.log({ "Writing to db": times });
+  } catch (err) {
+    console.log({ msg: err.message });
+  }
+};
+
+const readUpdateLogToDb = async (_roomID) => {
+  const data = await readFromDb(_roomID);
+  const updateLog = data.updateLog;
+  // console.log("updateLog2", updateLog);
+  return updateLog;
+};
+const writeUpdateLogToDb = async (_roomID, event) => {
+  timer_data[_roomID].updateLog = await readUpdateLogToDb(_roomID);
+  if (
+    // timer_data[_roomID] != undefined ||
+    timer_data[_roomID]?.updateLog == undefined
+  ) {
+    timer_data[_roomID].updateLog = [];
+  }
+  timer_data[_roomID].updateLog.push(event);
+
+  const query = { user: _roomID };
+  const updated_at = Date.now();
+  const update = {
+    $set: {
+      user: _roomID,
+      updateLog: timer_data[_roomID].updateLog,
+    },
+    updated_at,
+  };
+  try {
+    const times = await time.findOneAndUpdate(query, update, {
+      upsert: true,
+    });
+    // console.log({ "Writing to db": times });
+  } catch (err) {
+    console.log({ msg: err.message });
+  }
+};
 //Websocket
 let clientsConnected_Global = 0;
 const timer_data = {};
@@ -215,8 +324,36 @@ io.on("connection", (socket) => {
   const roomID = socket.handshake.headers.referer.split("/").pop();
   const host = socket.handshake.headers.host;
   // console.log("host", host);
+  socket.on("send-nickname", function (nickname) {
+    socket.nickname = nickname;
+    // users.push(socket.nickname);
+    // console.log("Nickname Updated:", socket.nickname);
+  });
+  readFromDb(roomID).then((x) => {
+    (timer_data[roomID].breakCounter = x?.break_count || 0),
+      (timer_data[roomID].workCounter = x?.pomo_count || 0);
+    // console.log(
+    //   "readFromDb 2",
+    //   "work",
+    //   timer_data[roomID].workCounter,
+    //   "break",
+    //   timer_data[roomID].breakCounter
+    // );
+  });
+  if (
+    timer_data[roomID] != undefined ||
+    timer_data[roomID]?.workCounter != undefined
+  ) {
+    socket.join(roomID);
 
-  socket.join(roomID);
+    io.to(roomID).emit("pomocount", {
+      workCounter: timer_data[roomID].workCounter,
+      breakCounter: timer_data[roomID].breakCounter,
+
+      Activity: "pomo count updated!",
+      roomID,
+    });
+  }
 
   if (timer_data[roomID] == undefined) {
     timer_data[roomID] = {
@@ -230,15 +367,21 @@ io.on("connection", (socket) => {
       completedPercentage: 0,
       breakCounter: 0,
       workCounter: 0,
+      updateLog: [],
     };
+    // writePomoToDb(
+    //   roomID,
+    //   timer_data[roomID].workCounter,
+    //   timer_data[roomID].breakCounter
+    // );
   }
 
   setTimeout(() => {
     timer_data[roomID].connections = liveClientCount(roomID);
 
     io.to(roomID).emit("localUserActivity", {
-      workCounter: timer_data[roomID].workCounter,
-      breakCounter: timer_data[roomID].breakCounter,
+      // workCounter: timer_data[roomID].workCounter,
+      // breakCounter: timer_data[roomID].breakCounter,
       clientsConnected_Socket: timer_data[roomID].connections,
       Activity: "Socket Client Joined_1",
       roomID,
@@ -277,15 +420,51 @@ io.on("connection", (socket) => {
       timer_data[roomID].connections = liveClientCount(roomID);
 
       io.to(roomID).emit("localUserActivity", {
-        workCounter: timer_data[roomID].workCounter,
-        breakCounter: timer_data[roomID].breakCounter,
+        // workCounter: timer_data[roomID].workCounter,
+        // breakCounter: timer_data[roomID].breakCounter,
         clientsConnected_Socket: timer_data[roomID].connections,
         Activity: "Socket Client Left_2",
         roomID,
       });
     }, 200);
+    let userLeftMsg = `${
+      socket.nickname ? socket.nickname : "Unknown user"
+    } left the session`;
+    io.to(roomID).emit("updateMessage", userLeftMsg);
+    writeUpdateLogToDb(roomID, userLeftMsg);
+  });
+  socket.on("userJoined", function (msg) {
+    socket.nickname = msg.VultureUsername;
+    // console.log("NickName updated_2", socket.nickname);
+    let userJoinMsg = `${socket.nickname} joined the session`;
+    io.to(roomID).emit("updateMessage", userJoinMsg);
+    writeUpdateLogToDb(roomID, userJoinMsg);
+  });
+  socket.on("usernameChange", function (msg) {
+    // console.log("usernameChange", msg);
+    let userNameChangeMsg = `${
+      msg.oldUsername ? msg.oldUsername : "Unknown User"
+    } changed thier name to ${msg.usernameInput}`;
+    io.to(roomID).emit("updateMessage", userNameChangeMsg);
+    writeUpdateLogToDb(roomID, userNameChangeMsg);
+  });
+  socket.on("sharedTimer", function (msg) {
+    // console.log("usernameChange", msg);
+    let userSharedTimerMsg = `${socket.nickname} shared the timer`;
+    io.to(roomID).emit("updateMessage", userSharedTimerMsg);
+    writeUpdateLogToDb(roomID, userSharedTimerMsg);
+  });
+  socket.on("startedTimer", function (msg) {
+    // console.log("startedTimer", msg);
+    let userStartedTimerMsg = `${socket.nickname} started a ${msg.min} minute ${msg.status} timer`;
+    io.to(roomID).emit("updateMessage", userStartedTimerMsg);
+    writeUpdateLogToDb(roomID, userStartedTimerMsg);
   });
 
+  // socket.on("userDisconnect", function (msg) {
+  //   console.log("userDisconnect", msg);
+  //   io.to(roomID).emit("userDisconnect", msg);
+  // });
   //send a timestamp to the socket
   socket.on("timestamp", function (msg) {
     console.log("on timestamp", msg);
@@ -299,6 +478,9 @@ io.on("connection", (socket) => {
         `paused: ${(timer_data[msg.userId].running = false)}`,
       ]);
     }
+    let userPausedTimerMsg = `${socket.nickname} paused the timer`;
+    io.to(roomID).emit("updateMessage", userPausedTimerMsg);
+    writeUpdateLogToDb(roomID, userPausedTimerMsg);
   });
   socket.on("playtimer", function (msg) {
     const currentRoom = timer_data[msg.userId];
@@ -308,6 +490,9 @@ io.on("connection", (socket) => {
         `paused: ${(timer_data[msg.userId].running = true)}`,
       ]);
     }
+    let userResumedTimerMsg = `${socket.nickname} resumed the timer`;
+    io.to(roomID).emit("updateMessage", userResumedTimerMsg);
+    writeUpdateLogToDb(roomID, userResumedTimerMsg);
   });
   socket.on("resettimer", function (msg) {});
   socket.on("changetimer", function (msg) {
@@ -324,6 +509,7 @@ io.on("connection", (socket) => {
   });
   socket.on("addmin", function (msg) {
     clearInterval(timer_data[msg.userId].interval);
+    timer_data[msg.userId].running = true;
 
     if (msg.status == "work") {
       timer_data[roomID].isBreak = false;
@@ -337,6 +523,11 @@ io.on("connection", (socket) => {
 
     // console.log(msg);
   });
+  (async function () {
+    const data = await readUpdateLogToDb(roomID);
+    // console.log(data);
+    data.forEach((event) => io.to(roomID).emit("updateMessage", event));
+  })();
 
   function sendAMessage(msg) {
     console.log("send a message:" + msg);
@@ -402,8 +593,8 @@ const runTimer = async (socket, input, req) => {
     setTimeout(() => {
       timer_data[roomID].connections = liveClientCount(roomID);
       io.to(roomID).emit("localUserActivity", {
-        workCounter: timer_data[roomID].workCounter,
-        breakCounter: timer_data[roomID].breakCounter,
+        // workCounter: timer_data[roomID].workCounter,
+        // breakCounter: timer_data[roomID].breakCounter,
         clientsConnected_Socket: timer_data[roomID].connections,
         Activity: "Socket Client Left_1",
         roomID,
@@ -440,8 +631,8 @@ const runTimer = async (socket, input, req) => {
     timer_data[roomID].stoppedCounter = 0;
     // timer_data[roomID].connections += 1;
     io.to(roomID).emit("localUserActivity", {
-      workCounter: timer_data[roomID].workCounter,
-      breakCounter: timer_data[roomID].breakCounter,
+      // workCounter: timer_data[roomID].workCounter,
+      // breakCounter: timer_data[roomID].breakCounter,
       clientsConnected_Socket: timer_data[roomID].connections,
       Activity: "Socket Client Joined_2",
       roomID,
@@ -464,6 +655,11 @@ const runTimer = async (socket, input, req) => {
   ) {
     timer_data[roomID].breakCounter = 0;
     timer_data[roomID].workCounter = 0;
+    // writePomoToDb(
+    //   roomID,
+    //   timer_data[roomID].workCounter,
+    //   timer_data[roomID].breakCounter
+    // );
   }
   if (
     timer_data[roomID] == undefined
@@ -481,6 +677,7 @@ const runTimer = async (socket, input, req) => {
       completedPercentage: 0,
       breakCounter: 0,
       workCounter: 0,
+      updateLog: [],
       // isBreak: false,
     };
     if (
@@ -494,11 +691,16 @@ const runTimer = async (socket, input, req) => {
       // console.log("break params 4", req.body.isBreak || "not found");
       timer_data[roomID].isBreak = false;
     }
+    // writePomoToDb(
+    //   roomID,
+    //   timer_data[roomID].workCounter,
+    //   timer_data[roomID].breakCounter
+    // );
   }
 
   io.to(roomID).emit("localUserActivity", {
-    workCounter: timer_data[roomID].workCounter,
-    breakCounter: timer_data[roomID].breakCounter,
+    // workCounter: timer_data[roomID].workCounter,
+    // breakCounter: timer_data[roomID].breakCounter,
     clientsConnected_Socket: timer_data[roomID].connections,
     Activity: "User Joined new room",
     roomID,
@@ -516,6 +718,29 @@ function longForLoop(param, _roomID) {
   var i = param;
   // console.log("this shit", timer_data[_roomID].originalTime);
   timer_data[_roomID].originalTime = param;
+  readFromDb(_roomID).then((x) => {
+    (timer_data[_roomID].breakCounter = x?.break_count || 0),
+      (timer_data[_roomID].workCounter = x?.pomo_count || 0);
+    // console.log(
+    //   "readFromDb 2",
+    //   "work",
+    //   timer_data[_roomID].workCounter,
+    //   "break",
+    //   timer_data[_roomID].breakCounter
+    // );
+  });
+  if (
+    timer_data[_roomID] != undefined ||
+    timer_data[_roomID].workCounter !== undefined
+  ) {
+    io.to(_roomID).emit("pomocount", {
+      workCounter: timer_data[_roomID].workCounter,
+      breakCounter: timer_data[_roomID].breakCounter,
+
+      Activity: "pomo count updated_2!",
+      _roomID,
+    });
+  }
 
   // console.log("this shit2", timer_data[_roomID].originalTime);
   if (param > 0) {
@@ -547,6 +772,24 @@ function longForLoop(param, _roomID) {
           timer_data[_roomID].isBreak
             ? timer_data[_roomID].breakCounter++
             : timer_data[_roomID].workCounter++;
+
+          writePomoToDb(
+            _roomID,
+            timer_data[_roomID].workCounter,
+            timer_data[_roomID].breakCounter
+          );
+          if (
+            timer_data[_roomID] != undefined ||
+            timer_data[_roomID].workCounter !== undefined
+          ) {
+            io.to(_roomID).emit("pomocount", {
+              workCounter: timer_data[_roomID].workCounter,
+              breakCounter: timer_data[_roomID].breakCounter,
+
+              Activity: "pomo count updated_3!",
+              _roomID,
+            });
+          }
         }
         io.to(_roomID).emit(
           "timestamp",
@@ -557,9 +800,9 @@ function longForLoop(param, _roomID) {
             timer_data[_roomID].isBreak,
             timer_data[_roomID].isUpdateTimer,
             timer_data[_roomID].originalTime,
-            timer_data[_roomID].completedPercentage,
-            timer_data[_roomID].breakCounter,
-            timer_data[_roomID].workCounter
+            timer_data[_roomID].completedPercentage
+            // timer_data[_roomID].breakCounter,
+            // timer_data[_roomID].workCounter
           )
         );
         // console.log(secondsToHMS(i), i);
@@ -578,9 +821,9 @@ function longForLoop(param, _roomID) {
             timer_data[_roomID].isBreak,
             timer_data[_roomID].isUpdateTimer,
             timer_data[_roomID].originalTime,
-            timer_data[_roomID].completedPercentage,
-            timer_data[_roomID].breakCounter,
-            timer_data[_roomID].workCounter
+            timer_data[_roomID].completedPercentage
+            // timer_data[_roomID].breakCounter,
+            // timer_data[_roomID].workCounter
           )
         );
         // timer_data[_roomID].clients.forEach((s) => {
