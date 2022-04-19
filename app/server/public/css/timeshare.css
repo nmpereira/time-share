@@ -151,7 +151,7 @@ html {
     /* padding: 30% 0; */
   }
 }
-@media screen and (max-width: 1200px) {
+/* @media screen and (max-width: 1200px) {
   #pomo_breaks,
   #pomos {
     display: none !important;
@@ -160,6 +160,32 @@ html {
 @media screen and (min-width: 1200px) {
   #pomo_breaks_mobile,
   #pomos_mobile {
+    display: none !important;
+  }
+} */
+
+@media (min-width: 1200px) and (min-height: 700px) {
+  /* desktop */
+
+  #pomo_breaks,
+  #pomos {
+    display: flex !important;
+    justify-content: center !important;
+  }
+  #pomo_breaks_mobile,
+  #pomos_mobile {
+    display: none !important;
+  }
+}
+@media (max-width: 1200px), (max-height: 700px) {
+  /* mobile */
+  #pomo_breaks_mobile,
+  #pomos_mobile {
+    display: flex !important;
+    justify-content: center !important;
+  }
+  #pomo_breaks,
+  #pomos {
     display: none !important;
   }
 }
