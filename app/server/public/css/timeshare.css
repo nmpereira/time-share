@@ -5,6 +5,15 @@
   margin-left: 10px;
 }
 
+.btn-work {
+  background: #4e50bf;
+  color: white;
+}
+.btn-break {
+  background: #2484d6;
+  color: white;
+}
+
 .container {
   position: absolute;
   left: 50%;
@@ -46,6 +55,9 @@ body {
 .btnPadding {
   margin: 10px;
 }
+.btnRound {
+  border-radius: 33px;
+}
 
 /* 
  nav_height='56px;'
@@ -84,7 +96,7 @@ html {
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   margin: 2em;
-  background: #4b4c79d9;
+  background: #484ab0;
 }
 .message-wrapper {
   overflow: hidden;
