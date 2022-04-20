@@ -526,7 +526,8 @@ io.on("connection", (socket) => {
   (async function () {
     const data = await readUpdateLogToDb(roomID);
     // console.log(data);
-    data.forEach((event) => io.to(roomID).emit("updateMessage", event));
+    data.forEach((event) => io.to(socket.id).emit("updateMessage", event));
+    // console.log(socket);
   })();
 
   function sendAMessage(msg) {
