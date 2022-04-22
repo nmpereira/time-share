@@ -261,7 +261,13 @@ app.post("/reset/:id", async (req, res) => {
 const readFromDb = async (_roomID) => {
   return await time.findOne({ user: _roomID });
 };
+const getOnlineUser = async (_roomID) => {
+  let onlineUsers = await io
+    .fetchSockets()
+    .then((x) => x.map((e) => e.nickname));
 
+  return await onlineUsers;
+};
 const writePomoToDb = async (_roomID, pomo_count, break_count) => {
   const query = { user: _roomID };
   const updated_at = Date.now();
@@ -427,15 +433,17 @@ io.on("connection", (socket) => {
         roomID,
       });
     }, 200);
+    getOnlineUser(roomID).then((x) => io.to(roomID).emit("usersOnline", x));
     let userLeftMsg = `${
       socket.nickname ? socket.nickname : "Unknown user"
     } left the session`;
+
     io.to(roomID).emit("updateMessage", userLeftMsg);
     writeUpdateLogToDb(roomID, userLeftMsg);
   });
   socket.on("userJoined", function (msg) {
     socket.nickname = msg.VultureUsername;
-    // console.log("NickName updated_2", socket.nickname);
+    getOnlineUser(roomID).then((x) => io.to(roomID).emit("usersOnline", x));
     let userJoinMsg = `${socket.nickname} joined the session`;
     io.to(roomID).emit("updateMessage", userJoinMsg);
     writeUpdateLogToDb(roomID, userJoinMsg);

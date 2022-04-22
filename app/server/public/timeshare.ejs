@@ -207,6 +207,9 @@
       socket.on("timerActivity", (msg) => {
         // console.log("timerActivity", msg);
       });
+      socket.on("usersOnline", (msg) => {
+        console.log("usersOnline", msg);
+      });
       // Listen for timestamps from server
       var audio = new Audio('./assets/Chime.wav');
 
