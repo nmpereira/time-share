@@ -392,3 +392,16 @@ html {
   justify-content: center; /* align horizontal */
   align-items: center; /* align vertical */
 }
+
+@media (max-width: 650px) {
+  #userBubbleContainer {
+    right: 25%;
+    left: 25%;
+  }
+  .userBubbleInital {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 1.25rem;
+    font-size: 0.5rem;
+  }
+}
