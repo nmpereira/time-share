@@ -300,7 +300,9 @@ const writePomoToDb = async (_roomID, pomo_count, break_count) => {
 };
 
 const readUpdateLogToDb = async (_roomID) => {
-  const data = await readFromDb(_roomID);
+  let data = await readFromDb(_roomID);
+
+  
   const updateLog = data?.updateLog || [];
   //console.log("updateLog2", updateLog);
   return updateLog;
@@ -551,8 +553,9 @@ io.on("connection", (socket) => {
     // console.log(msg);
   });
   (async function () {
-    const data = await readUpdateLogToDb(roomID);
-    // console.log(data);
+    let data = await readUpdateLogToDb(roomID);
+    data=data.slice(-100)
+    
     data.forEach((event) => io.to(socket.id).emit("updateMessage", event));
     // console.log(socket);
   })();
