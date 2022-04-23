@@ -268,7 +268,7 @@ html {
 }
 
 .fab:before {
-  content: "";
+  content: '';
   position: absolute;
   width: 100%;
   height: 100%;
@@ -382,7 +382,9 @@ html {
   flex-wrap: wrap;
 }
 .userBubbleInital {
+  margin-right: 4px;
   border: 1px solid white;
+
   background: white;
   font-weight: 500;
   width: 30px;
