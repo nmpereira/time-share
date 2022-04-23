@@ -261,7 +261,23 @@ app.post("/reset/:id", async (req, res) => {
 const readFromDb = async (_roomID) => {
   return await time.findOne({ user: _roomID });
 };
+const getOnlineUser = async (_roomID) => {
+    const emojis = ["✌", "😂", "😝", "😁", "😱", "👉", "🙌", "🍻", "🔥", "🌈", "🎈", "🌹", "💄", "🎀", "⚽", "🎾", "🏁", "🐻", "🐶", "🐬", "🐟", "🍀", "👀", "🚗", "🍎", "💝", "💙", "👌", "❤", "😍", "😉", "😓", "😳", "💪", "🍸", "🔑", "💖", "🌟", "🎉", "🌺", "🎶", "🏈", "⚾", "🏆", "👽", "💀", "🐵", "🐮", "🐩", "🐎", "👃", "👂", "🍓", "💘", "💜", "👊", "😜", "😵", "🙏", "👋", "💃", "💎", "🚀", "🌙", "🎁", "⛄", "🌊", "⛵", "🏀", "🎱", "💰", "👶", "🐰", "🐫", "🔫", "🚲", "🍉", "💛", "💚"]
 
+  let onlineUsers = await io
+
+    .fetchSockets()
+    .then((x) => x.map((e) => e.nickname))
+    .then((x) =>
+      x.map((e) => {
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+        return e == null || e == "NewUser" || e == "User" ? randomEmoji : e;
+      })
+    );
+
+  return await onlineUsers;
+};
 const writePomoToDb = async (_roomID, pomo_count, break_count) => {
   const query = { user: _roomID };
   const updated_at = Date.now();
@@ -284,7 +300,9 @@ const writePomoToDb = async (_roomID, pomo_count, break_count) => {
 };
 
 const readUpdateLogToDb = async (_roomID) => {
-  const data = await readFromDb(_roomID);
+  let data = await readFromDb(_roomID);
+
+  
   const updateLog = data?.updateLog || [];
   //console.log("updateLog2", updateLog);
   return updateLog;
@@ -427,21 +445,32 @@ io.on("connection", (socket) => {
         roomID,
       });
     }, 200);
+    getOnlineUser(roomID).then((x) => io.to(roomID).emit("usersOnline", x));
     let userLeftMsg = `${
       socket.nickname ? socket.nickname : "Unknown user"
     } left the session`;
+
     io.to(roomID).emit("updateMessage", userLeftMsg);
     writeUpdateLogToDb(roomID, userLeftMsg);
   });
   socket.on("userJoined", function (msg) {
     socket.nickname = msg.VultureUsername;
-    // console.log("NickName updated_2", socket.nickname);
+    getOnlineUser(roomID).then((x) => io.to(roomID).emit("usersOnline", x));
+    let userJoinMsg = `${socket.nickname} joined the session`;
+    io.to(roomID).emit("updateMessage", userJoinMsg);
+    writeUpdateLogToDb(roomID, userJoinMsg);
+  });
+
+  socket.on("userJoinedNull", function (msg) {
+    socket.nickname = msg.VultureUsername;
+    getOnlineUser(roomID).then((x) => io.to(roomID).emit("usersOnline", x));
     let userJoinMsg = `${socket.nickname} joined the session`;
     io.to(roomID).emit("updateMessage", userJoinMsg);
     writeUpdateLogToDb(roomID, userJoinMsg);
   });
   socket.on("usernameChange", function (msg) {
     // console.log("usernameChange", msg);
+    getOnlineUser(roomID).then((x) => io.to(roomID).emit("usersOnline", x));
     let userNameChangeMsg = `${
       msg.oldUsername ? msg.oldUsername : "Unknown User"
     } changed thier name to ${msg.usernameInput}`;
@@ -524,8 +553,10 @@ io.on("connection", (socket) => {
     // console.log(msg);
   });
   (async function () {
-    const data = await readUpdateLogToDb(roomID);
-    // console.log(data);
+    let data = await readUpdateLogToDb(roomID);
+    data=data.slice(-100)
+    
+
     data.forEach((event) => io.to(socket.id).emit("updateMessage", event));
     // console.log(socket);
   })();

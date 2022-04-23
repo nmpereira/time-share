@@ -363,3 +363,45 @@ html {
   transform: scale(1);
 }
 /* end of action button css */
+#userBubbleContainer {
+  position: fixed;
+  bottom: 5.5rem;
+  /* width: 50%; */
+  right: 40%;
+  left: 40%;
+  /* margin: 0 auto; */
+  /* width: 100px; */
+  /* border: 1px solid red; */
+  /* max-width: 300px; */
+  /* transform: translate(-50%, -50%); */
+}
+.userBubbles {
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.userBubbleInital {
+  border: 1px solid white;
+  background: white;
+  font-weight: 500;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+}
+
+@media (max-width: 650px) {
+  #userBubbleContainer {
+    right: 25%;
+    left: 25%;
+  }
+  .userBubbleInital {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 1.25rem;
+    font-size: 0.5rem;
+  }
+}
