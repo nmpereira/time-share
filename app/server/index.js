@@ -262,9 +262,19 @@ const readFromDb = async (_roomID) => {
   return await time.findOne({ user: _roomID });
 };
 const getOnlineUser = async (_roomID) => {
+    const emojis = ["✌", "😂", "😝", "😁", "😱", "👉", "🙌", "🍻", "🔥", "🌈", "🎈", "🌹", "💄", "🎀", "⚽", "🎾", "🏁", "🐻", "🐶", "🐬", "🐟", "🍀", "👀", "🚗", "🍎", "💝", "💙", "👌", "❤", "😍", "😉", "😓", "😳", "💪", "🍸", "🔑", "💖", "🌟", "🎉", "🌺", "🎶", "🏈", "⚾", "🏆", "👽", "💀", "🐵", "🐮", "🐩", "🐎", "👃", "👂", "🍓", "💘", "💜", "👊", "😜", "😵", "🙏", "👋", "💃", "💎", "🚀", "🌙", "🎁", "⛄", "🌊", "⛵", "🏀", "🎱", "💰", "👶", "🐰", "🐫", "🔫", "🚲", "🍉", "💛", "💚"]
+
   let onlineUsers = await io
+
     .fetchSockets()
-    .then((x) => x.map((e) => e.nickname));
+    .then((x) => x.map((e) => e.nickname))
+    .then((x) =>
+      x.map((e) => {
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+        return e == null || e == "NewUser" || e == "User" ? randomEmoji : e;
+      })
+    );
 
   return await onlineUsers;
 };
@@ -442,6 +452,14 @@ io.on("connection", (socket) => {
     writeUpdateLogToDb(roomID, userLeftMsg);
   });
   socket.on("userJoined", function (msg) {
+    socket.nickname = msg.VultureUsername;
+    getOnlineUser(roomID).then((x) => io.to(roomID).emit("usersOnline", x));
+    let userJoinMsg = `${socket.nickname} joined the session`;
+    io.to(roomID).emit("updateMessage", userJoinMsg);
+    writeUpdateLogToDb(roomID, userJoinMsg);
+  });
+
+  socket.on("userJoinedNull", function (msg) {
     socket.nickname = msg.VultureUsername;
     getOnlineUser(roomID).then((x) => io.to(roomID).emit("usersOnline", x));
     let userJoinMsg = `${socket.nickname} joined the session`;

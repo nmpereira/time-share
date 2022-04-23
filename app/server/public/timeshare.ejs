@@ -452,7 +452,7 @@
         socket.emit('send-nickname', VultureUsername);
       } else {
         console.log('Unknown User Joined:', VultureUsername)
-        // socket.emit("userJoinedNull", { userId, requestOrigin, VultureUsername })
+        socket.emit("userJoinedNull", { userId, requestOrigin, VultureUsername: 'NewUser' })
         socket.emit('send-nickname', 'User');
         document.querySelector("#usernameButton").click()
         document.querySelector("#usernameSpan").innerHTML = `Hey User!`
@@ -519,13 +519,15 @@
 
       const updateUsers = (users) => {
         document.querySelector('.userBubbles').innerHTML = ''
+        const emojis = ["✌", "😂", "😝", "😁", "😱", "👉", "🙌", "🍻", "🔥", "🌈", "🎈", "🌹", "💄", "🎀", "⚽", "🎾", "🏁", "🐻", "🐶", "🐬", "🐟", "🍀", "👀", "🚗", "🍎", "💝", "💙", "👌", "❤", "😍", "😉", "😓", "😳", "💪", "🍸", "🔑", "💖", "🌟", "🎉", "🌺", "🎶", "🏈", "⚾", "🏆", "👽", "💀", "🐵", "🐮", "🐩", "🐎", "👃", "👂", "🍓", "💘", "💜", "👊", "😜", "😵", "🙏", "👋", "💃", "💎", "🚀", "🌙", "🎁", "⛄", "🌊", "⛵", "🏀", "🎱", "💰", "👶", "🐰", "🐫", "🔫", "🚲", "🍉", "💛", "💚"]
 
         users.forEach((user) => {
+
           let userInitial
           if (!user) return
-          if (user == 'User') {
-            userInitial = '😎'
-            user = '😎'
+          if (emojis.includes(user)) {
+            userInitial = `${user}`
+            user = `${user} (New User)`
           }
           else {
 
@@ -549,7 +551,7 @@
 
       socket.on("usersOnline", (msg) => {
 
-        console.log("usersOnline", msg);
+        // console.log("usersOnline", msg);
         updateUsers(msg);
 
       });
