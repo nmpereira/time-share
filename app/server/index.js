@@ -556,6 +556,7 @@ io.on("connection", (socket) => {
     let data = await readUpdateLogToDb(roomID);
     data=data.slice(-100)
     
+
     data.forEach((event) => io.to(socket.id).emit("updateMessage", event));
     // console.log(socket);
   })();
