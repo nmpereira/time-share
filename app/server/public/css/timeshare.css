@@ -365,13 +365,13 @@ html {
 /* end of action button css */
 #userBubbleContainer {
   position: fixed;
-  bottom: 6rem;
+  bottom: 5.5rem;
   /* width: 50%; */
   right: 40%;
   left: 40%;
   /* margin: 0 auto; */
   /* width: 100px; */
-  border: 1px solid red;
+  /* border: 1px solid red; */
   /* max-width: 300px; */
   /* transform: translate(-50%, -50%); */
 }
@@ -383,6 +383,8 @@ html {
 }
 .userBubbleInital {
   border: 1px solid white;
+  background: white;
+  font-weight: 500;
   width: 30px;
   height: 30px;
   border-radius: 30px;

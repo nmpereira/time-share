@@ -450,6 +450,7 @@ io.on("connection", (socket) => {
   });
   socket.on("usernameChange", function (msg) {
     // console.log("usernameChange", msg);
+    getOnlineUser(roomID).then((x) => io.to(roomID).emit("usersOnline", x));
     let userNameChangeMsg = `${
       msg.oldUsername ? msg.oldUsername : "Unknown User"
     } changed thier name to ${msg.usernameInput}`;

@@ -162,10 +162,8 @@
 
 
 
-              <div class="userBubbleInital">B</div>
-              <div class="userBubbleInital">M</div>
-              <div class="userBubbleInital">B</div>
-              <div class="userBubbleInital">M</div>
+
+
 
             </div>
           </div>
@@ -218,9 +216,7 @@
       socket.on("timerActivity", (msg) => {
         // console.log("timerActivity", msg);
       });
-      socket.on("usersOnline", (msg) => {
-        console.log("usersOnline", msg);
-      });
+
       // Listen for timestamps from server
       var audio = new Audio('./assets/Chime.wav');
 
@@ -518,7 +514,47 @@
       }
     </script>
 
+    <script>
 
+
+      const updateUsers = (users) => {
+        document.querySelector('.userBubbles').innerHTML = ''
+
+        users.forEach((user) => {
+          let userInitial
+          if (!user) return
+          if (user == 'User') {
+            userInitial = '😎'
+            user = '😎'
+          }
+          else {
+
+            userInitial = user.charAt(0)
+          }
+          const newUser = document.createElement("div");
+          newUser.innerHTML = userInitial;
+
+
+          newUser.setAttribute("class", "userBubbleInital");
+          newUser.setAttribute("data-bs-toggle", "tooltip");
+          newUser.setAttribute("data-bs-placement", "top");
+          newUser.setAttribute("title", user);
+          const userDiv = document.querySelector(".userBubbles");
+          // and give it some content
+          // add the text node to the newly created div
+          userDiv.appendChild(newUser);
+          // userDiv.lastChild.scrollIntoView()
+        })
+      }
+
+      socket.on("usersOnline", (msg) => {
+
+        console.log("usersOnline", msg);
+        updateUsers(msg);
+
+      });
+
+    </script>
 
 
   </body>
