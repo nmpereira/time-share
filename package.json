@@ -32,6 +32,7 @@
     "express": "^4.17.2",
     "express-formidable": "^1.2.0",
     "express-session": "^1.17.2",
+    "logrocket": "^2.2.1",
     "method-override": "^3.0.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
