@@ -356,6 +356,23 @@
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
         // console.log("localUserActivity ", msg);
       })
+
+      socket.on("localpomo", (msg) => {
+
+        let localPomoCount = localStorage.getItem('VulturePomo');
+        localPomoCount++
+        localStorage.setItem('VulturePomo', localPomoCount);
+
+        console.log("localpomo ", msg);
+      })
+      socket.on("localbreak", (msg) => {
+
+        let localBreakCount = localStorage.getItem('VultureBreak');
+        localBreakCount++
+        localStorage.setItem('VultureBreak', localBreakCount);
+
+        console.log("localbreak ", msg);
+      })
       socket.on("changetimer", (msg) => {
         if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }
         // console.log("changetimer ", msg);
