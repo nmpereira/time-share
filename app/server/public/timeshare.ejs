@@ -153,6 +153,8 @@
 
                 <button id="StartNewTimer" class="btn btn-light btnSpace btnRound" onclick="startNewTimer()">Start a new
                   timer</button>
+                <button id="ClearPomos" class="btn btn-danger btnSpace btnRound" onclick="clearLocalPomo()">Clear
+                  Pomos</button>
               </div>
 
             </div>
@@ -356,22 +358,46 @@
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
         // console.log("localUserActivity ", msg);
       })
+      const writeLocalPomo = (_roomID, pomoType) => {
+
+        let storageData = JSON.parse(localStorage.getItem(`VulturePomo_${_roomID}`) || '{}');
+        if (storageData.workCount == null || storageData.workCount == undefined) storageData.workCount = 0
+        if (storageData.breakCount == null || storageData.breakCount == undefined) storageData.breakCount = 0
+        if (pomoType === 'work') {
+          storageData.workCount++;
+        } else if (pomoType === 'break') {
+          storageData.breakCount++;
+        } else if (pomoType === 'reset') {
+          storageData.workCount = 0
+          storageData.breakCount = 0
+        } else {
+          console.error("pomoType not specified")
+        }
+        // let localPomoCount = (storageData)
+        // pomoValue == null ? pomoValue = 0 : pomoValue++;
+        console.log("storageData", storageData)
+        let pomoData = {
+          'workCount': storageData.workCount, 'breakCount': storageData.breakCount, '_roomID': _roomID
+        }
+        localStorage.setItem(`VulturePomo_${_roomID}`, JSON.stringify(pomoData));
+
+      }
+      const clearLocalPomo = () => {
+        const userId = document.location.pathname.split("/").pop()
+        writeLocalPomo(userId, 'reset')
+      }
+
 
       socket.on("localpomo", (msg) => {
+        writeLocalPomo(msg._roomID, 'work')
 
-        let localPomoCount = localStorage.getItem('VulturePomo');
-        localPomoCount++
-        localStorage.setItem('VulturePomo', localPomoCount);
-
-        console.log("localpomo ", msg);
       })
       socket.on("localbreak", (msg) => {
+        writeLocalPomo(msg._roomID, 'break')
 
-        let localBreakCount = localStorage.getItem('VultureBreak');
-        localBreakCount++
-        localStorage.setItem('VultureBreak', localBreakCount);
 
-        console.log("localbreak ", msg);
+
+
       })
       socket.on("changetimer", (msg) => {
         if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }
