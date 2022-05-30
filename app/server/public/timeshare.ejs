@@ -47,10 +47,14 @@
           <div class="container">
 
             <div class="center">
-              <h2 id="pomos" class="d-flex justify-content-center"></h2>
-              <h2 id="pomo_breaks" class="d-flex justify-content-center"></h2>
-              <h2 id="pomos_mobile" class="d-flex justify-content-center"></h2>
-              <h2 id="pomo_breaks_mobile" class="d-flex justify-content-center"></h2>
+              <h2 id="localpomos" title="Individual Pomos" class="d-flex justify-content-center"></h2>
+              <h2 id="localbreaks" title="Individual breaks" class="d-flex justify-content-center"></h2>
+              <h2 id="localpomos_mobile" title="Individual Pomos" class="d-flex justify-content-center"></h2>
+              <h2 id="localbreaks_mobile" title="Individual breaks" class="d-flex justify-content-center"></h2>
+              <h2 id="pomos" title="Group Pomos" class="d-flex justify-content-center"></h2>
+              <h2 id="pomo_breaks" title="Group breaks" class="d-flex justify-content-center"></h2>
+              <h2 id="pomos_mobile" title="Group Pomos" class="d-flex justify-content-center"></h2>
+              <h2 id="pomo_breaks_mobile" title="Group breaks" class="d-flex justify-content-center"></h2>
               <div id="modalContainer" class="d-flex justify-content-center">
 
 
@@ -75,13 +79,14 @@
 
               <div class="d-flex justify-content-center timebuttons">
                 <!-- <button id="min_25" class="btn btn-work btnSpace btnRound  btnPadding updateTimer "
-                onclick="addmin(0.1,'work')">0.1
-                minute</button>
-              <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer "
-                onclick="addmin(0.25,'work')">0.25
-                minute</button>
-              <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer " onclick="addmin(1,'work')">1
-                minute</button> -->
+                  onclick="addmin(0.05,'work')">0.05
+                  minute</button>
+                <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer "
+                  onclick="addmin(0.25,'work')">0.25
+                  minute</button>
+                <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer "
+                  onclick="addmin(1,'work')">1
+                  minute</button> -->
                 <button id="min_25" class="btn btn-work btnSpace  btnRound btnPadding updateTimer "
                   onclick="addmin(5,'work')">5
                   minutes</button>
@@ -109,11 +114,12 @@
               </div>
 
               <div class="d-flex justify-content-center timebuttons">
-                <!-- <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding  updateTimer" onclick="addmin(0.1,'break')">0.1
-                minutes</button>
-              <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding  updateTimer"
-                onclick="addmin(0.25,'break')">0.25
-                minutes</button> -->
+                <!-- <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding  updateTimer"
+                  onclick="addmin(0.05,'break')">0.05
+                  minutes</button>
+                <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding  updateTimer"
+                  onclick="addmin(0.25,'break')">0.25
+                  minutes</button> -->
                 <button id="min_5" class="btn btn-break btnSpace btnRound btnPadding  updateTimer"
                   onclick="addmin(1,'break')">1
                   minute</button>
@@ -153,6 +159,9 @@
 
                 <button id="StartNewTimer" class="btn btn-light btnSpace btnRound" onclick="startNewTimer()">Start a new
                   timer</button>
+                <button id="ClearPomos" title="Clear your local pomo/breaks" class="btn btn-danger btnSpace btnRound"
+                  onclick="clearLocalPomo()">Clear
+                  Pomos</button>
               </div>
 
             </div>
@@ -355,6 +364,59 @@
 
         document.getElementById('userCountLocal').innerHTML = " " + msg.clientsConnected_Socket
         // console.log("localUserActivity ", msg);
+      })
+      const writeLocalPomo = (_roomID, pomoType) => {
+
+        let storageData = JSON.parse(localStorage.getItem(`VulturePomo_${_roomID}`) || '{}');
+        if (storageData.workCount == null || storageData.workCount == undefined) storageData.workCount = 0
+        if (storageData.breakCount == null || storageData.breakCount == undefined) storageData.breakCount = 0
+        if (pomoType === 'work') {
+          storageData.workCount++;
+        } else if (pomoType === 'break') {
+          storageData.breakCount++;
+        } else if (pomoType === 'reset') {
+          storageData.workCount = 0
+          storageData.breakCount = 0
+        } else {
+          console.error("pomoType not specified")
+        }
+        // let localPomoCount = (storageData)
+        // pomoValue == null ? pomoValue = 0 : pomoValue++;
+        console.log("storageData", storageData)
+        let pomoData = {
+          'workCount': storageData.workCount, 'breakCount': storageData.breakCount, '_roomID': _roomID
+        }
+        localStorage.setItem(`VulturePomo_${_roomID}`, JSON.stringify(pomoData));
+        readLocalPomo(_roomID)
+      }
+      const readLocalPomo = (_roomID) => {
+        let storageData = JSON.parse(localStorage.getItem(`VulturePomo_${_roomID}`) || '{}');
+        document.querySelector('#localpomos').innerHTML = `${storageData.workCount > 0 ? storageData.workCount : ''} ${'🍰'.repeat(storageData.workCount)}`;
+        document.querySelector('#localbreaks').innerHTML = `${storageData.breakCount > 0 ? storageData.breakCount : ''} ${'🍩'.repeat(storageData.breakCount)}`;
+
+
+        document.querySelector('#localpomos_mobile').innerHTML = storageData.workCount > 0 ? storageData.workCount + '🍰' : '';
+        document.querySelector('#localbreaks_mobile').innerHTML = storageData.breakCount > 0 ? storageData.breakCount + '🍩' : ''
+
+      }
+      readLocalPomo(document.location.pathname.split("/").pop())
+
+      const clearLocalPomo = () => {
+        const userId = document.location.pathname.split("/").pop()
+        writeLocalPomo(userId, 'reset')
+      }
+
+
+      socket.on("localpomo", (msg) => {
+        writeLocalPomo(msg._roomID, 'work')
+
+      })
+      socket.on("localbreak", (msg) => {
+        writeLocalPomo(msg._roomID, 'break')
+
+
+
+
       })
       socket.on("changetimer", (msg) => {
         if (msg.isUpdateTimer == undefined) { msg.isUpdateTimer = true }

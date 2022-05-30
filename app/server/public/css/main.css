@@ -1,15 +1,19 @@
 * {
-  font-family: "Roboto", "Arial", "Courier New";
+	font-family: "Roboto", "Arial", "Courier New";
 }
 
 #timestamp {
-  font-family: "Covered By Your Grace", cursive, "Courier New", "Arial";
+	font-family: "Covered By Your Grace", cursive, "Courier New", "Arial";
 }
 
 #pomo_breaks_mobile,
 #pomos_mobile,
 #pomos,
-#pomo_breaks {
-  font-family: "Courier New", "Arial";
-  font-weight: 900;
+#pomo_breaks,
+#localpomos,
+#localpomos,
+#localbreaks_mobile,
+#localpomos_mobile {
+	font-family: "Courier New", "Arial";
+	font-weight: 900;
 }

@@ -799,9 +799,28 @@ function longForLoop(param, _roomID) {
         i--;
         if (secondsToHMS(i) <= 0) {
           timer_data[_roomID].isUpdateTimer = true;
-          timer_data[_roomID].isBreak
-            ? timer_data[_roomID].breakCounter++
-            : timer_data[_roomID].workCounter++;
+          if(
+
+            timer_data[_roomID].isBreak
+            ){
+
+              timer_data[_roomID].breakCounter++
+                              io.to(_roomID).emit("localbreak", {
+              Activity: "Add to local break!",
+              _roomID,
+            });
+            }else{
+              timer_data[_roomID].workCounter++;
+
+                io.to(_roomID).emit("localpomo", {
+              Activity: "Add to local pomo!",
+              _roomID,
+            });
+
+            }
+
+
+          
 
           writePomoToDb(
             _roomID,
