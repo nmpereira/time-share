@@ -391,11 +391,11 @@
       }
       const readLocalPomo = (_roomID) => {
         let storageData = JSON.parse(localStorage.getItem(`VulturePomo_${_roomID}`) || '{}');
-        document.querySelector('#localpomos').innerHTML = `${storageData.workCount > 0 ? storageData.workCount : ''} ${'🍰'.repeat(storageData.workCount)}`;
+        document.querySelector('#localpomos').innerHTML = `${storageData.workCount > 0 ? storageData.workCount : ''} ${'🍎'.repeat(storageData.workCount)}`;
         document.querySelector('#localbreaks').innerHTML = `${storageData.breakCount > 0 ? storageData.breakCount : ''} ${'🍩'.repeat(storageData.breakCount)}`;
 
 
-        document.querySelector('#localpomos_mobile').innerHTML = storageData.workCount > 0 ? storageData.workCount + '🍰' : '';
+        document.querySelector('#localpomos_mobile').innerHTML = storageData.workCount > 0 ? storageData.workCount + '🍎' : '';
         document.querySelector('#localbreaks_mobile').innerHTML = storageData.breakCount > 0 ? storageData.breakCount + '🍩' : ''
 
       }
