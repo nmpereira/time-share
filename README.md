@@ -1,24 +1,26 @@
-# time-share
-
 # Time-Share
 
+https://vulture.nmpereira.com
+
 A shared timer for working together remotely!
+
 Create a timer, share it with friends or colleagues.
+
 You both see the same synced time!
 
-## Screenshots
 
-![App Screenshot]()
+## Screenshot
 
+![mario_timer_screenshot](https://user-images.githubusercontent.com/67307808/175460423-74b26b1c-5119-4bbf-9317-628864108cfc.png)
 
 ## Demo
 
-Insert gif or link to demo
-
+![ezgif com-gif-maker(1)](https://user-images.githubusercontent.com/67307808/175460667-d6c99b45-7eec-4432-b1d4-b3eda5479d61.gif)
 
 ## Tech Stack
 
 **Client:** EJS
+
 
 **Server:** Node, Express, MongoDB
 
@@ -32,6 +34,7 @@ Insert gif or link to demo
 ```
  
 ## Deployment
+
 
 To deploy this project run
 
