@@ -19,10 +19,10 @@ You both see the same synced time!
 
 ## Tech Stack
 
-**Client:** EJS
+**Client:** EJS, Socket.io, Bootstrap 5
 
 
-**Server:** Node, Express, MongoDB
+**Server:** Socket.io, Node-Fetch, Express, Momentsjs, MongoDB (Mongoose), ... [among other things](https://github.com/nmpereira/time-share/blob/main/package.json).
 
 
 ## Installation
@@ -36,7 +36,7 @@ You both see the same synced time!
 ## Deployment
 
 
-To deploy this project run
+To run this project
 
 ```bash
 For Development, run npm run devstart in the root directory. (the express app will serve the .ejs frontend)
@@ -50,3 +50,5 @@ For Production, run npm start in the root directory. (the express app will serve
 - 🍪 emoji represents number of Group Breaks
 - 🍎 emoji represents number of Individual Pomos
 - 🍩 emoji represents number of Individual Breaks
+
+This project is hosted on [railway.app](https://railway.app?referralCode=mariojuanaaa)
