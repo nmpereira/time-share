@@ -439,9 +439,8 @@
         // console.log("this is paused")
       };
       const addmin = (min, status) => {
-        // sets minute range for min, checks if number. toFixed(4) rounds min to 4 decimal places. 
-        if (isNaN(min) || min < .1 || min > 99) return
-        min = min.toFixed(4)
+        // sets minute range for min, checks if number. allows .1 min exception for testing. 
+        if (isNaN(min) || (min < 1 && min !== .1) || min > 99) return
         // checks status for 'work' or 'break'
         if (status !== 'work' && status !== 'break') return
         // console.log("addmin", min, status)
