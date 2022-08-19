@@ -439,7 +439,7 @@
         // console.log("this is paused")
       };
       const addmin = (min, status) => {
-        if (min < .2 || min > 99) return
+        if (min < .1 || min > 99) return
         
         // console.log("addmin", min, status)
         socket.emit("addmin", { min, userId, requestOrigin, status });
