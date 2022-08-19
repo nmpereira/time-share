@@ -439,9 +439,11 @@
         // console.log("this is paused")
       };
       const addmin = (min, status) => {
-        //sets minute range for min, checks if number. toFixed(4) rounds min to 4 decimal places. 
-        if (min < .1 || min > 99 || isNaN(min) ) return
+        // sets minute range for min, checks if number. toFixed(4) rounds min to 4 decimal places. 
+        if (isNaN(min) || min < .1 || min > 99) return
         min = min.toFixed(4)
+        // checks status for 'work' or 'break'
+        if (status !== 'work' && status !== 'break') return
         // console.log("addmin", min, status)
         socket.emit("addmin", { min, userId, requestOrigin, status });
         // playTimer()
