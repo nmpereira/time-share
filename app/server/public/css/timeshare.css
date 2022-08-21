@@ -4,9 +4,14 @@
 	--white:		white;
 	--silver: 		silver;
 	--dark-silver: 	#a1a2b3;
-	--indigo-blue:	#4e50bf;
+
+	--portage-blue: #81a4f1;
 	--slate-blue:	#6164ed;
+	--indigo-blue:	#4e50bf;
+
 	--royal-blue:	#2484d6;
+	--denim-blue: 	#126ee2;
+	--tory-blue: 	#0c50a7;
 
 	--dark-background: var(--indigo-blue);
 	--light-background: var(--royal-blue);
@@ -75,8 +80,8 @@ body {
 }
 
 /* 
- nav_height='56px;'
- footer_height='80px'; */
+	nav_height='56px;'
+	footer_height='80px'; */
 
 .modal-backdrop {
 	/* bug fix - no overlay */
@@ -179,16 +184,16 @@ html {
 	}
 }
 /* @media screen and (max-width: 1200px) {
-  #pomo_breaks,
-  #pomos {
+	#pomo_breaks,
+	#pomos {
     display: none !important;
-  }
+	}
 }
 @media screen and (min-width: 1200px) {
-  #pomo_breaks_mobile,
-  #pomos_mobile {
+	#pomo_breaks_mobile,
+	#pomos_mobile {
     display: none !important;
-  }
+	}
 } */
 
 @media (min-width: 1200px) and (min-height: 700px) {
@@ -226,16 +231,16 @@ html {
 }
 
 /* @media screen and (max-height: 700px) {
-  #pomo_breaks,
-  #pomos {
+	#pomo_breaks,
+	#pomos {
     display: none !important;
-  }
+	}
 }
 @media screen and (min-height: 700px) {
-  #pomo_breaks_mobile,
-  #pomos_mobile {
+	#pomo_breaks_mobile,
+	#pomos_mobile {
     display: none !important;
-  }
+	}
 } */
 @media screen and (max-width: 950px) {
 	.timebuttons {
@@ -264,7 +269,7 @@ html {
   } */
 }
 
-/* action button css */
+/* Floating action button */
 .fab-wrapper {
 	position: fixed;
 	bottom: 3rem;
@@ -280,14 +285,14 @@ html {
 	width: 45px;
 	height: 45px;
 	bottom: 50px;
-	background: blue;
+	
 	border-radius: 50%;
-	background: #126ee2;
-	box-shadow: 0px 5px 20px #81a4f1;
+	background: var(--denim-blue);
+	box-shadow: 0px 5px 20px var(--portage-blue);
 	transition: all 0.3s ease;
 	z-index: 1;
 	border-bottom-right-radius: 6px;
-	border: 1px solid #0c50a7;
+	border: 1px solid var(--tory-blue);
 }
 
 .fab:before {
@@ -308,8 +313,8 @@ html {
 	background-color: rgba(255, 255, 255, 0.2);
 }
 .fab:hover {
-	background: #2c87e8;
-	box-shadow: 0px 5px 20px 5px #81a4f1;
+	background: var(--royal-blue);
+	box-shadow: 0px 5px 20px 5px var(--portage-blue);
 }
 
 .fab-dots {
@@ -386,6 +391,7 @@ html {
 	transform: scale(1);
 }
 /* end of action button css */
+
 #userBubbleContainer {
 	position: fixed;
 	bottom: 5.5rem;
