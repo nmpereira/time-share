@@ -11,9 +11,9 @@
 #pomos,
 #pomo_breaks,
 #localpomos,
-#localpomos,
-#localbreaks_mobile,
-#localpomos_mobile {
+#localbreaks,
+#localpomos_mobile, 
+#localbreaks_mobile {
 	font-family: "Courier New", "Arial";
 	font-weight: 900;
 }
